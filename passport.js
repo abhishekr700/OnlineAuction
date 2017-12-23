@@ -1,52 +1,47 @@
+//Import Passport
 const passport = require("passport");
+//Import LocalStrategy module
 const LocalStrategy = require("passport-local").Strategy;
 
-const users = [
-    {
-        username: "a",
-        password: "ap",
-        id: 1
-    },
-    {
-        username: "b",
-        password: "bp",
-        id: 2
-    },
-    {
-        username: "c",
-        password: "cp",
-        id: 3
-    }
-];
+//Import User Model
+const Users = require("./models/sql/sequelize.js").Users;
 
 //Serialize user
 passport.serializeUser(function (user,done) {
-   console.log("Serialized !");
-   done(null,user.id);
+   console.log("Serialized ! : " + user);
+   done(null,user.username);
 });
 
 //De-Serialize User
 passport.deserializeUser(function (id,done) {
     console.log("Deserialize !");
-    for(i in users){
-        if(users[i].id == id){
-            done(null,users[i]);
-        }
-    }
+    Users.findById(id)
+        .then( (user)=>{
+            done(null,user);
+        } )
 });
 
+//Define LocalStrategy
 const localstrategy = new LocalStrategy(
     function (username,password,done) {
         console.log("Local-Starategy !");
-        for(i in users){
-            if(users[i].username === username){
-                if(users[i].password === password){
-                    return done(null,users[i]);
-                }
-                return done(null,false);
+        Users.findOne( {
+            where : {
+                username : username
             }
-        }
-        return done(null,false);
+        })
+            .then((user) => {
+                if(user == null){
+                    console.log("Username not found");
+                    return done(null,false,{message: "Username not found !"})
+                }
+                if(password === user.password){
+                    console.log("User found");
+                    return done(null,user);
+                }
+                console.log("Pass incorrect");
+                return done(null,false,{message: "Pass incorrect !"});
+            });
     }
 
 );
