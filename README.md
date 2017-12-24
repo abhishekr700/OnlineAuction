@@ -5,4 +5,5 @@
 2. Run npm install
 3. Download the configs.js file and place it in the project directory
 4. Modify configs.js to specify the port you want to use
-5. Start the server using,   node server.js
+5. Run  mongod --dbpath=./models/mongodb  on separate terminal
+6. Start the server using,   node server.js
