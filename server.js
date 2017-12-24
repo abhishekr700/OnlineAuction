@@ -12,6 +12,8 @@ const Passport = require("./passport");
 const session = require("express-session");
 const Users = require("./models/sql/sequelize").Users;
 
+const Product=require('./models/mongodb/products').models.Product;
+
 //Initialise Server
 const app = express();
 
@@ -71,7 +73,23 @@ app.post("/signup",(req,res)=>{
         phone2: req.body.phone2
     })
 });
-
+//fetch all the products
+app.get('/products',function (req,res) {
+    Product.findall({})
+        .then((productlist)=>{res.send(productlist)})
+        .catch((err)=>{console.error(err)})
+});
+//add products to db
+app.post('/addproduct',function (req,res) {
+    Product.create({
+        name:req.body.productname,
+        category:req.body.category,
+        basevalue:req.body.basevalue,
+        duration:req.body.duration
+    })
+        .then((result)=>{res.redirect('.')})
+        .catch((err)=>{console.error(err)})
+});
 //Show all users TODO: Remove this later
 app.get("/showuser", (req,res) => {
     Users.findAll()
