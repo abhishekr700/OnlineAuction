@@ -1,6 +1,6 @@
-##Online Auction System
+## Online Auction System
 
-####Steps
+#### Steps
 1. Clone the repo 
 2. Run npm install
 3. Download the configs.js file and place it in the project directory
