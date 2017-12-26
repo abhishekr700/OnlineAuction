@@ -9,7 +9,7 @@ const Users = require("./models/sql/sequelize.js").Users;
 //Serialize user
 passport.serializeUser(function (user,done) {
    console.log("Serialized ! : " + user);
-   done(null,user.username);
+   done(null,user.id);
 });
 
 //De-Serialize User

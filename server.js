@@ -12,8 +12,7 @@ const Passport = require("./passport");
 const session = require("express-session");
 const Users = require("./models/sql/sequelize").Users;
 
-const Product=require('./models/mongodb/products').models.Product;
-
+const models = require("./models/mongodb/mongo");
 //Initialise Server
 const app = express();
 
@@ -36,7 +35,7 @@ app.set("view engine","ejs");
 //Handle sessions
 app.use(session({
     resave: true,
-    saveUninitialized: true,
+    saveUninitialized: false,
     secret: "Boli_Lagegi"
 }));
 
@@ -48,6 +47,7 @@ app.use(Passport.session());
 
 //Render Login Page
 app.get("/login",(req,res)=>{
+    console.log("Login: ",req.user);
     res.render("login");
 });
 
@@ -75,17 +75,19 @@ app.post("/signup",(req,res)=>{
 });
 //fetch all the products
 app.get('/products',function (req,res) {
-    Product.findall({})
+    models.Products.findall({})
         .then((productlist)=>{res.send(productlist)})
         .catch((err)=>{console.error(err)})
 });
 //add products to db
 app.post('/addproduct',function (req,res) {
-    Product.create({
-        name:req.body.productname,
-        category:req.body.category,
-        basevalue:req.body.basevalue,
-        duration:req.body.duration
+    models.Products.create({
+        userID: req.user.id,
+        name: req.body.productname,
+        desc: req.body.desc,
+        category: req.body.category,
+        basevalue: req.body.basevalue,
+        duration: req.body.duration
     })
         .then((result)=>{res.redirect('.')})
         .catch((err)=>{console.error(err)})
@@ -98,6 +100,15 @@ app.get("/showuser", (req,res) => {
         })
 });
 
+//TODO: Will remove later
+app.get("/pri", (req,res)=>{
+    console.log("GET:  ",req.user);
+    res.send("Logged IN");
+});
+app.post("/pri", (req,res)=>{
+    console.log("POST:   ",req.user);
+    res.send("Logged IN");
+});
 //404 Handler
 app.use(function (req,res) {
     res.send("404 Error !!!")
