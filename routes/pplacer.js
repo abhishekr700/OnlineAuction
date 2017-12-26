@@ -26,4 +26,5 @@ route.post('/addproduct',upload.single('imgUploader'),function (req,res) {
         .then((result)=>{res.redirect('/pplacer')})
         .catch((err)=>{console.error(err)})
 });
+
 exports.route=route;

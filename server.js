@@ -31,7 +31,7 @@ app.use(express.urlencoded({
 
 const routes={
     PPlacer:require('./routes/pplacer').route,
-    // users:require('./routes/users').route
+    users:require('./routes/users').route
 };
 
 //Set View Engine
@@ -45,6 +45,7 @@ app.use(session({
 }));
 
 app.use('/pplacer', routes.PPlacer);
+app.use('/users',routes.users);
 
 // app.use('/users', routes.users);
 
@@ -83,12 +84,6 @@ app.post("/signup",(req,res)=>{
     })
 });
 
-//fetch all the products
-app.get('/products',function (req,res) {
-    models.Products.findall({})
-        .then((productlist)=>{res.send(productlist)})
-        .catch((err)=>{console.error(err)})
-});
 
 //Show all users TODO: Remove this later
 app.get("/showuser", (req,res) => {
@@ -97,6 +92,21 @@ app.get("/showuser", (req,res) => {
             res.send(users);
         })
 });
+
+//fetch all the products
+app.get('/products',function (req,res) {
+    console.log("showing products")
+    models.Products.find({})
+        .then((productlist)=>{res.send(productlist)})
+        .catch((err)=>{console.error(err)})
+});
+
+//Show products in user
+app.get('/userproducts',function (req,res) {
+    models.Products.find({})
+        .then((productlist)=>{res.send(productlist)})
+        .catch((err)=>{console.error(err)})
+})
 
 //TODO: Will remove later
 app.get("/pri", (req,res)=>{
