@@ -1,0 +1,23 @@
+Users 
+-*Name
+-*Email
+-*Username
+-*Password
+-*Phone No. Mandatory
+-Phone No. Optional
+
+Product 
+
+-UsersId
+-NameofProduct
+-Description
+-Cateogary
+-Min. Price
+-Duration
+
+
+Bids
+-ProdID
+-[userID,price,TimeStamp]
+-isOpen
+

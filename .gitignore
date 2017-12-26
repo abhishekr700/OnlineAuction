@@ -1,0 +1,5 @@
+.idea/ 
+node_modules/
+configs.js 
+data/ 
+public_html/Images
