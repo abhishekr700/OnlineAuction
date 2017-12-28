@@ -15,5 +15,6 @@ Routes MAP
 ----/all		Show all users
 ----/			Show /users page
 ----/details	Show user's details
+----/items		Show all items of logged in user
 
 
