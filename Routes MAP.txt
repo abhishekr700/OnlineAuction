@@ -1,0 +1,19 @@
+Routes MAP
+
+
+
+
+--/items
+----/add GET	Render AddItem Route
+----/add POST	Add new item to DB
+----/all 		Show all DB items
+----/			Page to add/view items 		Temporary
+----/<itemid>	Show item's details with id=itemid
+
+
+--/users
+----/all		Show all users
+----/			Show /users page
+----/details	Show user's details
+
+

@@ -2,10 +2,7 @@ const mongoose = require("mongoose");
 
 const ProductSchema = mongoose.Schema({
     img:String,
-    userID: {
-        type: mongoose.Schema.Types.ObjectId,
-    //     //ref: "users"
-    },
+    userID: Number,
     name: String,
     desc: String,
     category: String,

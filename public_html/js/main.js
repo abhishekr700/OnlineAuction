@@ -7,14 +7,7 @@ $( ()=> {
     $("#admin").click(()=>{
         window.location = '/pplacer.html'
     })
-    $("#products").click(()=>{
-        //TODO: products page to be added later
-        window.location = '/products'
-    });
 
-    $("#place_product").click(()=>{
-        window.location = '/createproduct.html'
-    })
     $.get('/userproducts',function (data) {
         data.forEach(function (item) {
             console.log(item);
