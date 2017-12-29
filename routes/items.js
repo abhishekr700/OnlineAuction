@@ -49,8 +49,18 @@ route.post('/add' ,upload.single('imgUploader'),function (req,res) {
         basevalue: req.body.basevalue,
         duration: req.body.duration
     })
-        .then(()=>{
-            res.redirect('/items/add')
+        .then((item)=>{
+            models.Bids.create({
+                ProdID: item._id,
+                isOpen: true,
+                allBids: []
+            })
+                .then(()=>{
+                    res.redirect('/items/add');
+                })
+                .catch((err)=>{
+                    console.log(err);
+                })
         })
         .catch((err)=>{
             console.error(err)

@@ -4,6 +4,7 @@ const CONFIG = require("../../configs");
 
 //Require DB models
 const Products = require("./products");
+const Bids = require("./bids");
 
 //Use global promise instead of Mongoose's
 mongoose.Promise = global.Promise;
@@ -22,5 +23,5 @@ mongoose.connect(`mongodb://${CONFIG.MONGO.HOST}:${CONFIG.MONGO.PORT}/${CONFIG.M
 
 //Expose models for use elsewhere
 module.exports = {
-    Products
+    Products,Bids
 };
