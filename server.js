@@ -53,7 +53,7 @@ app.use(Passport.session());
 
 //Items route
 app.use("/items", require("./routes/items"));
-// app.use('/pplacer', routes.PPlacer);
+app.use("/bids", require("./routes/bids"));
 app.use('/users', require("./routes/users"));
 
 

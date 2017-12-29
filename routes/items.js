@@ -67,6 +67,44 @@ route.post('/add' ,upload.single('imgUploader'),function (req,res) {
         })
 });
 
+//Redirect to particular item page to create bid
+route.get("/bid/:id",(req,res)=>{
+    res.render('createbid',{
+        userid:req.params.id
+    })
+});
+
+//create a bid
+route.post("/bid/:id",(req,res)=>{
+   console.log(req.params.id);
+   models.Bids.findOneAndUpdate(
+       {
+           ProdID:req.params.id
+       },
+       {
+           $push: {
+               allBids: {
+                   userID: req.user.id,
+                   price: req.body.bidprice,
+                   time: new Date()
+               }
+           }
+       }
+   )
+       .then( (item)=>{
+           console.log("Item:",item);
+           res.redirect('/bids');
+       })
+       .catch((err)=>{
+           console.log(err);
+           res.send({
+               message: "error finding item"
+           });
+       })
+
+
+});
+
 //Get item details
 route.get("/:id", (req,res)=>{
     models.Products.findById(req.params.id,{
