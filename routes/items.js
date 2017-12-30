@@ -3,6 +3,9 @@ const route = require("express").Router();
 //Import MongoDB models
 const models = require("../models/mongodb/mongo");
 
+//Import HELPERS
+const HELPERS = require("../helpers");
+
 //Import multer module
 const multer = require('multer');
 
@@ -33,12 +36,12 @@ route.get('/all',function (req,res) {
 let upload = multer({ storage: Storage });
 
 //Render Add Item page
-route.get("/add", (req,res) => {
+route.get("/add", HELPERS.checkLoggedIn ,(req,res) => {
     res.render("additem");
 });
 
 //Post route to add products to DB
-route.post('/add' ,upload.single('imgUploader'),function (req,res) {
+route.post('/add' ,HELPERS.checkLoggedIn ,upload.single('imgUploader'),function (req,res) {
     console.log("ADD: ",req.user);
     models.Products.create({
         img: req.file.filename,
@@ -69,7 +72,7 @@ route.post('/add' ,upload.single('imgUploader'),function (req,res) {
 
 
 //create a bid
-route.post("/:id/bid",(req,res)=>{
+route.post("/:id/bid",HELPERS.checkLoggedIn ,(req,res)=>{
    console.log(req.params.id);
    models.Bids.findOneAndUpdate(
        {

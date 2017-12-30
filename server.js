@@ -11,7 +11,7 @@ const CONFIG = require("./configs");
 const Passport = require("./passport");
 const session = require("express-session");
 const Users = require("./models/sql/sequelize").Users;
-
+const HELPERS = require("./helpers");
 const models = require("./models/mongodb/mongo");
 
 //Initialise Server
@@ -54,7 +54,7 @@ app.use(Passport.session());
 //Items route
 app.use("/items", require("./routes/items"));
 app.use("/bids", require("./routes/bids"));
-app.use('/users', require("./routes/users"));
+app.use('/users', HELPERS.checkLoggedIn ,require("./routes/users"));
 
 
 /*
