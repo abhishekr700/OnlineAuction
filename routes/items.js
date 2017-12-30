@@ -18,7 +18,7 @@ route.get("/", (req,res) => {
     res.render("items");
 });
 
-//Show all the products
+//Return all the products
 route.get('/all',function (req,res) {
     // console.log("showing products");
     models.Products.find({})
@@ -67,15 +67,9 @@ route.post('/add' ,upload.single('imgUploader'),function (req,res) {
         })
 });
 
-//Redirect to particular item page to create bid
-route.get("/bid/:id",(req,res)=>{
-    res.render('createbid',{
-        userid:req.params.id
-    })
-});
 
 //create a bid
-route.post("/bid/:id",(req,res)=>{
+route.post("/:id/bid",(req,res)=>{
    console.log(req.params.id);
    models.Bids.findOneAndUpdate(
        {
@@ -92,8 +86,8 @@ route.post("/bid/:id",(req,res)=>{
        }
    )
        .then( (item)=>{
-           console.log("Item:",item);
-           res.redirect('/bids');
+           console.log("ItemInBids:",item);
+           res.redirect('/items/' + req.params.id);
        })
        .catch((err)=>{
            console.log(err);
@@ -108,11 +102,13 @@ route.post("/bid/:id",(req,res)=>{
 //Get item details
 route.get("/:id", (req,res)=>{
     models.Products.findById(req.params.id,{
-        _id: 0
+        // _id: 0
     })
         .then( (item)=>{
             console.log("Item:",item);
-            res.send(item);
+            res.render("item-details", {
+                item: item
+            });
         })
         .catch((err)=>{
             console.log(err);

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Item Details</title>
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha384-xBuQ/xzmlsLoJpyjoggmTEz8OWUFM0/RC5BsqQBDX2v5cMvDHcMakNTNrHIW2I5f" crossorigin="anonymous"></script>
+    <script src="/js/item-details.js" type="text/javascript"> </script>
+</head>
+<body>
+
+<div id="item-detail">
+    Name: <%= item.name %> <br>
+    Description: <%= item.desc %><br>
+    <img src="/Images/<%= item._id%>" alt=""><br>
+    by User: <%= item.userID %><br>
+    category: <%= item.category %><br>
+    basevalue: <%= item.baseValue%><br>
+    duration: ---<br>
+    <!--TODO: Add duration timer-->
+    <form action="/items/<%= item._id%>/bid" method="post">
+        <input type="number" name="bidprice">
+        <button type="submit">Submit</button>
+    </form>
+</div>
+
+</body>
+</html>
