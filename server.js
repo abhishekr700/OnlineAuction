@@ -101,6 +101,13 @@ app.post("/signup",(req,res)=>{
         })
 });
 
+//Logout route
+app.get("/logout", (req,res)=>{
+    console.log("LOGOUT !");
+    req.logout();
+    res.redirect("/");
+});
+
 //404 Handler
 app.use(function (req,res) {
     res.send("404 Error !!!")
