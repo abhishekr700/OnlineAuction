@@ -108,10 +108,26 @@ route.get("/:id", (req,res)=>{
         // _id: 0
     })
         .then( (item)=>{
-            console.log("Item:",item);
-            res.render("item-details", {
-                item: item
-            });
+            models.Bids.find({
+                ProdID:item.id
+            })
+                .then((itembid)=>{
+                //to compute minimum bid allowed
+                    var minbid=item.basevalue;
+                    //selecting base value as minimum value
+                    (itembid[0].allBids).forEach(function (data) {
+                        if(minbid<data.price){
+                            minbid=data.price;
+                        }
+
+                    });
+                    console.log(minbid);
+                    console.log("Item:",item);
+                    res.render("item-details", {
+                        item: item,
+                        minbid:minbid
+                    });
+                });
         })
         .catch((err)=>{
             console.log(err);
