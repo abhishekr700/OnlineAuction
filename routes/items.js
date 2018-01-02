@@ -1,4 +1,5 @@
 const route = require("express").Router();
+const Timer=require("timer.js");
 
 //Import MongoDB models
 const models = require("../models/mongodb/mongo");
@@ -60,6 +61,29 @@ route.post('/add' ,HELPERS.checkLoggedIn ,upload.single('imgUploader'),function 
             })
                 .then(()=>{
                     res.redirect('/items/add');
+                    var myTimer = new Timer({
+                        tick    : 1,
+                        // ontick  : function(sec) { console.log(sec + ' seconds left') },
+                        onstart : function() { console.log('timer started') },
+                        onstop  : function() { console.log('timer stop'); },
+                        onpause : function() { console.log('timer set on pause') },
+                        onend   : function() {
+                            console.log(item._id);
+                            models.Bids.findOneAndUpdate({
+                            filter:{
+                                ProdID : item._id
+                            }
+                            ,
+                            update:{
+                                $set: {
+                                    isOpen : false
+                                }
+                            }
+                        });
+                            console.log('timer ended normally');
+                        }
+                    });
+                    myTimer.start(item.duration);
                 })
                 .catch((err)=>{
                     console.log(err);
@@ -115,6 +139,7 @@ route.get("/:id", (req,res)=>{
                 //to compute minimum bid allowed
                     var minbid=item.basevalue;
                     //selecting base value as minimum value
+                    console.log(itembid);
                     (itembid[0].allBids).forEach(function (data) {
                         if(minbid<data.price){
                             minbid=data.price;
