@@ -3,25 +3,20 @@ const Timer=require("timer.js");
 
 //Import MongoDB models
 const models = require("../models/mongodb/mongo");
-
 //Import HELPERS
 const HELPERS = require("../helpers");
-
 //Import multer module
 const multer = require('multer');
-
 let Storage = multer.diskStorage({
     destination:  './public_html/Images',
     filename: function (req, file, callback) {
         callback(null, file.originalname);
     }
 });
-
 //Items default page
 route.get("/", (req,res) => {
     res.render("items");
 });
-
 //Return all the products
 route.get('/all',function (req,res) {
     // console.log("showing products");
@@ -33,14 +28,11 @@ route.get('/all',function (req,res) {
             console.error(err)
         })
 });
-
 let upload = multer({ storage: Storage });
-
 //Render Add Item page
 route.get("/add", HELPERS.checkLoggedIn ,(req,res) => {
     res.render("additem");
 });
-
 //Post route to add products to DB
 route.post('/add' ,HELPERS.checkLoggedIn ,upload.single('imgUploader'),function (req,res) {
     console.log("ADD: ",req.user);
@@ -69,17 +61,20 @@ route.post('/add' ,HELPERS.checkLoggedIn ,upload.single('imgUploader'),function 
                         onpause : function() { console.log('timer set on pause') },
                         onend   : function() {
                             console.log(item._id);
-                            models.Bids.findOneAndUpdate({
-                            filter:{
-                                ProdID : item._id
-                            }
-                            ,
-                            update:{
-                                $set: {
-                                    isOpen : false
+
+                            models.Bids.updateOne(
+                                {
+                                    "ProdID" : item._id
                                 }
-                            }
-                        });
+                                ,
+                                {
+                                    $set: {
+                                        "isOpen" : false
+                                    }
+                                }
+                            ).then(function (data) {
+                                console.log("bid timed out")
+                            });
                             console.log('timer ended normally');
                         }
                     });
@@ -94,38 +89,34 @@ route.post('/add' ,HELPERS.checkLoggedIn ,upload.single('imgUploader'),function 
         })
 });
 
-
 //create a bid
 route.post("/:id/bid",HELPERS.checkLoggedIn ,(req,res)=>{
-   console.log(req.params.id);
-   models.Bids.findOneAndUpdate(
-       {
-           ProdID:req.params.id
-       },
-       {
-           $push: {
-               allBids: {
-                   userID: req.user.id,
-                   price: req.body.bidprice,
-                   time: new Date()
-               }
-           }
-       }
-   )
-       .then( (item)=>{
-           console.log("ItemInBids:",item);
-           res.redirect('/items/' + req.params.id);
-       })
-       .catch((err)=>{
-           console.log(err);
-           res.send({
-               message: "error finding item"
-           });
-       })
-
-
+    console.log(req.params.id);
+    models.Bids.findOneAndUpdate(
+        {
+            ProdID:req.params.id
+        },
+        {
+            $push: {
+                allBids: {
+                    userID: req.user.id,
+                    price: req.body.bidprice,
+                    time: new Date()
+                }
+            }
+        }
+    )
+        .then( (item)=>{
+            console.log("ItemInBids:",item);
+            res.redirect('/items/' + req.params.id);
+        })
+        .catch((err)=>{
+            console.log(err);
+            res.send({
+                message: "error finding item"
+            });
+        })
 });
-
 //Get item details
 route.get("/:id", (req,res)=>{
     models.Products.findById(req.params.id,{
@@ -136,7 +127,7 @@ route.get("/:id", (req,res)=>{
                 ProdID:item.id
             })
                 .then((itembid)=>{
-                //to compute minimum bid allowed
+                    //to compute minimum bid allowed
                     var minbid=item.basevalue;
                     //selecting base value as minimum value
                     console.log(itembid);
@@ -144,7 +135,6 @@ route.get("/:id", (req,res)=>{
                         if(minbid<data.price){
                             minbid=data.price;
                         }
-
                     });
                     console.log(minbid);
                     console.log("Item:",item);
@@ -161,5 +151,4 @@ route.get("/:id", (req,res)=>{
             });
         })
 });
-
 module.exports = route;
