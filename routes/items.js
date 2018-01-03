@@ -3,8 +3,10 @@ const Timer=require("timer.js");
 
 //Import MongoDB models
 const models = require("../models/mongodb/mongo");
+
 //Import HELPERS
 const HELPERS = require("../helpers");
+
 //Import multer module
 const multer = require('multer');
 let Storage = multer.diskStorage({
@@ -13,10 +15,12 @@ let Storage = multer.diskStorage({
         callback(null, file.originalname);
     }
 });
+
 //Items default page
 route.get("/", (req,res) => {
     res.render("items");
 });
+
 //Return all the products
 route.get('/all',function (req,res) {
     // console.log("showing products");
@@ -29,10 +33,12 @@ route.get('/all',function (req,res) {
         })
 });
 let upload = multer({ storage: Storage });
+
 //Render Add Item page
 route.get("/add", HELPERS.checkLoggedIn ,(req,res) => {
     res.render("additem");
 });
+
 //Post route to add products to DB
 route.post('/add' ,HELPERS.checkLoggedIn ,upload.single('imgUploader'),function (req,res) {
     console.log("ADD: ",req.user);
@@ -78,7 +84,7 @@ route.post('/add' ,HELPERS.checkLoggedIn ,upload.single('imgUploader'),function 
                             console.log('timer ended normally');
                         }
                     });
-                    myTimer.start(item.duration);
+                    myTimer.start(item.duration*60*60);
                 })
                 .catch((err)=>{
                     console.log(err);
@@ -94,7 +100,8 @@ route.post("/:id/bid",HELPERS.checkLoggedIn ,(req,res)=>{
     console.log(req.params.id);
     models.Bids.findOneAndUpdate(
         {
-            ProdID:req.params.id
+            ProdID:req.params.id,
+            isOpen:true
         },
         {
             $push: {
@@ -117,6 +124,7 @@ route.post("/:id/bid",HELPERS.checkLoggedIn ,(req,res)=>{
             });
         })
 });
+
 //Get item details
 route.get("/:id", (req,res)=>{
     models.Products.findById(req.params.id,{
