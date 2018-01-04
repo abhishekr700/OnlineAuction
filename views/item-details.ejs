@@ -17,10 +17,21 @@
     maxbid:<%=minbid%><br>
     duration: ---<br>
     <!--TODO: Add duration timer-->
+    <% if(!isOwn){%>
     <form action="/items/<%= item._id%>/bid" method="post">
+
         <input type="number" name="bidprice" min="<%=minbid%>">
         <button type="submit">Submit</button>
     </form>
+    <%}%>
+    <% if(isOwn){ %>
+    <form action="/items/<%= item._id%>/incTime" method="post">
+
+        <input name="duration" placeholder="duration">
+        <button type="submit">Submit</button>
+    </form>
+    <%}%>
+
 </div>
 
 </body>

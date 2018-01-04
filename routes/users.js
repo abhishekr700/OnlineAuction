@@ -22,7 +22,10 @@ route.get("/items", (req,res)=>{
         userID: req.user.id
     })
         .then((items)=>{
-            res.send(items);
+            res.render("ownItems",
+                {
+                    items:items
+                })
         })
         .catch((err)=>{
             console.log("Cannot find user's items due to :",err);

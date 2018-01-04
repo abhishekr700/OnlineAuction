@@ -8,13 +8,13 @@ const Users = require("./models/sql/sequelize.js").Users;
 
 //Serialize user
 passport.serializeUser(function (user,done) {
-   console.log("Serialized !");
+   // console.log("Serialized !");
    done(null,user.id);
 });
 
 //De-Serialize User
 passport.deserializeUser(function (id,done) {
-    console.log("Deserialize !");
+    // console.log("Deserialize !");
     Users.findById(id)
         .then( (user)=>{
             // console.log(user);
