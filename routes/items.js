@@ -1,5 +1,7 @@
 const route = require("express").Router();
 const Timer=require("timer.js");
+const fs=require('fs');
+const path = require("path");
 
 //Import MongoDB models
 const models = require("../models/mongodb/mongo");
@@ -9,12 +11,19 @@ const HELPERS = require("../helpers");
 
 //Import multer module
 const multer = require('multer');
-let Storage = multer.diskStorage({
-    destination:  './public_html/Images',
-    filename: function (req, file, callback) {
-        callback(null, file.originalname);
-    }
-});
+
+
+
+    let Storage = multer.diskStorage({
+        destination:  './public_html/Images',
+        filename: function (req, file, callback ){
+            callback(null, file.originalname);
+        }
+    });
+    let upload = multer({ storage: Storage });
+
+
+
 
 //Items default page
 route.get("/", (req,res) => {
@@ -23,7 +32,8 @@ route.get("/", (req,res) => {
 
 //Return all the products
 route.get('/all',function (req,res) {
-    // console.log("showing products");
+    console.log("showing products");
+
     models.Products.find({})
         .then((productlist)=>{
             res.send(productlist)
@@ -32,7 +42,7 @@ route.get('/all',function (req,res) {
             console.error(err)
         })
 });
-let upload = multer({ storage: Storage });
+
 
 //Render Add Item page
 route.get("/add", HELPERS.checkLoggedIn ,(req,res) => {
@@ -43,7 +53,6 @@ route.get("/add", HELPERS.checkLoggedIn ,(req,res) => {
 route.post('/add' ,HELPERS.checkLoggedIn ,upload.single('imgUploader'),function (req,res) {
     console.log("ADD: ",req.user);
     models.Products.create({
-        img: req.file.filename,
         userID: req.user.id,
         name: req.body.productname,
         desc: req.body.desc,
@@ -52,6 +61,7 @@ route.post('/add' ,HELPERS.checkLoggedIn ,upload.single('imgUploader'),function 
         duration: req.body.duration
     })
         .then((item)=>{
+            fs.rename(path.join(__dirname,"../", "public_html/Images/",req.file.filename),path.join(__dirname,"../", "public_html/Images/",item._id+".jpg"),(err)=>{console.log(err);})
             models.Bids.create({
                 ProdID: item._id,
                 isOpen: true,
@@ -143,7 +153,8 @@ route.get("/:id", (req,res)=>{
                         if(minbid<data.price){
                             minbid=data.price;
                         }
-                    });
+                    }
+                    );
                     console.log(minbid);
                     console.log("Item:",item);
                     res.render("item-details", {
