@@ -12,8 +12,6 @@ const HELPERS = require("../helpers");
 //Import multer module
 const multer = require('multer');
 
-
-
     let Storage = multer.diskStorage({
         destination:  './public_html/Images',
         filename: function (req, file, callback ){
@@ -23,36 +21,32 @@ const multer = require('multer');
     let upload = multer({ storage: Storage });
 
 
-
-
 //Items default page
-route.get("/", (req,res) => {
+route.get("/", (req, res) => {
     res.render("items");
 });
 
 //Return all the products
-route.get('/all',function (req,res) {
-    console.log("showing products");
-
+route.get('/all', function (req, res) {
+    // console.log("showing products");
     models.Products.find({})
-        .then((productlist)=>{
+        .then((productlist) => {
             res.send(productlist)
         })
-        .catch((err)=>{
+        .catch((err) => {
             console.error(err)
         })
 });
 
-
 //Render Add Item page
-route.get("/add", HELPERS.checkLoggedIn ,(req,res) => {
+route.get("/add", HELPERS.checkLoggedIn, (req, res) => {
     res.render("additem");
 });
 
 
 //Post route to add products to DB
-route.post('/add' ,HELPERS.checkLoggedIn ,upload.single('imgUploader'),function (req,res) {
-    console.log("ADD: ",req.user);
+route.post('/add', HELPERS.checkLoggedIn, upload.single('imgUploader'), function (req, res) {
+    console.log("ADD: ", req.user);
     models.Products.create({
         userID: req.user.id,
         name: req.body.productname,
@@ -62,13 +56,14 @@ route.post('/add' ,HELPERS.checkLoggedIn ,upload.single('imgUploader'),function 
         duration: req.body.duration
     })
         .then((item)=>{
-            fs.rename(path.join(__dirname,"../", "public_html/Images/",req.file.filename),path.join(__dirname,"../", "public_html/Images/",item._id+".jpg"),(err)=>{console.log(err);})
+            fs.rename(path.join(__dirname,"../", "public_html/Images/",req.file.filename),path.join(__dirname,"../", "public_html/Images/",item._id+".jpg"),(err)=>{console.log(err);});
+
             models.Bids.create({
                 ProdID: item._id,
                 isOpen: true,
                 allBids: []
             })
-                .then(()=>{
+                .then(() => {
                     res.redirect('/items/add');
                     var myTimer = new Timer({
                         tick    : 1,
@@ -97,11 +92,11 @@ route.post('/add' ,HELPERS.checkLoggedIn ,upload.single('imgUploader'),function 
                     });
                     myTimer.start(item.duration*3600);
                 })
-                .catch((err)=>{
+                .catch((err) => {
                     console.log(err);
                 })
         })
-        .catch((err)=>{
+        .catch((err) => {
             console.error(err)
         })
 });
@@ -137,7 +132,6 @@ route.post("/:id/bid",HELPERS.checkLoggedIn ,(req,res)=>{
                             message: "error finding item"
                         });
                     })
-
             }
             else {
                 console.log("User bidding own item");
@@ -148,13 +142,14 @@ route.post("/:id/bid",HELPERS.checkLoggedIn ,(req,res)=>{
 });
 
 //Get item details
-route.get("/:id", (req,res)=>{
-    models.Products.findById(req.params.id,{
+route.get("/:id", (req, res) => {
+    models.Products.findById(req.params.id, {
         // _id: 0
     })
         .then( (item)=>{
+            // console.log(item);
             models.Bids.find({
-                ProdID:item.id
+                ProdID:item._id
             })
                 .then((itembid)=> {
                     //to compute minimum bid allowed
@@ -171,24 +166,26 @@ route.get("/:id", (req,res)=>{
                     // console.log("Item:",item);
                     models.Products.findById(req.params.id)
                         .then((item) => {
-                            if (item.userID !== req.user.id) {
+                            if(req.user) {
+                                if (item.userID === req.user.id) {
+                                    res.render("item-details", {
+                                        item: item,
+                                        minbid: minbid,
+                                        isOwn: true
+                                    });
+                                }
+                            }
+                            else {
                                 res.render("item-details", {
                                     item: item,
                                     minbid: minbid,
                                     isOwn: false
                                 });
                             }
-                            else {
-                                res.render("item-details", {
-                                    item: item,
-                                    minbid: minbid,
-                                    isOwn: true
-                                });
-                            }
                         });
                 })
         })
-        .catch((err)=>{
+        .catch((err) => {
             console.log(err);
             res.send({
                 message: "error finding item"
@@ -196,8 +193,38 @@ route.get("/:id", (req,res)=>{
         })
 });
 
-
 route.get("/:id/incTime",(req,res)=>{
 
-})
+});
+
+//Get Time
+route.get("/:id/time", (req, res) => {
+    console.log("In /:id/time");
+    models.Products.findById(req.params.id)
+        .then((item) => {
+            console.log(item);
+            let curDate = new Date();
+            let origDate = new Date(item.createdAt);
+            console.log(curDate, " ", origDate);
+            console.log(typeof curDate);
+            console.log(typeof origDate);
+            // console.log(typeof item.createdAt.toString());
+            let sec = (curDate - origDate) / 1000;
+            if (sec < (item.duration * 60 * 60)) {
+                console.log("sec:", sec);
+                let timeRemaining = (item.duration*3600)-sec;
+                res.send({timeRemaining});
+            }
+            else {
+                res.send({
+                    sec: 0
+                })
+            }
+        })
+        .catch((err) => {
+            console.log(err);
+            res.redirect(`/items/${req.params.id}`);
+        })
+});
+
 module.exports = route;
