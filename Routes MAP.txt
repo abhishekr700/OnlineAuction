@@ -10,6 +10,7 @@ Routes MAP
 ----/			  Show All DB Items
 ----/<itemid>	  Show item's details with id=itemid and give bidding input box
 ----/<itemid>/bid Route to add a new bid to DB
+----/<itemid>/incTime  increase the duration
 
 --/users
 ----/all		Return all users

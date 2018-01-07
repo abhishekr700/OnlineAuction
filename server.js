@@ -3,6 +3,8 @@
  */
 const express = require("express");
 const path = require("path");
+const http=require("http");
+const socketIo=require('socket.io');
 
 /*
     Import User Files
@@ -16,7 +18,8 @@ const models = require("./models/mongodb/mongo");
 
 //Initialise Server
 const app = express();
-
+const Server=http.Server(app);
+const io=socketIo(Server);
 /*
     MiddleWares
  */
@@ -113,7 +116,15 @@ app.use(function (req,res) {
     res.send("404 Error !!!")
 });
 
+io.on('connection',(socket)=>{
+    console.log("socket created "+socket.id);
+    socket.on('bid',(data)=>{
+        console.log("ProdId: "+data.prodId);
+        models.Bids.find({ProdID :data.prodId})
+            .then((bids)=>{console.log(bids); socket.emit('bid',{bids:bids})});});
+
+});
 //Listen on port
-app.listen(CONFIG.SERVER.PORT,function () {
+Server.listen(CONFIG.SERVER.PORT,function () {
    console.log(`Server running @ http://${CONFIG.SERVER.HOST}:${CONFIG.SERVER.PORT}`);
 });
