@@ -25,7 +25,7 @@ passport.deserializeUser(function (id,done) {
 //Define LocalStrategy
 const localstrategy = new LocalStrategy(
     function (username,password,done) {
-        console.log("Local-Starategy !");
+        //console.log("Local-Starategy !");
         Users.findOne( {
             where : {
                 username : username
@@ -33,14 +33,14 @@ const localstrategy = new LocalStrategy(
         })
             .then((user) => {
                 if(user == null){
-                    console.log("Username not found");
+                    //console.log("Username not found");
                     return done(null,false,{message: "Username not found !"})
                 }
                 if(password === user.password){
-                    console.log("User found");
+                  //  console.log("User found");
                     return done(null,user);
                 }
-                console.log("Pass incorrect");
+              //  console.log("Pass incorrect");
                 return done(null,false,{message: "Pass incorrect !"});
             });
     }
