@@ -27,6 +27,7 @@
     "passport-local": "^1.0.0",
     "path": "^0.12.7",
     "sequelize": "^4.28.6",
+    "socket.io": "^2.0.4",
     "timer.js": "^1.0.4"
   }
 }

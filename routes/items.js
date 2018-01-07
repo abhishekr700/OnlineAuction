@@ -167,6 +167,7 @@ route.get("/:id", (req, res) => {
                     // console.log("Item:",item);
                     models.Products.findById(req.params.id)
                         .then((item) => {
+                            console.log("user: "+req.user);
                             if (!req.user || item.userID !== req.user.id) {
                                 res.render("item-details", {
                                     item: item,
@@ -178,7 +179,7 @@ route.get("/:id", (req, res) => {
                                 res.render("item-details", {
                                     item: item,
                                     minbid: minbid,
-                                    isOwn: false
+                                    isOwn: true
                                 });
                             }
                         });
