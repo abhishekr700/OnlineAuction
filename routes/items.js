@@ -73,11 +73,11 @@ route.post('/add' ,HELPERS.checkLoggedIn ,upload.single('imgUploader'),function 
                     var myTimer = new Timer({
                         tick    : 1,
                         // ontick  : function(sec) { console.log(sec + ' seconds left') },
-                        onstart : function() { console.log('timer started') },
+                        onstart : function() { console.log('timer started'+item._id) },
                         onstop  : function() { console.log('timer stop'); },
                         onpause : function() { console.log('timer set on pause') },
                         onend   : function() {
-                            console.log(item._id);
+                            // console.log(item._id);
 
                             models.Bids.updateOne(
                                 {
@@ -90,12 +90,13 @@ route.post('/add' ,HELPERS.checkLoggedIn ,upload.single('imgUploader'),function 
                                     }
                                 }
                             ).then(function (data) {
-                                console.log("bid timed out")
+                                console.log("bid timed out"+item._id)
                             });
                             console.log('timer ended normally');
                         }
                     });
-                    myTimer.start(item.duration*3600);
+                    console.log(myTimer._.id);
+                    myTimer.start(item.duration);
                 })
                 .catch((err)=>{
                     console.log(err);
@@ -154,7 +155,7 @@ route.get("/:id", (req,res)=>{
     })
         .then( (item)=>{
             models.Bids.find({
-                ProdID:item.id
+                ProdID:item._id
             })
                 .then((itembid)=> {
                     //to compute minimum bid allowed
@@ -171,7 +172,7 @@ route.get("/:id", (req,res)=>{
                     // console.log("Item:",item);
                     models.Products.findById(req.params.id)
                         .then((item) => {
-                            if (item.userID !== req.user.id) {
+                            if (!req.user || item.userID !== req.user.id) {
                                 res.render("item-details", {
                                     item: item,
                                     minbid: minbid,
