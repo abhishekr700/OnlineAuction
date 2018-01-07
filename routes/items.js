@@ -91,7 +91,7 @@ route.post('/add', HELPERS.checkLoggedIn, upload.single('imgUploader'), function
                         }
                     });
                     console.log(myTimer._.id);
-                    myTimer.start(item.duration);
+                    myTimer.start(item.duration*60*60);
                 })
                 .catch((err) => {
                     console.log(err);
