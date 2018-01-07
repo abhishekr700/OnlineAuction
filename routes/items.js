@@ -136,7 +136,7 @@ route.post("/:id/bid",HELPERS.checkLoggedIn ,(req,res)=>{
             }
             else {
                 console.log("User bidding own item");
-                res.redirect(`/items/${req.params.id}`)
+                res.redirect(`/items/git ${req.params.id}`)
             }
         })
 
