@@ -3,29 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <title>Item Details</title>
-    <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha384-xBuQ/xzmlsLoJpyjoggmTEz8OWUFM0/RC5BsqQBDX2v5cMvDHcMakNTNrHIW2I5f" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"
+            integrity="sha384-xBuQ/xzmlsLoJpyjoggmTEz8OWUFM0/RC5BsqQBDX2v5cMvDHcMakNTNrHIW2I5f"
+            crossorigin="anonymous"></script>
     <script src="/socket.io/socket.io.js"></script>
     <script src="/js/easytimer.js" type="text/javascript"></script>
 
-    <script src="/js/item-details-owner.js" type="text/javascript"> </script>
+    <script src="/js/item-details-owner.js" type="text/javascript"></script>
 </head>
 <body>
 
-<div id="item-detail" data-itemid=<%= item._id%>>
+<div id="item-detail" data-itemid=<%= item._id %>>
     Name: <%= item.name %> <br>
     Description: <%= item.desc %><br>
-    <img src="/Images/<%= item._id%>" alt=""><br>
+    <img src="/Images/<%= item._id %>" alt=""><br>
     by User: <%= item.userID %><br>
     category: <%= item.category %><br>
-    basevalue: <%= item.basevalue%><br>
-    maxbid:<%=minbid%><br>
-    duration: <span id="timer"></span>    <br>
+    basevalue: <%= item.basevalue %><br>
+    maxbid:<%= minbid %><br>
+    duration: <span id="timer"></span> <br>
     <!--TODO: Add duration timer-->
 
 
-    <form action="/items/<%= item._id%>/incTime" method="post">
+    <form action="/items/<%= item._id %>/incTime" method="post">
 
-        <input name="duration" placeholder="duration">
+        <input name="duration" placeholder="duration" required>
         <button type="submit">Submit</button>
     </form>
     <ul id="bids"></ul>

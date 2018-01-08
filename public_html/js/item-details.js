@@ -3,7 +3,7 @@ var socket = io();
 $(() => {
     let name = $(".bidplaced")[0].id;
 
-    socket.emit("prodID",{
+    socket.emit("prodID", {
         prodId: $('#bid')[0].name
     })
     socket.on('bid', (data) => {
@@ -36,19 +36,19 @@ $(() => {
     $.get(`/items/${$("#item-detail").data("itemid")}/time`, function (data) {
         // console.log("ll");
         console.log(data.timeRemaining);
-        if(data.timeRemaining > 0){
-        timer.start({countdown: true, startValues: {seconds: data.timeRemaining}});
+        if (data.timeRemaining > 0) {
+            timer.start({countdown: true, startValues: {seconds: data.timeRemaining}});
 
-        timer.addEventListener("secondsUpdated", function (e) {
-            $('#timer .days').html(timer.getTimeValues().days);
-            $('#timer .hours').html(timer.getTimeValues().hours);
-            $('#timer .minutes').html(timer.getTimeValues().minutes);
-            $('#timer .seconds').html(timer.getTimeValues().seconds);
-        });
+            timer.addEventListener("secondsUpdated", function (e) {
+                $('#timer .days').html(timer.getTimeValues().days);
+                $('#timer .hours').html(timer.getTimeValues().hours);
+                $('#timer .minutes').html(timer.getTimeValues().minutes);
+                $('#timer .seconds').html(timer.getTimeValues().seconds);
+            });
 
-        timer.addEventListener('targetAchieved', function (e) {
-            $('#timer').html("Bid Closed");
-        });
+            timer.addEventListener('targetAchieved', function (e) {
+                $('#timer').html("Bid Closed");
+            });
         }
         else {
             $('#timer').html("Bid Closed");

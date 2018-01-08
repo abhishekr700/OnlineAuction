@@ -13,15 +13,15 @@ mongoose.Promise = global.Promise;
 mongoose.connect(`mongodb://${CONFIG.MONGO.HOST}:${CONFIG.MONGO.PORT}/${CONFIG.MONGO.DB_NAME}`, {
     useMongoClient: true
 })
-.then(()=>{
-    console.log("Successful connection to MongoDB");
-})
-.catch((err)=>{
-    console.log("Mongoose connection error due to: ",err);
-    process.exit();
-});
+    .then(() => {
+        console.log("Successful connection to MongoDB");
+    })
+    .catch((err) => {
+        console.log("Mongoose connection error due to: ", err);
+        process.exit();
+    });
 
 //Expose models for use elsewhere
 module.exports = {
-    Products,Bids
+    Products, Bids
 };
