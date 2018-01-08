@@ -2,7 +2,7 @@
 const passport = require("passport");
 //Import LocalStrategy module
 const LocalStrategy = require("passport-local").Strategy;
-
+const bcrypt=require('bcryptjs')
 //Import User Model
 const Users = require("./models/sql/sequelize.js").Users;
 
@@ -35,13 +35,23 @@ const localstrategy = new LocalStrategy(
                 if(user == null){
                     //console.log("Username not found");
                     return done(null,false,{message: "Username not found !"})
+                }else {
+
+                    bcrypt.compare(password, user.password).then((res) => {
+                        // res === true
+                        console.log(res);
+                        if (res) {
+
+                            return done(null, user);
+                        }
+                        else {
+                            return done(null, false, {message: "Pass incorrect !"});
+                        }
+
+                    });
+                    console.log("abcdef");
+                    //  console.log("Pass incorrect");
                 }
-                if(password === user.password){
-                  //  console.log("User found");
-                    return done(null,user);
-                }
-              //  console.log("Pass incorrect");
-                return done(null,false,{message: "Pass incorrect !"});
             });
     }
 

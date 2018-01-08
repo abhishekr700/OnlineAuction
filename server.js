@@ -15,7 +15,7 @@ const session = require("express-session");
 const Users = require("./models/sql/sequelize").Users;
 const HELPERS = require("./helpers");
 const models = require("./models/mongodb/mongo");
-
+const bcrypt=require('bcryptjs');
 //Initialise Server
 const app = express();
 const Server=http.Server(app);
@@ -87,20 +87,29 @@ app.get("/signup",(req,res)=>{
 
 //New User via SignUp route
 app.post("/signup",(req,res)=>{
-    Users.create({
-        username: req.body.username,
-        password: req.body.password,
-        name: req.body.name,
-        email: req.body.email,
-        phone1: req.body.phone1,
-        phone2: req.body.phone2
-    })
-        .then(()=>{
-            res.redirect("/login");
-        })
-        .catch((err)=>{
-            console.log(err);
-        })
+
+    bcrypt.genSalt(10, function(err, salt) {
+        bcrypt.hash(req.body.password, salt, function(err, hash) {
+            // Store hash in your password DB.
+
+
+            Users.create({
+                username: req.body.username,
+                password: hash,
+                name: req.body.name,
+                email: req.body.email,
+                phone1: req.body.phone1,
+                phone2: req.body.phone2
+            })
+                .then(()=>{
+                    res.redirect("/login");
+                })
+                .catch((err)=>{
+                    console.log(err);
+                })
+        });
+    });
+
 });
 
 //Logout route
