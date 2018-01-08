@@ -1,4 +1,3 @@
-
 var socket=io();
 let queryString = decodeURIComponent(window.location);
 queryString = queryString.split('/');
@@ -9,10 +8,11 @@ $(()=>{
     console.log(queryString);
     socket.emit('bid',{prodId:queryString});
     socket.on('bid',(data)=>{
-
+        console.log("def");
         var bid=data.bids;
-        var ul= $(`#bids`);
-             ul.empty();
+        console.log(bid);
+        var ul= $("#bids");
+             ul.html("");
             if(bid.allBids.length===0){}else{
 
                 bid.allBids.forEach((Bid)=> {

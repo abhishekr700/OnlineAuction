@@ -16,22 +16,7 @@ route.get("/all", (req,res) => {
         })
 });
 
-//Show all items of LoggedIN user
-route.get("/items", (req,res)=>{
-    models.Products.find({
-        userID: req.user.id
-    })
-        .then((items)=>{
-            res.render("ownItems",
-                {
-                    items:items
-                })
-        })
-        .catch((err)=>{
-            console.log("Cannot find user's items due to :",err);
-        })
 
-});
 
 //Get User details
 route.get("/details", (req,res)=>{

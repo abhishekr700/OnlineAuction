@@ -122,13 +122,17 @@ io.on('connection',(socket)=>{
     socket.on('bid',(data)=>{
         pplacers[data.prodId]=socket.id;
         console.log("ProdId: "+data.prodId);
-
-
         models.Bids.findOne({ProdID :data.prodId})
-            .then((bids)=>{ socket.emit('bid',{bids:bids})});});
+            .then((bids)=>{
+
+            socket.emit('bid',{bids:bids})});});
+
+
     socket.on('bid2',(data)=>{
+        console.log("abc");
+
         models.Bids.findOne({ProdID :data.prodId})
-        .then((bids)=>{ socket.to(pplacers[data.prodId]).emit('bid',{bids:bids})});
+        .then((bids)=>{  socket.to(pplacers[data.prodId]).emit('bid',{bids:bids})});
     })
 
 });

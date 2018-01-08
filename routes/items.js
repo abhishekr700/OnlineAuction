@@ -23,9 +23,61 @@ const multer = require('multer');
 
 //Items default page
 route.get("/", (req, res) => {
-    res.render("items");
+    console.log(typeof req.query.showall);
+    if(req.query.show == "all")
+    {
+        models.Products.find({})
+            .then((items)=>{
+                res.render("items",{
+                    items
+                })
+            })
+            .catch((err)=>{
+                console.log(err);
+            })
+    }
+    else{
+        if(req.user){
+            if(req.query.show === "others"){
+        models.Products.find({
+            userID :{
+                $ne: req.user.id
+            }
+        })
+            .then((items)=>{
+                res.render("items",{
+                    items
+                })
+            })
+            .catch((err)=>{
+                console.log(err);
+            })
+            }
+            else if(req.query.show === "user") {
+                models.Products.find({
+                    userID: req.user.id
+                })
+                    .then((items)=>{
+                        res.render("items",{
+                            items
+                        })
+                    })
+                    .catch((err)=>{
+                        console.log(err);
+                    })
+
+            }
+            else {
+                res.send("Don't mess with me ! ~Mr.Server")
+            }
+        }
+        else
+            res.redirect("/login");
+        }
+
 });
 
+//TODO:remove later
 //Return all the products
 route.get('/all', function (req, res) {
     // console.log("showing products");
@@ -133,12 +185,65 @@ route.get("/:id", (req, res) => {
                                 res.render("item-details", {
                                     item: item,
                                     minbid: minbid,
+                                    bidplaced:false
                                 });
                             }
                             else {
-                                res.render("item-details2", {
+                                res.render("item-details-owner", {
                                     item: item,
                                     minbid: minbid,
+
+                                });
+                            }
+                        });
+                })
+        })
+        .catch((err) => {
+            console.log(err);
+            res.send({
+                message: "error finding item"
+            });
+        })
+});
+
+//Get item details
+route.get("/:id/bidplaced", (req, res) => {
+    console.log("in gett");
+    models.Products.findById(req.params.id, {
+        // _id: 0
+    })
+        .then( (item)=>{
+            // console.log(item);
+            models.Bids.find({
+                ProdID:item._id
+            })
+                .then((itembid)=> {
+                    //to compute minimum bid allowed
+                    var minbid = item.basevalue;
+                    //selecting base value as minimum value
+                    // console.log(itembid);
+                    (itembid[0].allBids).forEach(function (data) {
+                            if (minbid < data.price) {
+                                minbid = data.price;
+                            }
+                        }
+                    );
+                    // console.log(minbid);
+                    // console.log("Item:",item);
+                    models.Products.findById(req.params.id)
+                        .then((item) => {
+                            console.log("user: "+req.user);
+                            if (!req.user || item.userID !== req.user.id) {
+                                res.render("item-details", {
+                                    item: item,
+                                    minbid: minbid,
+                                    bidplaced:true
+                                });
+                            }
+                            else {
+                                res.render("item-details-owner", {
+                                    item: item,
+                                    minbid: minbid
 
                                 });
                             }
@@ -207,7 +312,7 @@ route.post("/:id/bid",HELPERS.checkLoggedIn ,(req,res)=>{
                     }
                 )
                     .then( (item)=>{
-                        res.redirect('/items/' + req.params.id);
+                        res.redirect('/items/' + req.params.id+'/bidplaced');
                     })
                     .catch((err)=>{
                         console.log(err);
@@ -219,7 +324,7 @@ route.post("/:id/bid",HELPERS.checkLoggedIn ,(req,res)=>{
             else {
                // console.log("User bidding own item");
 
-                res.redirect(`/items/git ${req.params.id}`)
+                res.redirect(`/items/ ${req.params.id}`)
             }
         })
 

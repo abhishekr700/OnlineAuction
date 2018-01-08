@@ -25,7 +25,7 @@
 
     <form action="/items/<%= item._id%>/bid" method="post">
 
-        <input type="number" name="bidprice" min="<%=minbid%>">
+        <input type="number" name="bidprice" class="bidplaced" id="<%=bidplaced%>" min="<%=minbid%>">
 
         <button id="bid" name="<%= item._id%>" >
         Submit</button>

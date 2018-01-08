@@ -1,10 +1,14 @@
+var socket=io();
 $(()=>{
-    $('#bid').click(()=>{
-        var socket=io();
+    var name=$(".bidplaced")[0].id;
+
+        console.log(name);
+    if(name)
+    {
         console.log($('#bid')[0].name);
         socket.emit('bid2',{prodId:$('#bid')[0].name});
 
-    })
+    }
     let timer = new Timer();
     //timer.start();
     // console.log($("#item-detail").data("itemid"));
