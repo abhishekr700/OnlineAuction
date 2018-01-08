@@ -71,7 +71,6 @@ app.get("/",(req,res)=>{
 
 //Render Login Page
 app.get("/login",(req,res)=>{
-    console.log("Login: ",req.user);
     res.render("login");
 });
 
@@ -111,21 +110,31 @@ app.get("/logout", (req,res)=>{
     res.redirect("/");
 });
 
+
+
 //404 Handler
 app.use(function (req,res) {
     res.send("404 Error !!!")
 });
-
+let pplacers={};
 io.on('connection',(socket)=>{
     console.log("socket created "+socket.id);
     socket.on('bid',(data)=>{
+        pplacers[data.prodId]=socket.id;
         console.log("ProdId: "+data.prodId);
-        models.Bids.find({ProdID :data.prodId})
-            .then((bids)=> {
-            console.log(bids);
-                socket.emit('bid',{bids:bids})
-            });
+        models.Bids.findOne({ProdID :data.prodId})
+            .then((bids)=>{
+
+            socket.emit('bid',{bids:bids})});});
+
+
+    socket.on('bid2',(data)=>{
+        console.log("abc");
+
+        models.Bids.findOne({ProdID :data.prodId})
+        .then((bids)=>{  socket.to(pplacers[data.prodId]).emit('bid',{bids:bids})});
     })
+
 });
 
 //Listen on port

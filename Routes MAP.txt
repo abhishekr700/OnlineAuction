@@ -4,18 +4,18 @@ Routes MAP
 
 
 --/items
-----/add GET	  Render AddItem Route
-----/add POST	  Add new item to DB
-----/all 		  Return all DB items
-----/			  Show All DB Items
-----/<itemid>	  Show item's details with id=itemid and give bidding input box
-----/<itemid>/bid Route to add a new bid to DB
-----/<itemid>/incTime  increase the duration
+----/add GET	        Render AddItem Route
+----/add POST	        Add new item to DB
+----/all 		        Return all DB items
+----/			        Show All DB Items
+----/<itemid>	        Show item's details with id=itemid and give bidding input box
+----/<itemid>/bidplaced Show item page after bid placed
+----/<itemid>/bid       Route to add a new bid to DB
+----/<itemid>/incTime   increase the duration
 
 --/users
-----/all		Return all users
-----/			Show /users page -> view your item,bid on item,add an item
-----/details	Return user's details
-----/items		Return all items of logged in user
+----/all		        Return all users
+----/			        Show /users page -> view your item,bid on item,add an item
+----/details	        Return user's details
 
 

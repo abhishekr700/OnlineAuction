@@ -23,9 +23,61 @@ const multer = require('multer');
 
 //Items default page
 route.get("/", (req, res) => {
-    res.render("items");
+    console.log(typeof req.query.showall);
+    if(req.query.show == "all")
+    {
+        models.Products.find({})
+            .then((items)=>{
+                res.render("items",{
+                    items
+                })
+            })
+            .catch((err)=>{
+                console.log(err);
+            })
+    }
+    else{
+        if(req.user){
+            if(req.query.show === "others"){
+        models.Products.find({
+            userID :{
+                $ne: req.user.id
+            }
+        })
+            .then((items)=>{
+                res.render("items",{
+                    items
+                })
+            })
+            .catch((err)=>{
+                console.log(err);
+            })
+            }
+            else if(req.query.show === "user") {
+                models.Products.find({
+                    userID: req.user.id
+                })
+                    .then((items)=>{
+                        res.render("items",{
+                            items
+                        })
+                    })
+                    .catch((err)=>{
+                        console.log(err);
+                    })
+
+            }
+            else {
+                res.send("Don't mess with me ! ~Mr.Server")
+            }
+        }
+        else
+            res.redirect("/login");
+        }
+
 });
 
+//TODO:remove later
 //Return all the products
 route.get('/all', function (req, res) {
     // console.log("showing products");
@@ -46,7 +98,7 @@ route.get("/add", HELPERS.checkLoggedIn, (req, res) => {
 
 //Post route to add products to DB
 route.post('/add', HELPERS.checkLoggedIn, upload.single('imgUploader'), function (req, res) {
-    console.log("ADD: ", req.user);
+    //console.log("ADD: ", req.user);
     models.Products.create({
         userID: req.user.id,
         name: req.body.productname,
@@ -102,47 +154,6 @@ route.post('/add', HELPERS.checkLoggedIn, upload.single('imgUploader'), function
         })
 });
 
-//create a bid
-route.post("/:id/bid",HELPERS.checkLoggedIn ,(req,res)=>{
-    // console.log(req.params.id);
-    console.log(req.body.bidprice);
-    models.Products.findById(req.params.id)
-        .then((item)=>{
-            if(item.userID !== req.user.id){
-                models.Bids.findOneAndUpdate(
-                    {
-                        ProdID:req.params.id,
-                        isOpen:true
-                    },
-                    {
-                        $push: {
-                            allBids: {
-                                userID: req.user.id,
-                                price: req.body.bidprice,
-                                time: new Date()
-                            }
-                        }
-                    }
-                )
-                    .then( (item)=>{
-                        console.log("ItemInBids:",item);
-                        res.redirect('/items/bidplaced/' + req.params.id);
-                    })
-                    .catch((err)=>{
-                        console.log(err);
-                        res.send({
-                            message: "error finding item"
-                        });
-                    })
-            }
-            else {
-                console.log("User bidding own item");
-                res.redirect(`/items/${req.params.id}`)
-            }
-        })
-
-});
-
 //Get item details
 route.get("/:id", (req, res) => {
     console.log("in gett");
@@ -174,16 +185,14 @@ route.get("/:id", (req, res) => {
                                 res.render("item-details", {
                                     item: item,
                                     minbid: minbid,
-                                    isOwn: false,
-                                    isplaced: false
+                                    bidplaced:false
                                 });
                             }
                             else {
-                                res.render("item-details", {
+                                res.render("item-details-owner", {
                                     item: item,
                                     minbid: minbid,
-                                    isOwn: true,
-                                    isplaced:false
+
                                 });
                             }
                         });
@@ -198,8 +207,8 @@ route.get("/:id", (req, res) => {
 });
 
 //Get item details
-route.get("/bidplaced/:id", (req, res) => {
-    console.log("in bid gett");
+route.get("/:id/bidplaced", (req, res) => {
+    console.log("in gett");
     models.Products.findById(req.params.id, {
         // _id: 0
     })
@@ -228,16 +237,14 @@ route.get("/bidplaced/:id", (req, res) => {
                                 res.render("item-details", {
                                     item: item,
                                     minbid: minbid,
-                                    isOwn: false,
-                                    isplaced: true
+                                    bidplaced:true
                                 });
                             }
                             else {
-                                res.render("item-details", {
+                                res.render("item-details-owner", {
                                     item: item,
-                                    minbid: minbid,
-                                    isOwn: true,
-                                    isplaced:false
+                                    minbid: minbid
+
                                 });
                             }
                         });
@@ -256,20 +263,22 @@ route.get("/:id/incTime",(req,res)=>{
 });
 
 route.get("/:id/time", (req, res) => {
-    console.log("In /:id/time");
+    //console.log("In /:id/time");
     models.Products.findById(req.params.id)
         .then((item) => {
-            console.log(item);
+           // console.log(item);
             let curDate = new Date();
             let origDate = new Date(item.createdAt);
-            console.log(curDate, " ", origDate);
-            console.log(typeof curDate);
-            console.log(typeof origDate);
+            //console.log(curDate, " ", origDate);
+           // console.log(typeof curDate);
+            //console.log(typeof origDate);
             // console.log(typeof item.createdAt.toString());
             let sec = (curDate - origDate) / 1000;
             if (sec < (item.duration * 60 * 60)) {
                 console.log("sec:", sec);
+                console.log(item.duration);
                 let timeRemaining = (item.duration*3600)-sec;
+                console.log(timeRemaining);
                 res.send({timeRemaining});
             }
             else {
@@ -283,5 +292,43 @@ route.get("/:id/time", (req, res) => {
             res.redirect(`/items/${req.params.id}`);
         })
 });
+//create a bid
+route.post("/:id/bid",HELPERS.checkLoggedIn ,(req,res)=>{
+    // console.log(req.params.id);
+    models.Products.findById(req.params.id)
+        .then((item)=>{
+            if(item.userID !== req.user.id){
+                models.Bids.findOneAndUpdate(
+                    {
+                        ProdID:req.params.id,
+                        isOpen:true
+                    },
+                    {
+                        $push: {
+                            allBids: {
+                                userID: req.user.id,
+                                price: req.body.bidprice,
+                                time: new Date()
+                            }
+                        }
+                    }
+                )
+                    .then( (item)=>{
+                        res.redirect('/items/' + req.params.id+'/bidplaced');
+                    })
+                    .catch((err)=>{
+                        console.log(err);
+                        res.send({
+                            message: "error finding item"
+                        });
+                    })
+            }
+            else {
+               // console.log("User bidding own item");
 
+                res.redirect(`/items/ ${req.params.id}`)
+            }
+        })
+
+});
 module.exports = route;
