@@ -1,5 +1,4 @@
 const route = require("express").Router();
-const Timer=require("timer.js");
 const fs=require("fs");
 const path = require("path");
 
@@ -99,13 +98,16 @@ route.get("/add", HELPERS.checkLoggedIn, (req, res) => {
 //Post route to add products to DB
 route.post('/add', HELPERS.checkLoggedIn, upload.single('imgUploader'), function (req, res) {
     //console.log("ADD: ", req.user);
+    let curDate = new Date();
+    let finalDate = curDate.getTime() + req.body.duration*3600*1000;
+    let endDate = new Date(finalDate);
     models.Products.create({
         userID: req.user.id,
         name: req.body.productname,
         desc: req.body.desc,
         category: req.body.category,
         basevalue: req.body.basevalue,
-        duration: req.body.duration
+        endDate: endDate
     })
         .then((item)=>{
             fs.rename(path.join(__dirname,"../", "public_html/Images/",req.file.filename),path.join(__dirname,"../", "public_html/Images/",item._id+".jpg"),(err)=>{console.log(err);});
@@ -117,34 +119,7 @@ route.post('/add', HELPERS.checkLoggedIn, upload.single('imgUploader'), function
             })
                 .then(() => {
                     res.redirect('/items/add');
-                    var myTimer = new Timer({
-                        tick    : 1,
-                        // ontick  : function(sec) { console.log(sec + ' seconds left') },
-                        onstart : function() { console.log('timer started'+item._id) },
-                        onstop  : function() { console.log('timer stop'); },
-                        onpause : function() { console.log('timer set on pause') },
-                        onend   : function() {
-                            // console.log(item._id);
-
-                            models.Bids.updateOne(
-                                {
-                                    "ProdID" : item._id
-                                }
-                                ,
-                                {
-                                    $set: {
-                                        "isOpen" : false
-                                    }
-                                }
-                            ).then(function (data) {
-                                console.log("bid timed out"+item._id)
-                            });
-                            console.log('timer ended normally');
-                        }
-                    });
-                    console.log(myTimer._.id);
-                    myTimer.start(item.duration*60*60);
-                })
+                    })
                 .catch((err) => {
                     console.log(err);
                 })
@@ -171,6 +146,7 @@ route.get("/:id", (req, res) => {
                     //selecting base value as minimum value
                     // console.log(itembid);
                     (itembid[0].allBids).forEach(function (data) {
+                        if(data.price)
                             if (minbid < data.price) {
                                 minbid = data.price;
                             }
@@ -262,28 +238,35 @@ route.get("/:id/incTime",(req,res)=>{
 
 });
 
+//Get time for a item
 route.get("/:id/time", (req, res) => {
     //console.log("In /:id/time");
     models.Products.findById(req.params.id)
         .then((item) => {
            // console.log(item);
             let curDate = new Date();
-            let origDate = new Date(item.createdAt);
-            //console.log(curDate, " ", origDate);
-           // console.log(typeof curDate);
-            //console.log(typeof origDate);
-            // console.log(typeof item.createdAt.toString());
-            let sec = (curDate - origDate) / 1000;
-            if (sec < (item.duration * 60 * 60)) {
-                console.log("sec:", sec);
+            let timeRemaining = (item.endDate - curDate) / 1000;
+            if (timeRemaining > 0) {
+                console.log("sec:", timeRemaining);
                 console.log(item.duration);
-                let timeRemaining = (item.duration*3600)-sec;
-                console.log(timeRemaining);
                 res.send({timeRemaining});
             }
             else {
+                models.Bids.updateOne(
+                    {
+                        "ProdID" : item._id
+                    }
+                    ,
+                    {
+                        $set: {
+                            "isOpen" : false
+                        }
+                    }
+                ).then(function (data) {
+                    console.log("bid timed out"+item._id)
+                });
                 res.send({
-                    sec: 0
+                    timeRemaining: 0
                 })
             }
         })
@@ -292,43 +275,63 @@ route.get("/:id/time", (req, res) => {
             res.redirect(`/items/${req.params.id}`);
         })
 });
+
 //create a bid
-route.post("/:id/bid",HELPERS.checkLoggedIn ,(req,res)=>{
+route.post("/:id/bid",HELPERS.checkLoggedIn ,(req,res)=> {
     // console.log(req.params.id);
-    models.Products.findById(req.params.id)
-        .then((item)=>{
-            if(item.userID !== req.user.id){
-                models.Bids.findOneAndUpdate(
-                    {
-                        ProdID:req.params.id,
-                        isOpen:true
-                    },
-                    {
-                        $push: {
-                            allBids: {
-                                userID: req.user.id,
-                                price: req.body.bidprice,
-                                time: new Date()
+    if (req.body.bidprice) {
+        models.Products.findById(req.params.id)
+            .then((item) => {
+                if (item.userID !== req.user.id) {
+                    if (req.body.bidprice > item.minbid) {
+                        models.Bids.findOneAndUpdate(
+                            {
+                                ProdID: req.params.id,
+                                isOpen: true
+                            },
+                            {
+                                $push: {
+                                    allBids: {
+                                        userID: req.user.id,
+                                        price: req.body.bidprice,
+                                        time: new Date()
+                                    }
+                                }
                             }
-                        }
+                        )
+                            .then((item) => {
+                                console.log(item);
+                                if (item !== null)
+                                    res.redirect('/items/' + req.params.id + '/bidplaced');
+                                else
+                                //TODO: Add flash message
+                                    res.send({
+                                        msg: "Bid closed"
+                                    })
+                            })
+                            .catch((err) => {
+                                console.log(err);
+                                res.send({
+                                    message: "error finding item"
+                                });
+                            })
                     }
-                )
-                    .then( (item)=>{
-                        res.redirect('/items/' + req.params.id+'/bidplaced');
-                    })
-                    .catch((err)=>{
-                        console.log(err);
-                        res.send({
-                            message: "error finding item"
-                        });
-                    })
-            }
-            else {
-               // console.log("User bidding own item");
-
-                res.redirect(`/items/ ${req.params.id}`)
-            }
-        })
-
+                    else {
+                        res.send("Majje le rha hai ladke ?");
+                    }
+                }
+                else {
+                    // console.log("User bidding own item");
+                    res.redirect(`/items/ ${req.params.id}`)
+                }
+            })
+            .catch((err) => {
+                console.log(err);
+            })
+    }
+    else {
+        res.send("Front end se maze na le ~Mr. Server");
+    }
 });
+
 module.exports = route;

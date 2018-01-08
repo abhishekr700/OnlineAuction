@@ -6,7 +6,7 @@ const ProductSchema = mongoose.Schema({
     desc: String,
     category: String,
     basevalue: Number,
-    duration: Number
+    endDate: Date
 },{
     timestamps: true
 });

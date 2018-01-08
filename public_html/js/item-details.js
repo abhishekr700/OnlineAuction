@@ -36,7 +36,7 @@ $(() => {
     $.get(`/items/${$("#item-detail").data("itemid")}/time`, function (data) {
         // console.log("ll");
         console.log(data.timeRemaining);
-
+        if(data.timeRemaining > 0){
         timer.start({countdown: true, startValues: {seconds: data.timeRemaining}});
 
         timer.addEventListener("secondsUpdated", function (e) {
@@ -47,7 +47,11 @@ $(() => {
         });
 
         timer.addEventListener('targetAchieved', function (e) {
-            $('#timer').append('KABOOM!!');
+            $('#timer').html("Bid Closed");
         });
+        }
+        else {
+            $('#timer').html("Bid Closed");
+        }
     })
 });

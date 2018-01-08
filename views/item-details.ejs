@@ -13,13 +13,13 @@
 </head>
 <body>
 <div id="item-detail" data-itemid=<%= item._id %>>
+    <% if(bidplaced){%>
+    <img src=../../Images/<%= item._id%>.jpg><br>
+    <% } else{%>
+    <img src=../Images/<%= item._id%>.jpg><br>
+    <%}%>
     Name: <%= item.name %> <br>
     Description: <%= item.desc %><br>
-
-
-    <img src=`../public_html/Images/<%= item._id%>`><br>
-
-
     by User: <%= item.userID %><br>
     category: <%= item.category %><br>
     basevalue: <%= item.basevalue %><br>
@@ -36,7 +36,7 @@
 
     <form action="/items/<%= item._id %>/bid" method="post">
 
-        <input type="number" name="bidprice" class="bidplaced" id="<%= bidplaced %>" min="<%= minbid %>">
+        <input type="number" name="bidprice" class="bidplaced" id="<%= bidplaced %>" min="<%= minbid %>" required>
 
         <button id="bid" name="<%= item._id %>">
             Submit
