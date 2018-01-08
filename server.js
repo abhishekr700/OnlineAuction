@@ -121,9 +121,13 @@ io.on('connection',(socket)=>{
     socket.on('bid',(data)=>{
         console.log("ProdId: "+data.prodId);
         models.Bids.find({ProdID :data.prodId})
-            .then((bids)=>{console.log(bids); socket.emit('bid',{bids:bids})});});
-
+            .then((bids)=> {
+            console.log(bids);
+                socket.emit('bid',{bids:bids})
+            });
+    })
 });
+
 //Listen on port
 Server.listen(CONFIG.SERVER.PORT,function () {
    console.log(`Server running @ http://${CONFIG.SERVER.HOST}:${CONFIG.SERVER.PORT}`);

@@ -10,11 +10,12 @@
     <script src="/js/item-details.js" type="text/javascript"> </script>
 </head>
 <body>
-
 <div id="item-detail" data-itemid=<%= item._id%>>
     Name: <%= item.name %> <br>
     Description: <%= item.desc %><br>
+
     <img src=`../public_html/Images/<%= item._id%>`><br>
+
     by User: <%= item.userID %><br>
     category: <%= item.category %><br>
     basevalue: <%= item.basevalue%><br>
@@ -26,17 +27,13 @@
     <form action="/items/<%= item._id%>/bid" method="post">
 
         <input type="number" name="bidprice" min="<%=minbid%>">
-        <button type="submit">Submit</button>
+        <button type="submit" class="bidid" id="<%=isplaced%>">Submit</button>
     </form>
     <%}%>
     <% if(isOwn){ %>
 
     <ul id="bids"></ul>
-    <form action="/items/<%= item._id%>/incTime" method="post">
-
-        <input name="duration" placeholder="duration">
-        <button type="submit">Submit</button>
-    </form>
+    <div class="bidid" id="<%=isplaced%>"></div>
     <%}%>
 
 </div>
