@@ -3,13 +3,13 @@ const Users = require("../models/sql/sequelize").Users;
 const models = require("../models/mongodb/mongo");
 
 route.get('/',function (req,res) {
-    console.log("render /users page");
+   // console.log("render /users page");
     res.render("user");
 });
 
 //Show all users TODO: Remove this later
 route.get("/all", (req,res) => {
-    console.log("Render /users/all");
+   // console.log("Render /users/all");
     Users.findAll()
         .then((users)=>{
             res.send(users);

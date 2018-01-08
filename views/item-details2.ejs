@@ -7,30 +7,28 @@
     <script src="/socket.io/socket.io.js"></script>
     <script src="/js/easytimer.js" type="text/javascript"></script>
 
-    <script src="/js/item-details.js" type="text/javascript"> </script>
+    <script src="/js/item-details2.js" type="text/javascript"> </script>
 </head>
 <body>
+
 <div id="item-detail" data-itemid=<%= item._id%>>
     Name: <%= item.name %> <br>
     Description: <%= item.desc %><br>
-
-    <img src="/Images/<%=item._id%>.jpg" height="100"><br>
+    <img src="/Images/<%= item._id%>" alt=""><br>
     by User: <%= item.userID %><br>
     category: <%= item.category %><br>
     basevalue: <%= item.basevalue%><br>
     maxbid:<%=minbid%><br>
-
     duration: <span id="timer"></span>    <br>
+    <!--TODO: Add duration timer-->
 
 
-    <form action="/items/<%= item._id%>/bid" method="post">
+    <form action="/items/<%= item._id%>/incTime" method="post">
 
-        <input type="number" name="bidprice" min="<%=minbid%>">
-
-        <button id="bid" name="<%= item._id%>" >
-        Submit</button>
+        <input name="duration" placeholder="duration">
+        <button type="submit">Submit</button>
     </form>
-
+    <ul id="bids"></ul>
 
 </div>
 
