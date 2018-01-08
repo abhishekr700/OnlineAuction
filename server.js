@@ -117,10 +117,22 @@ app.use(function (req,res) {
     res.send("404 Error !!!")
 });
 let pplacers={};
+let arr =[];
 io.on('connection',(socket)=>{
     console.log("socket created "+socket.id);
-    socket.on('bid',(data)=>{
-        pplacers[data.prodId]=socket.id;
+    socket.on('prodID',(data)=>{
+        console.log("1",pplacers);
+        arr = pplacers[data.prodId];
+        if(!arr){
+            arr=[];
+        }
+        console.log(arr);
+        arr.push(socket.id)
+        console.log(arr);
+        pplacers[data.prodId] = arr;
+        console.log(pplacers);
+        arr=[];
+        // console.log(pplacers);
         console.log("ProdId: "+data.prodId);
         models.Bids.findOne({ProdID :data.prodId})
             .then((bids)=>{
@@ -132,7 +144,9 @@ io.on('connection',(socket)=>{
         console.log("abc");
 
         models.Bids.findOne({ProdID :data.prodId})
-        .then((bids)=>{  socket.to(pplacers[data.prodId]).emit('bid',{bids:bids})});
+        .then((bids)=>{
+            for(let i of pplacers[data.prodId])
+                socket.to(i).emit('bid',{bids:bids})});
     })
 
 });

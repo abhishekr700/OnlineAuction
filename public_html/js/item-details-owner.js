@@ -6,7 +6,7 @@ queryString=queryString[queryString.length-1];
 //console.log(" prodId: "+queryString[queryString.length-1]);
 $(()=>{
     console.log(queryString);
-    socket.emit('bid',{prodId:queryString});
+    socket.emit('prodID',{prodId:queryString});
     socket.on('bid',(data)=>{
         console.log("def");
         var bid=data.bids;
