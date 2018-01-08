@@ -14,10 +14,10 @@ mongoose.connect(`mongodb://${CONFIG.MONGO.HOST}:${CONFIG.MONGO.PORT}/${CONFIG.M
     useMongoClient: true
 })
 .then(()=>{
-    //console.log("Successful connection to MongoDB");
+    console.log("Successful connection to MongoDB");
 })
 .catch((err)=>{
-    //console.log("Mongoose connection error due to: ",err);
+    console.log("Mongoose connection error due to: ",err);
     process.exit();
 });
 

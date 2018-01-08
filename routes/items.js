@@ -275,8 +275,10 @@ route.get("/:id/time", (req, res) => {
             // console.log(typeof item.createdAt.toString());
             let sec = (curDate - origDate) / 1000;
             if (sec < (item.duration * 60 * 60)) {
-                //console.log("sec:", sec);
+                console.log("sec:", sec);
+                console.log(item.duration);
                 let timeRemaining = (item.duration*3600)-sec;
+                console.log(timeRemaining);
                 res.send({timeRemaining});
             }
             else {

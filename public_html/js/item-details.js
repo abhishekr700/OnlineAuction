@@ -13,14 +13,16 @@ $(()=>{
     //timer.start();
     // console.log($("#item-detail").data("itemid"));
     $.get(`/items/${$("#item-detail").data("itemid")}/time`,function(data){
-        console.log("ll");
-        //console.log(data.timeRemaining);
+        // console.log("ll");
+        console.log(data.timeRemaining);
 
         timer.start({countdown: true, startValues: {seconds: data.timeRemaining}});
-        $('#timer').html(timer.getTimeValues().toString());
 
         timer.addEventListener("secondsUpdated", function (e) {
-            $('#timer').html(timer.getTimeValues().toString());
+            $('#timer .days').html(timer.getTimeValues().days);
+            $('#timer .hours').html(timer.getTimeValues().hours);
+            $('#timer .minutes').html(timer.getTimeValues().minutes);
+            $('#timer .seconds').html(timer.getTimeValues().seconds);
         });
 
         timer.addEventListener('targetAchieved', function (e) {

@@ -3,32 +3,41 @@
 <head>
     <meta charset="UTF-8">
     <title>Item Details</title>
-    <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha384-xBuQ/xzmlsLoJpyjoggmTEz8OWUFM0/RC5BsqQBDX2v5cMvDHcMakNTNrHIW2I5f" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"
+            integrity="sha384-xBuQ/xzmlsLoJpyjoggmTEz8OWUFM0/RC5BsqQBDX2v5cMvDHcMakNTNrHIW2I5f"
+            crossorigin="anonymous"></script>
     <script src="/socket.io/socket.io.js"></script>
     <script src="/js/easytimer.js" type="text/javascript"></script>
 
-    <script src="/js/item-details.js" type="text/javascript"> </script>
+    <script src="/js/item-details.js" type="text/javascript"></script>
 </head>
 <body>
-<div id="item-detail" data-itemid=<%= item._id%>>
+<div id="item-detail" data-itemid=<%= item._id %>>
     Name: <%= item.name %> <br>
     Description: <%= item.desc %><br>
 
-    <img src="/Images/<%=item._id%>.jpg" height="100"><br>
+    <img src="/Images/<%= item._id %>.jpg" height="100"><br>
     by User: <%= item.userID %><br>
     category: <%= item.category %><br>
-    basevalue: <%= item.basevalue%><br>
-    maxbid:<%=minbid%><br>
+    basevalue: <%= item.basevalue %><br>
+    maxbid:<%= minbid %><br>
 
-    duration: <span id="timer"></span>    <br>
+    duration:
+    <div id="timer">
+        <span class="days"></span><span> days</span>
+        <span class="hours"></span><span> hours</span>
+        <span class="minutes"></span><span> minutes</span>
+        <span class="seconds"></span><span> seconds</span>
+    </div>
 
 
-    <form action="/items/<%= item._id%>/bid" method="post">
+    <form action="/items/<%= item._id %>/bid" method="post">
 
-        <input type="number" name="bidprice" class="bidplaced" id="<%=bidplaced%>" min="<%=minbid%>">
+        <input type="number" name="bidprice" class="bidplaced" id="<%= bidplaced %>" min="<%= minbid %>">
 
-        <button id="bid" name="<%= item._id%>" >
-        Submit</button>
+        <button id="bid" name="<%= item._id %>">
+            Submit
+        </button>
     </form>
 
 
