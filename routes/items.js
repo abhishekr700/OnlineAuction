@@ -39,6 +39,9 @@ route.get("/", (req, res) => {
                 models.Products.find({
                     userID: {
                         $ne: req.user.id
+                    },
+                    endDate:{
+                        $gt: Date.now()
                     }
                 })
                     .then((items) => {
