@@ -18,7 +18,7 @@ database.authenticate()
     });
 
 var Users = database.import("./users.js");
-Users.sync();
+Users.sync({alter:true});
 
 module.exports = {
     Users
