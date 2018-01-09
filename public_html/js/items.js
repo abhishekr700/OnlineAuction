@@ -1,23 +1,22 @@
 $(function () {
-    $("button[data-btn='details']").click(RedirectToItemDetails);
+    //Update timers for each item displayed
     let list = $("#productlist").children();
-    console.log(list);
-    console.log(typeof list);
-    console.log(list[0]);
     for (let item of list) {
-        console.log(item);
-        console.log(item.getAttribute("id"))
-        updateTimer(item.getAttribute("id"))
+        updateTimer(item.getAttribute("id"));
     }
+
+    //Add event handler for "View Details" button
+    $("button[data-btn='details']").click(RedirectToItemDetails);
+
 });
 
-//Update Timers
+//Update timer of a single product
 function updateTimer(prodID) {
     let timer = new Timer();
 
+    //Get time from server
     $.get(`/items/${prodID}/time`, function (data) {
-        // console.log("ll");
-        console.log(data.timeRemaining);
+        // console.log(data.timeRemaining);
         if (data.timeRemaining > 0) {
             timer.start({countdown: true, startValues: {seconds: data.timeRemaining}});
 
@@ -33,12 +32,13 @@ function updateTimer(prodID) {
             });
         }
         else {
+            //If bid already closed
             $(`div[data-timer="${prodID}"]`).html("Bid Closed");
         }
     })
 }
 
-//Open the Item's details page in a new tab
+//Event handler for "View Item Details" button (Open the Item's details page in a new tab)
 function RedirectToItemDetails(ev) {
     let id = ev.target.parentNode.id;
     console.log(id);

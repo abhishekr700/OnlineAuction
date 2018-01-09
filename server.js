@@ -16,10 +16,12 @@ const Users = require("./models/sql/sequelize").Users;
 const HELPERS = require("./helpers");
 const models = require("./models/mongodb/mongo");
 const bcrypt = require('bcryptjs');
+
 //Initialise Server
 const app = express();
 const Server = http.Server(app);
 const io = socketIo(Server);
+
 /*
     MiddleWares
  */
@@ -124,21 +126,22 @@ app.get("/logout", (req, res) => {
 app.use(function (req, res) {
     res.send("404 Error !!!")
 });
+
 let pplacers = {};
 let arr = [];
 io.on('connection', (socket) => {
-    console.log("socket created " + socket.id);
+    // console.log("socket created " + socket.id);
     socket.on('prodID', (data) => {
-        console.log("1", pplacers);
+        // console.log("1", pplacers);
         arr = pplacers[data.prodId];
         if (!arr) {
             arr = [];
         }
-        console.log(arr);
+        // console.log(arr);
         arr.push(socket.id)
-        console.log(arr);
+        // console.log(arr);
         pplacers[data.prodId] = arr;
-        console.log(pplacers);
+        // console.log(pplacers);
         arr = [];
         // console.log(pplacers);
         console.log("ProdId: " + data.prodId);
@@ -151,7 +154,7 @@ io.on('connection', (socket) => {
 
 
     socket.on('bid2', (data) => {
-        console.log("abc");
+        // console.log("abc");
 
         models.Bids.findOne({ProdID: data.prodId})
             .then((bids) => {

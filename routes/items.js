@@ -105,6 +105,7 @@ route.post('/add', HELPERS.checkLoggedIn, upload.single('imgUploader'), function
         desc: req.body.desc,
         category: req.body.category,
         basevalue: req.body.basevalue,
+        minbid:req.body.basevalue,
         endDate: endDate
     })
         .then((item) => {
@@ -137,43 +138,41 @@ route.get("/:id", (req, res) => {
     })
         .then((item) => {
             // console.log(item);
-            models.Bids.find({
-                ProdID: item._id
-            })
-                .then((itembid) => {
-                    //to compute minimum bid allowed
-                    var minbid = item.basevalue;
-                    //selecting base value as minimum value
-                    // console.log(itembid);
-                    (itembid[0].allBids).forEach(function (data) {
-                            if (data.price)
-                                if (minbid < data.price) {
-                                    minbid = data.price;
-                                }
-                        }
-                    );
-                    // console.log(minbid);
-                    // console.log("Item:",item);
-                    models.Products.findById(req.params.id)
-                        .then((item) => {
-                            console.log("user: " + req.user);
+            // models.Bids.find({
+            //     ProdID: item._id
+            // })
+            //     .then((itembid) => {
+            //         //to compute minimum bid allowed
+            //         //var minbid = item.basevalue;
+            //         //selecting base value as minimum value
+            //         // console.log(itembid);
+            //         (itembid[0].allBids).forEach(function (data) {
+            //                 if (data.price)
+            //                     if (minbid < data.price) {
+            //                         minbid = data.price;
+            //                     }
+            //             }
+            //         );
+            //         // console.log(minbid);
+            //         // console.log("Item:",item);
+            //         models.Products.findById(req.params.id)
+            //             .then((item) => {
+            //                 console.log("user: " + req.user);
                             if (!req.user || item.userID !== req.user.id) {
                                 res.render("item-details", {
                                     item: item,
-                                    minbid: minbid,
+                                    // minbid: minbid,
                                     bidplaced: false
                                 });
                             }
                             else {
                                 res.render("item-details-owner", {
                                     item: item,
-                                    minbid: minbid,
+                                    // minbid: minbid,
 
                                 });
                             }
-                        });
-                })
-        })
+                        })
         .catch((err) => {
             console.log(err);
             res.send({
@@ -190,42 +189,40 @@ route.get("/:id/bidplaced", (req, res) => {
     })
         .then((item) => {
             // console.log(item);
-            models.Bids.find({
-                ProdID: item._id
-            })
-                .then((itembid) => {
-                    //to compute minimum bid allowed
-                    var minbid = item.basevalue;
-                    //selecting base value as minimum value
-                    // console.log(itembid);
-                    (itembid[0].allBids).forEach(function (data) {
-                            if (minbid < data.price) {
-                                minbid = data.price;
-                            }
-                        }
-                    );
-                    // console.log(minbid);
-                    // console.log("Item:",item);
-                    models.Products.findById(req.params.id)
-                        .then((item) => {
+            // models.Bids.find({
+            //     ProdID: item._id
+            // })
+            //     .then((itembid) => {
+            //         //to compute minimum bid allowed
+            //         var minbid = item.basevalue;
+            //         //selecting base value as minimum value
+            //         // console.log(itembid);
+            //         (itembid[0].allBids).forEach(function (data) {
+            //                 if (minbid < data.price) {
+            //                     minbid = data.price;
+            //                 }
+            //             }
+            //         );
+            //         // console.log(minbid);
+            //         // console.log("Item:",item);
+            //         models.Products.findById(req.params.id)
+            //             .then((item) => {
                             console.log("user: " + req.user);
                             if (!req.user || item.userID !== req.user.id) {
                                 res.render("item-details", {
                                     item: item,
-                                    minbid: minbid,
                                     bidplaced: true
                                 });
                             }
                             else {
                                 res.render("item-details-owner", {
                                     item: item,
-                                    minbid: minbid
 
                                 });
                             }
-                        });
-                })
-        })
+                        })
+                // })
+        //})
         .catch((err) => {
             console.log(err);
             res.send({
@@ -295,9 +292,11 @@ route.get("/:id/time", (req, res) => {
 //Add a bid
 route.post("/:id/bid", HELPERS.checkLoggedIn, (req, res) => {
     // console.log(req.params.id);
+    console.log(req.body.bidprice);
     if (req.body.bidprice) {
         models.Products.findById(req.params.id)
             .then((item) => {
+                console.log(item);
                 if (item.userID !== req.user.id) {
                     if (req.body.bidprice > item.minbid) {
                         models.Bids.findOneAndUpdate(
@@ -315,8 +314,11 @@ route.post("/:id/bid", HELPERS.checkLoggedIn, (req, res) => {
                                 }
                             }
                         )
-                            .then((item) => {
-                                console.log(item);
+                            .then((bidItem) => {
+                                item.minbid = req.body.bidprice;
+                                item.save();
+
+                                console.log("after push",item);
                                 if (item !== null)
                                     res.redirect('/items/' + req.params.id + '/bidplaced');
                                 else
@@ -346,6 +348,7 @@ route.post("/:id/bid", HELPERS.checkLoggedIn, (req, res) => {
             })
     }
     else {
+        //If bidprice is null
         res.send("Front end se maze na le ~Mr. Server");
     }
 });

@@ -6,6 +6,7 @@ const ProductSchema = mongoose.Schema({
     desc: String,
     category: String,
     basevalue: Number,
+    minbid: Number,
     endDate: Date
 }, {
     timestamps: true

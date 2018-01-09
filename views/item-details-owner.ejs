@@ -3,11 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <title>Item Details</title>
-    <script src="https://code.jquery.com/jquery-3.2.1.min.js"
-            integrity="sha384-xBuQ/xzmlsLoJpyjoggmTEz8OWUFM0/RC5BsqQBDX2v5cMvDHcMakNTNrHIW2I5f"
-            crossorigin="anonymous"></script>
+    <script src="/js/lib/jquery-3.2.1.min.js" type="text/javascript"></script>
     <script src="/socket.io/socket.io.js"></script>
-    <script src="/js/easytimer.js" type="text/javascript"></script>
+    <script src="/js/lib/easytimer.js" type="text/javascript"></script>
 
     <script src="/js/item-details-owner.js" type="text/javascript"></script>
 </head>
@@ -20,7 +18,7 @@
     by User: <%= item.userID %><br>
     category: <%= item.category %><br>
     basevalue: <%= item.basevalue %><br>
-    maxbid:<%= minbid %><br>
+    maxbid:<%= item.minbid %><br>
     duration: <span id="timer"></span> <br>
     <!--TODO: Add duration timer-->
 
