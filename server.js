@@ -5,6 +5,7 @@ const express = require("express");
 const path = require("path");
 const http = require("http");
 const socketIo = require('socket.io');
+const Sequelize = require("sequelize");
 
 /*
     Import User Files
@@ -90,27 +91,49 @@ app.get("/signup", (req, res) => {
 //New User via SignUp route
 app.post("/signup", (req, res) => {
 
-    bcrypt.genSalt(10, function (err, salt) {
-        bcrypt.hash(req.body.password, salt, function (err, hash) {
-            // Store hash in your password DB.
+    Users.find({
+        where: {
+            [Sequelize.Op.or]: [
+                {username: req.body.username},
+                {email: req.body.email}
+            ]
+        }
+    })
+        .then((user)=>{
+            if(!user){
+                bcrypt.genSalt(10, function (err, salt) {
+                    bcrypt.hash(req.body.password, salt, function (err, hash) {
+                        // Store hash in your password DB.
 
+                        Users.create({
+                            username: req.body.username,
+                            password: hash,
+                            name: req.body.name,
+                            email: req.body.email,
+                            phone1: req.body.phone1,
+                            phone2: req.body.phone2
+                        })
+                            .then((user) => {
+                                req.login(user,()=>{
+                                    res.redirect("/users");
+                                });
+                                // res.redirect("/login");
+                            })
+                            .catch((err) => {
+                                console.log(err);
+                            })
+                    });
+                });
 
-            Users.create({
-                username: req.body.username,
-                password: hash,
-                name: req.body.name,
-                email: req.body.email,
-                phone1: req.body.phone1,
-                phone2: req.body.phone2
-            })
-                .then(() => {
-                    res.redirect("/login");
-                })
-                .catch((err) => {
-                    console.log(err);
-                })
-        });
-    });
+            }
+            else{
+                res.send("duplicate user")
+            }
+        })
+        .catch((err)=>{
+            console.log(err);
+    })
+
 
 });
 
