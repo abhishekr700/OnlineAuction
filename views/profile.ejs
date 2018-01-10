@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+Name: <%= user.dataValues.name%> <br>
+Username:<%= user.dataValues.username%><br>
+Email:<%= user.dataValues.email%><br>
+Phone No:<%= user.dataValues.phone1%><br>
+Alt PhoneNo.:<%= user.dataValues.phone2%><br>
+<a href="/users/profile/edit">
+    <button>Edit Profile</button>
+</a>
+<br>
+<a href="/users/changePass">
+    <button>Change Pass</button>
+</a>
+
+</body>
+</html>
