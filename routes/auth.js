@@ -216,7 +216,10 @@ module.exports = function (app) {
 
 //Render Login Page
     app.get("/login", (req, res) => {
-        res.render("login");
+        if(req.user)
+            res.redirect("/users");
+        else
+            res.render("login");
     });
 
 //Login Route
@@ -227,7 +230,10 @@ module.exports = function (app) {
 
 //Render SignUp page
     app.get("/signup", (req, res) => {
-        res.render("signup");
+        if(req.user)
+            res.redirect("/users");
+        else
+            res.render("signup");
     });
 
 //New User via SignUp route

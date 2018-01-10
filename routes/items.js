@@ -190,7 +190,7 @@ route.get("/:id", (req, res) => {
 });
 
 //Get item details
-route.get("/:id/bidplaced", (req, res) => {
+route.get("/:id/bidplaced",HELPERS.checkLoggedIn, (req, res) => {
     console.log("in gett");
     models.Products.findById(req.params.id, {
         // _id: 0
@@ -362,7 +362,7 @@ route.post("/:id/bid", HELPERS.checkLoggedIn, (req, res) => {
 });
 
 //Delete an item
-route.get("/:id/delete",(req,res)=>{
+route.get("/:id/delete",HELPERS.checkLoggedIn,(req,res)=>{
     models.Bids.find({
         ProdID: req.params.id
     })
