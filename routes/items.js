@@ -22,6 +22,8 @@ let upload = multer({storage: Storage});
 //Items default page
 route.get("/", (req, res) => {
     console.log(typeof req.query.showall);
+    if(!req.query.show)
+        req.query.show = "all";
     if (req.query.show == "all") {
         models.Products.find({})
             .then((items) => {
@@ -34,13 +36,13 @@ route.get("/", (req, res) => {
             })
     }
     else {
-        if (req.user) {
-            if (req.query.show === "others") {
+        if (req.query.show === "others") {
+            if (req.user)
                 models.Products.find({
                     userID: {
                         $ne: req.user.id
                     },
-                    endDate:{
+                    endDate: {
                         $gt: Date.now()
                     }
                 })
@@ -52,8 +54,11 @@ route.get("/", (req, res) => {
                     .catch((err) => {
                         console.log(err);
                     })
-            }
-            else if (req.query.show === "user") {
+            else
+                res.redirect("/login");
+        }
+        else if (req.query.show === "user") {
+            if (req.user)
                 models.Products.find({
                     userID: req.user.id
                 })
@@ -65,14 +70,14 @@ route.get("/", (req, res) => {
                     .catch((err) => {
                         console.log(err);
                     })
+            else
+                res.redirect("/login");
 
-            }
-            else {
-                res.send("Don't mess with me ! ~Mr.Server")
-            }
         }
-        else
-            res.redirect("/login");
+        else {
+            res.send("Don't mess with me ! ~Mr.Server")
+        }
+
     }
 
 });
@@ -354,6 +359,41 @@ route.post("/:id/bid", HELPERS.checkLoggedIn, (req, res) => {
         //If bidprice is null
         res.send("Front end se maze na le ~Mr. Server");
     }
+});
+
+//Delete an item
+route.get("/:id/delete",(req,res)=>{
+    models.Bids.find({
+        ProdID: req.params.id
+    })
+        .then((bidentry)=>{
+            // console.log("bidentry:",bidentry);
+            if(bidentry){
+                if(bidentry.allBids.length === 0 ){
+                    // console.log("No bids...Proceed to delete");
+                    models.Products.findById(req.params.id)
+                        .then((item)=>{
+                            // console.log(item);
+                            bidentry.remove();
+                            item.remove();
+                            res.redirect("/items?show=user");
+                        })
+                        .catch((err)=>{
+                            console.log("Error deleting item:",err);
+                        })
+                }
+                else{
+                    res.send("Cannot remove item ! Bids Placed !");
+                }
+            }
+            else{
+                // console.log("Item not found");
+                res.send("Item not found");
+            }
+        })
+        .catch((err)=>{
+            console.log(err);
+        })
 });
 
 module.exports = route;
