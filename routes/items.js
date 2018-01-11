@@ -363,19 +363,30 @@ route.post("/:id/bid", HELPERS.checkLoggedIn, (req, res) => {
 
 //Delete an item
 route.get("/:id/delete",HELPERS.checkLoggedIn,(req,res)=>{
-    models.Bids.find({
+    models.Bids.findOne({
         ProdID: req.params.id
     })
         .then((bidentry)=>{
-            // console.log("bidentry:",bidentry);
             if(bidentry){
-                if(bidentry.allBids.length === 0 ){
+                if(bidentry.allBids === undefined || bidentry.allBids.length === 0){
                     // console.log("No bids...Proceed to delete");
                     models.Products.findById(req.params.id)
                         .then((item)=>{
                             // console.log(item);
-                            bidentry.remove();
                             item.remove();
+                            bidentry.remove();
+                            fs.stat(path.join(__dirname, "../", "public_html/Images/", item._id + ".jpg"), function (err, stats) {
+                                console.log(stats);//here we got all information of file in stats variable
+
+                                if (err) {
+                                    return console.error(err);
+                                }
+
+                                fs.unlink(path.join(__dirname, "../", "public_html/Images/", item._id + ".jpg"),function(err){
+                                    if(err) return console.log(err);
+                                    console.log('file deleted successfully');
+                                });
+                            });
                             res.redirect("/items?show=user");
                         })
                         .catch((err)=>{
