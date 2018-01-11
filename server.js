@@ -53,7 +53,12 @@ app.use(session({
     resave: true,
     saveUninitialized: false,
     secret: "Boli_Lagegi",
-    store: store
+    store: store,
+    //if maxAge not set, cookie valid for current session only(until browser restart)
+    cookie : {
+        maxAge: 1000* 60 * 60 *24 * 10      //10 days
+    },
+
 }));
 
 
