@@ -1,8 +1,10 @@
 const Passport = require("../passport");
 const crypto=require('crypto');
 const bcrypt = require('bcryptjs');
+const Sequelize = require("sequelize");
 const nodemailer=require('nodemailer');
 const Users = require("../models/sql/sequelize").Users;
+const CONFIG = require("../configs");
 
 
 module.exports = function (app) {
@@ -64,7 +66,7 @@ module.exports = function (app) {
                     'If you did not request this, please ignore this email and your password will remain unchanged.\n'
                 };
                 smtpTransport.sendMail(mailOptions, function (err) {
-                    //console.log(err);
+                    console.log("sendmail",err);
                     if (err) {
                         //console.log("rejected");
                         reject();
@@ -156,7 +158,8 @@ module.exports = function (app) {
                 mailPassword(user).then(() => {
                     //console.log("after function");
                     res.send('An e-mail has been sent to ' + user.email + ' with further instructions.')
-                }).catch(() => {
+                }).catch((err) => {
+                    console.log(err);
                     res.send('error occurred');
 
                 })
