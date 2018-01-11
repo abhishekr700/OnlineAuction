@@ -24,7 +24,7 @@ route.get("/", (req, res) => {
     console.log(typeof req.query.showall);
     if(!req.query.show)
         req.query.show = "all";
-    if (req.query.show == "all") {
+    if (req.query.show === "all") {
         models.Products.find({})
             .then((items) => {
                 res.render("items", {
@@ -261,41 +261,42 @@ route.post("/:id/incTime", HELPERS.checkLoggedIn, (req, res) => {
 
 //Get time for a item
 route.get("/:id/time", (req, res) => {
-    //console.log("In /:id/time");
-    models.Products.findById(req.params.id)
-        .then((item) => {
-            // console.log(item);
-            let curDate = new Date();
-            let timeRemaining = (item.endDate - curDate) / 1000;
-            if (timeRemaining > 0) {
-                console.log("sec:", timeRemaining);
-                console.log(item.duration);
-                res.send({timeRemaining});
-            }
-            else {
-                models.Bids.updateOne(
-                    {
-                        "ProdID": item._id
-                    }
-                    ,
-                    {
-                        $set: {
-                            "isOpen": false
-                        }
-                    }
-                ).then(function (data) {
-                    console.log("bid timed out" + item._id)
-                });
-                res.send({
-                    timeRemaining: 0
-                })
-            }
-        })
-        .catch((err) => {
-            console.log(err);
-            res.redirect(`/items/${req.params.id}`);
-        })
+//console.log("In /:id/time");
+models.Products.findById(req.params.id)
+    .then((item) => {
+        // console.log(item);
+        let curDate = new Date();
+        let timeRemaining = (item.endDate - curDate) / 1000;
+        if (timeRemaining > 0) {
+            console.log("sec:", timeRemaining);
+            console.log(item.duration);
+            res.send({timeRemaining});
+        }
+        else {
+            models.Bids.updateOne(
+                {
+                    "ProdID": item._id
+                }
+                ,
+                {
+                    $set: {
+                        "isOpen": false
+                }
+                }
+            ).then(function (data) {
+                console.log("bid timed out" + item._id)
+            });
+            res.send({
+                timeRemaining: 0
+            })
+        }
+    })
+    .catch((err) => {
+        console.log(err);
+        res.redirect(`/items/${req.params.id}`);
+    })
 });
+
 
 //Add a bid
 route.post("/:id/bid", HELPERS.checkLoggedIn, (req, res) => {

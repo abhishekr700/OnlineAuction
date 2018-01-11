@@ -19,7 +19,13 @@
     category: <%= item.category %><br>
     basevalue: <%= item.basevalue %><br>
     maxbid:<%= item.minbid %><br>
-    duration: <span id="timer"></span> <br>
+    duration:
+    <div id="timer">
+        <span class="days"></span><span> days</span>
+        <span class="hours"></span><span> hours</span>
+        <span class="minutes"></span><span> minutes</span>
+        <span class="seconds"></span><span> seconds</span>
+    </div>
     <!--TODO: Add duration timer-->
 
 
@@ -28,6 +34,7 @@
         <input name="duration" placeholder="duration" required>
         <button type="submit">Submit</button>
     </form>
+    <div id="msg"></div>
     <a href="/items/<%= item._id %>/delete"><button>Delete This Item</button></a>
     <ul id="bids"></ul>
 

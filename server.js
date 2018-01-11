@@ -49,7 +49,7 @@ let Sessions=sessionModel.base.models.sessions;
 app.set("view engine", "ejs");
 
 //Handle sessions
-app.use(session({
+let sessionMiddleware = session({
     resave: true,
     saveUninitialized: false,
     secret: "Boli_Lagegi",
@@ -59,7 +59,8 @@ app.use(session({
         maxAge: 1000* 60 * 60 *24 * 10      //10 days
     },
 
-}));
+})
+app.use(sessionMiddleware);
 
 
 //Initialise passport
@@ -104,23 +105,34 @@ Sessions.find()
         console.log(err);
     });
 
-let pplacers = {};
+let ProductSocketMap = {};
 let arr = [];
+
+io.use(function(socket, next){
+        // Wrap the express middleware
+    sessionMiddleware(socket.request, {}, next);
+        console.log("After next");
+    })
+
 io.on('connection', (socket) => {
+
+    let userId = socket.request.session.passport.user;
+    console.log("Your User ID is", userId);
+
     // console.log("socket created " + socket.id);
     socket.on('prodID', (data) => {
-        // console.log("1", pplacers);
-        arr = pplacers[data.prodId];
+        // console.log("1", ProductSocketMap);
+        arr = ProductSocketMap[data.prodId];
         if (!arr) {
             arr = [];
         }
         // console.log(arr);
         arr.push(socket.id)
         // console.log(arr);
-        pplacers[data.prodId] = arr;
-        // console.log(pplacers);
+        ProductSocketMap[data.prodId] = arr;
+        // console.log(ProductSocketMap);
         arr = [];
-        // console.log(pplacers);
+        // console.log(ProductSocketMap);
         console.log("ProdId: " + data.prodId);
         models.Bids.findOne({ProdID: data.prodId})
             .then((bids) => {
@@ -135,9 +147,63 @@ io.on('connection', (socket) => {
 
         models.Bids.findOne({ProdID: data.prodId})
             .then((bids) => {
-                for (let i of pplacers[data.prodId])
+                for (let i of ProductSocketMap[data.prodId])
                     socket.to(i).emit('bid', {bids: bids})
             });
+    })
+
+    socket.on("bid-closed",(data)=>{
+
+        models.Products.findById(data.prodID)
+            .then((item) => {
+                // console.log(item);
+                let curDate = new Date();
+                let timeRemaining = (item.endDate - curDate) / 1000;
+                if (timeRemaining > 0) {
+                    socket.emit("msg",{msg: "Time left for bid close !"})
+                }
+                //Bid actually closed Therefore, update isOpen values
+                else {
+                    models.Bids.findOne({
+                        ProdID: data.prodID
+                    })
+                        .then(function (bidentry) {
+                            bidentry.isOpen = false;
+                            bidentry.save();
+
+                            let userID = socket.request.session.passport.user;
+                            //Check if user is winner\
+                            let winner = bidentry.allBids[bidentry.allBids.length -1];
+                            if(userID === winner.userID){
+                                socket.emit("msg",{
+                                    msg: "You won the bid"
+                                });
+                            }
+                            else if(userID === item.userID){
+                                console.log("Socket msg to owner",item.userID,userID);
+                                socket.emit("msg",{msg: "Your product was purchased by " + winner.userID })
+                            }
+                            else{
+                                for(let bid of bidentry.allBids){
+                                    if(bid.userID === userID){
+                                        socket.emit("msg",{
+                                            msg: "You lost the bid"
+                                        });
+                                    }
+                                }
+                            }
+
+
+                        })
+                        .catch((err)=>{
+                            console.log(err);
+                        })
+                }
+            })
+            .catch((err) => {
+                console.log(err);
+                res.redirect(`/items/${req.params.id}`);
+            })
     })
 
 });

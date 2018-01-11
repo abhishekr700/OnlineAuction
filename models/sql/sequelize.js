@@ -4,7 +4,8 @@ const CONFIG = require("../../configs");
 //DB Configuration
 const database = new Sequelize(CONFIG.SQL.DATABASE, CONFIG.SQL.USER, CONFIG.SQL.PASSWORD, {
     dialect: "mysql",
-    host: CONFIG.SQL.HOST
+    host: CONFIG.SQL.HOST,
+    logging: false
 });
 
 //Test DB Connection

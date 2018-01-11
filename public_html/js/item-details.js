@@ -30,9 +30,8 @@ $(() => {
             , {prodId: $('#bid')[0].name});
 
     }
+
     let timer = new Timer();
-    //timer.start();
-    // console.log($("#item-detail").data("itemid"));
     $.get(`/items/${$("#item-detail").data("itemid")}/time`, function (data) {
         // console.log("ll");
         console.log(data.timeRemaining);
@@ -48,10 +47,18 @@ $(() => {
 
             timer.addEventListener('targetAchieved', function (e) {
                 $('#timer').html("Bid Closed");
+                //Emit event on timer ends
+                socket.emit("bid-closed",{
+                    prodID: $('#bid')[0].name
+                });
             });
         }
         else {
             $('#timer').html("Bid Closed");
         }
+    })
+
+    socket.on("msg",(data)=>{
+        $("#msg").html(data.msg);
     })
 });
