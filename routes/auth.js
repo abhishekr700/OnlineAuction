@@ -1,11 +1,10 @@
 const Passport = require("../passport");
 const crypto=require('crypto');
 const bcrypt = require('bcryptjs');
-const Sequelize = require("sequelize");
 const nodemailer=require('nodemailer');
 const Users = require("../models/sql/sequelize").Users;
+const Sequelize=require('sequelize');
 const CONFIG = require("../configs");
-
 
 module.exports = function (app) {
 
@@ -125,6 +124,7 @@ module.exports = function (app) {
                     //console.log(err);
                     if (err) {
                         //console.log("rejected");
+                        console.log(err);
                         reject();
                     } else {
                         resolve();

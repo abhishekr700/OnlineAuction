@@ -6,16 +6,17 @@ const path = require("path");
 const http = require("http");
 const socketIo = require('socket.io');
 const Sequelize = require("sequelize");
-const Passport = require("./passport");
-
+const session = require("express-session");
+const mongoose=require("mongoose");
+const MongoStore = require('connect-mongo')(session);
 
 /*
     Import User Files
  */
 const CONFIG = require("./configs");
-const session = require("express-session");
 const Users = require("./models/sql/sequelize").Users;
 const HELPERS = require("./helpers");
+const Passport = require("./passport");
 const models = require("./models/mongodb/mongo");
 //const async=require('async');
 
@@ -37,6 +38,12 @@ app.use(express.urlencoded({
     extended: true
 }));
 
+const connection = mongoose.createConnection(`mongodb://${CONFIG.MONGO.HOST}:${CONFIG.MONGO.PORT}/${CONFIG.MONGO.DB_NAME}`, {
+    useMongoClient: true
+});
+const store= new MongoStore({mongooseConnection: connection});
+let sessionModel=mongoose.model('sessions',new mongoose.Schema({ session: Object, expires: Date}));
+let Sessions=sessionModel.base.models.sessions;
 
 //Set View Engine
 app.set("view engine", "ejs");
@@ -45,8 +52,10 @@ app.set("view engine", "ejs");
 app.use(session({
     resave: true,
     saveUninitialized: false,
-    secret: "Boli_Lagegi"
+    secret: "Boli_Lagegi",
+    store: store
 }));
+
 
 //Initialise passport
 app.use(Passport.initialize());
@@ -78,6 +87,17 @@ app.get("/", (req, res) => {
 app.use(function (req, res) {
     res.send("404 Error !!!")
 });
+
+Sessions.find()
+    .then((sessions)=> {
+
+    let user=JSON.parse(sessions[0].session).passport.user;
+
+   console.log(user);
+    }).catch((err)=>
+    {
+        console.log(err);
+    });
 
 let pplacers = {};
 let arr = [];
