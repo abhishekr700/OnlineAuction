@@ -5,6 +5,8 @@ const nodemailer=require('nodemailer');
 const Users = require("../models/sql/sequelize").Users;
 const Sequelize=require('sequelize');
 const CONFIG = require("../configs");
+const models = require("../models/mongodb/mongo");
+
 
 module.exports = function (app) {
 
@@ -265,10 +267,20 @@ module.exports = function (app) {
                                 phone2: req.body.phone2
                             })
                                 .then((user) => {
-                                    req.login(user, () => {
-                                        res.redirect("/users");
-                                    });
-                                    // res.redirect("/login");
+
+                                    models.UserBidsMap.create({
+                                        userID: user.id,
+                                        bidsOn: []
+                                    })
+                                        .then((data)=>{
+                                            console.log("Userbid: ",data);
+                                            req.login(user, () => {
+                                                res.redirect("/users");
+                                            });
+                                        })
+                                        .catch((err)=>{
+                                            console.log(err);
+                                        })
                                 })
                                 .catch((err) => {
                                     console.log(err);

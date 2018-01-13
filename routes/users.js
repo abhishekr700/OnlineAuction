@@ -18,6 +18,13 @@ route.get("/all", (req, res) => {
         })
 });
 
+route.get("/userbids",(req,res)=>{
+    models.UserBidsMap.find()
+        .then((userbids)=>{
+            res.send(userbids);
+        })
+})
+
 
 //Get User details
 route.get("/profile", (req, res) => {

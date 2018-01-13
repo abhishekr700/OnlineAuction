@@ -74,6 +74,33 @@ route.get("/", (req, res) => {
                 res.redirect("/login");
 
         }
+        else if(req.query.show === "userbids"){
+            if(req.user){
+                models.UserBidsMap.findOne({
+                    userID: req.user.id
+                })
+                    .then((biditems)=>{
+                        console.log(biditems.bidsOn);
+                        let arr = [];
+                        for(let biditem of biditems.bidsOn){
+                            arr.push(biditem.ProdID);
+
+                        }
+                        models.Products.find({
+                            "_id": {
+                                $in: arr
+                            }
+                        })
+                            .then((items)=>{
+                                console.log(arr);
+                                res.render("items",{
+                                    items
+                                })
+                            })
+
+                    })
+            }
+        }
         else {
             res.send("Don't mess with me ! ~Mr.Server")
         }
@@ -268,8 +295,8 @@ models.Products.findById(req.params.id)
         let curDate = new Date();
         let timeRemaining = (item.endDate - curDate) / 1000;
         if (timeRemaining > 0) {
-            console.log("sec:", timeRemaining);
-            console.log(item.duration);
+            // console.log("sec:", timeRemaining);
+            // console.log(item.duration);
             res.send({timeRemaining});
         }
         else {
@@ -301,7 +328,7 @@ models.Products.findById(req.params.id)
 //Add a bid
 route.post("/:id/bid", HELPERS.checkLoggedIn, (req, res) => {
     // console.log(req.params.id);
-    console.log(req.body.bidprice);
+    // console.log(req.body.bidprice);
     if (req.body.bidprice) {
         models.Products.findById(req.params.id)
             .then((item) => {
@@ -327,14 +354,43 @@ route.post("/:id/bid", HELPERS.checkLoggedIn, (req, res) => {
                                 item.minbid = req.body.bidprice;
                                 item.save();
 
-                                console.log("after push",item);
-                                if (item !== null)
-                                    res.redirect('/items/' + req.params.id + '/bidplaced');
-                                else
-                                //TODO: Add flash message
-                                    res.send({
-                                        msg: "Bid closed"
+                                models.UserBidsMap.findOneAndUpdate(
+                                    {
+                                        userID: req.user.id
+                                    },
+                                    {
+                                        $pull: {
+                                            bidsOn: {
+                                                ProdID: item._id
+                                            }
+                                        }
+                                    }
+                                )
+                                    .then(()=>{
+                                        models.UserBidsMap.findOneAndUpdate(
+                                            {
+                                                userID: req.user.id
+                                            },
+                                            {
+                                                $push: {
+                                                    bidsOn: {
+                                                        ProdID: item._id
+                                                    }
+                                                }
+                                            }
+                                        )
+                                            .then(()=>{
+                                                console.log("after push",item);
+                                                if (item !== null)
+                                                    res.redirect('/items/' + req.params.id + '/bidplaced');
+                                                else
+                                                //TODO: Add flash message
+                                                    res.send({
+                                                        msg: "Bid closed"
+                                                    })
+                                            })
                                     })
+
                             })
                             .catch((err) => {
                                 console.log(err);

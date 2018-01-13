@@ -94,17 +94,6 @@ app.use(function (req, res) {
     res.send("404 Error !!!")
 });
 
-Sessions.find()
-    .then((sessions)=> {
-
-    let user=JSON.parse(sessions[0].session).passport.user;
-
-   console.log(user);
-    }).catch((err)=>
-    {
-        console.log(err);
-    });
-
 let ProductSocketMap = {};
 let arr = [];
 
