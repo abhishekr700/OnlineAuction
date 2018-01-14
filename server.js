@@ -105,7 +105,15 @@ io.use(function(socket, next){
 
 io.on('connection', (socket) => {
 
-    let userId = socket.request.session.passport.user;
+
+    let pass = socket.request.session.passport;
+    let userId;
+    if(!pass)
+    {
+
+    }else{
+        userId=pass.user;
+    }
     console.log("Your User ID is", userId);
 
     // console.log("socket created " + socket.id);
