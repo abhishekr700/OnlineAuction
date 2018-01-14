@@ -4,26 +4,113 @@
     <meta charset="UTF-8">
     <title>Home | Online Auction</title>
     <%- include('components/headers'); %>
+    <script src="js/lib/easytimer.js" type="text/javascript"></script>
     <script type="text/javascript" src="js/main.js"></script>
-</head>
+    <script type="text/javascript" src="js/index.js"></script>
 
+</head>
+<style>
+
+ #all-itms-btn{
+   position: fixed;
+     right: 2vw;
+     bottom: 2vh;
+ }
+    /*.background{*/
+        /*!*background-image: url("http://via.placeholder.com/1300x370");*!*/
+        /*!*background-repeat: no-repeat;*!*/
+        /*!*background-size: contain;*!*/
+        /*background-position: center;*/
+        /*height: 80vh;*/
+    /*}*/
+
+    #jumbotron{
+        height: 50vh;
+    }
+    .margin-top-20{
+        margin-top: 10vh;
+    }
+    #timer{
+        color: black;
+    }
+</style>
 <body>
 <%- include('components/navbar'); %>
 <br><br>
 
-<a href="/signup">
-    <button>Sign Up</button>
-</a><br>
-<a href="/login">
-    <button>Login</button>
-</a><br>
-<a href="/logout">
-    <button>Logout</button>
-</a><br>
-<a href="/items?show=all">
-    <button>View All Items</button>
-</a>
-<div id="time"></div>
+<div>
+    <div class="ui inverted vertical masthead center aligned segment " id="jumbotron">
+
+        <div class="ui text container margin-top-20">
+            <h1 class="ui header inverted ">Choose Product of your choice</h1>
+            <br>
+            <form class="ui form">
+                <div class=" fields">
+                    <div class="field one wide"></div>
+                    <div class="field five wide">
+                        <input name="name" placeholder="name" type="text"></div>
+                    <div class="field five wide">
+                        <input name="category" placeholder="category" type="text"></div>
+                    <div class="field two wide">
+                        <button class="ui button" type="submit">SEARCH</button></div>
+                </div>
+            </form>
+        </div>
+
+    </div>
+  <br><br>
+
+    <div class="ui special cards container"  id="productlist">
+    <% items.forEach((item)=>{%>
+
+
+        <div class="card"  id="<%= item._id%>" style="margin-left: 5vw ; height: 50vh">
+            <div class="blurring dimmable image">
+                <div class="ui inverted dimmer">
+                    <div class="content" >
+                        <div class="center" id="<%= item._id%>">
+                            <button class="ui primary button" data-btn="details">View Details</button>
+                        </div>
+                    </div>
+                </div>
+                <img  src="../Images/<%= item._id%>.jpg" style="height: 30vh">
+            </div>
+            <div class="content">
+                <div class="header"><%= item.name %></div>
+                <div class="meta">
+                    <span class="date"><%= item.category%></span>
+                </div>
+            </div>
+            <div class="extra content" id="timer">
+                <div data-timer=<%= item._id %>>
+                    <span class="days"></span><span> days</span>
+                    <span class="hours"></span><span> hours</span>
+                    <span class="minutes"></span><span> minutes</span>
+                    <span class="seconds"></span><span> seconds</span>
+                </div>
+            </div>
+        </div>
+
+    <%})%>
+    </div>
+
+<a href="/items?show=all"><button id="all-itms-btn" class="ui primary button">view all</button></a>
+
+<!--<a href="/signup">-->
+    <!--<button>Sign Up</button>-->
+<!--</a><br>-->
+<!--<a href="/login">-->
+    <!--<button>Login</button>-->
+<!--</a><br>-->
+<!--<a href="/logout">-->
+    <!--<button>Logout</button>-->
+<!--</a><br>-->
+<!--<a href="/items?show=all">-->
+    <!--<button>View All Items</button>-->
+<!--</a>-->
+
+<br><br>
+</div>
 <%- include('components/footer'); %>
 </body>
 </html>

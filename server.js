@@ -85,7 +85,25 @@ require("./routes/auth")(app);
 
 //Render Landing Page
 app.get("/", (req, res) => {
-    res.render("index");
+
+    models.Products.find(
+        {
+            endDate: {
+                $gt: Date.now()
+            }
+        }
+    ).then((items)=>{
+        let itemsTobeSent=[];
+
+        for(let i = items.length-1;i>=0;i--)
+            itemsTobeSent.push(items[i]);
+        res.render("index",{
+            items:itemsTobeSent
+        });
+    }).catch((err)=>{
+        console.log(err);
+    })
+
 });
 
 
@@ -105,7 +123,14 @@ io.use(function(socket, next){
 
 io.on('connection', (socket) => {
 
-    let userId = socket.request.session.passport.user;
+    let pass = socket.request.session.passport;
+    let userId;
+    if(!pass)
+    {
+
+    }else{
+         userId=pass.user;
+    }
     console.log("Your User ID is", userId);
 
     // console.log("socket created " + socket.id);
