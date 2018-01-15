@@ -2,10 +2,66 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Add Item</title>
+    <%- include('components/headers'); %>
+    <style>
+        .margin-top-40{
+            margin-top: 40px;
+        }
+        .text-center{
+            text-align: center;
+        }
+        .clr-sml{
+            height: 10px;
+        }
+
+    </style>
 </head>
 <body>
-<form enctype="multipart/form-data" action="/items/add" method="post">
+
+<%- include('components/navbar'); %>
+<br><br><br>
+<div class="ui container margin-top-40">
+    <div class="ui grid">
+        <div class="three wide column"></div>
+        <div class="margin-left-right-20 ten wide column">
+            <form class="ui form" enctype="multipart/form-data" action="/items/add" method="post">
+                <h4 class="ui dividing header text-center" style="font-size: 24px;">Add an Item to start Auction</h4>
+                <div class="clr-sml"></div>
+                <div class="field">
+                    <label style="font-size: 16px;">Product Details</label>
+
+                    <div class="clr-sml"></div>
+                        <div class="field">
+                            <input type="file" name="imgUploader">
+                        </div>
+                        <div class="field">
+                            <input type="text" name="productname" placeholder="Name of Product">
+                        </div>
+                        <div class="field">
+                            <input type="text" name="category" placeholder="Category of Product">
+                        </div>
+                        <div class="field">
+                            <input type="number" name="basevalue" placeholder="Base Value of Product (This will be the minimum bid for your product)">
+                        </div>
+                        <div class="field">
+                            <textarea rows="4" type="text" placeholder="Enter product description" name="desc"></textarea>
+                        </div>
+
+                        <div class="field">
+                            <input type="number" name="duration" placeholder="Duration of Bid(in hours)">
+                        </div>
+
+                </div>
+                <div class="clr-sml"></div>
+                <div class="field text-center">
+                    <button class="ui button" type="submit">Submit</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<!--<form enctype="multipart/form-data" action="/items/add" method="post">
     <input type="file" name="imgUploader">
     <input type="text" name="productname" placeholder="name of product">
     <input type="text" placeholder="Enter product description" name="desc">
@@ -13,6 +69,8 @@
     <input type="text" name="category" placeholder="category">
     <input type="number" name="duration" placeholder="duration in hours">
     <button type="submit">Submit</button>
-</form>
+</form>-->
+<br><br>
+<%- include('components/footer'); %>
 </body>
 </html>

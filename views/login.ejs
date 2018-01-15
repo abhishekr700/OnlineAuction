@@ -2,14 +2,166 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Login/Signup | Online Auction</title>
+    <%- include('components/headers'); %>
+    <style>
+        .margin-top-70 {
+            margin-top: 120px;
+        }
+
+        .margin-top-40 {
+            margin-top: 40px;
+        }
+        .text-right{
+            text-align: right;
+        }
+        .t16 {
+            font-size: 16px;
+        }
+
+        .t22 {
+            font-size: 22px;
+        }
+
+        .clr-sml {
+            height: 10px;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .blue-font {
+            color: blue;
+        }
+
+        .blue-font:hover {
+            text-decoration: underline;
+        }
+        .margin-left-right-20{
+            margin-left: 20px;
+            margin-right: 20px;
+        }
+        .font {
+            font-family: sans-serif;
+        }
+    </style>
 </head>
 <body>
-<form action="/login" method="post">
-    <input name="username" placeholder="Username" type="text">
-    <input name="password" placeholder="Password" type="password">
-    <button>Login</button>
-</form>
-<a href="/forgot">forgot password</a>
+<div>
+    <%- include('components/navbar'); %></div>
+<div class="margin-top-70">
+    <div class="ui container">
+        <form class="ui form" action="/login" method="post">
+            <div class="ui grid">
+                <div class="five wide field t22 text-center">
+                    <div class="clr-sml"></div>
+                    Welcome to Auctionator!
+                </div>
+
+                <div class="four wide field">
+                    <input name="username" placeholder="Username" type="text">
+                </div>
+                <div class="four wide field">
+                    <input name="password" id="password_login" placeholder="Password" type="password">
+
+                </div>
+                <div class="two wide field">
+                    <button class="ui button" type="submit">Login</button>
+                </div>
+
+            </div>
+        </form>
+        <div class="ui grid">
+            <div class="fourteen wide column">
+                <div class="text-right"><a href="/forgot" class="t16 blue-font">Forgot Password</a></div>
+            </div>
+        </div>
+        <div class="ui horizontal divider">
+            Or
+        </div>
+    </div>
+
+</div>
+
+<div class="ui container margin-top-40">
+    <div class="ui grid">
+        <div class="six wide column">
+            <div class="clr-sml"></div>
+            <div class="text-center"><img src="/buy-sell.png" height="80"></div>
+            <div class="clr-sml"></div>
+            <div class="text-center t16"><b>BUY</b></div>
+            <div class="t16 margin-left-right-20 text-center">Buy the most popular products from around the world at your own rate.</div>
+            <br>
+            <div class="clr-sml"></div>
+            <div class="text-center"><img src="/sell.png" height="80"></div>
+            <div class="clr-sml"></div>
+            <div class="text-center t16"><b>SELL</b></div>
+            <div class="t16 margin-left-right-20 text-center">Sell your products to worlds top enthusiast sitting at your place.</div>
+
+        </div>
+        <div class="ten wide column">
+            <div class="margin-left-right-20">
+                <form class="ui form" action="/signup" method="post">
+                    <h4 class="ui dividing header text-center" style="font-size: 24px;">New to Auctionator? Register
+                        with Us</h4>
+                    <div class="clr-sml"></div>
+                    <div class="field">
+                        <label style="font-size: 16px;">Personal Details</label>
+                        <div class="clr-sml"></div>
+                        <div class="two fields">
+                            <div class="field">
+                                <input name="name" placeholder="Full Name" type="text" required>
+                            </div>
+                            <div class="field">
+                                <input name="email" placeholder="E-Mail" type="email"
+                                       data-val-regex-pattern="^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$"
+                                       data-val-required="Please enter email id" required>
+                            </div>
+                        </div>
+                        <div class="two fields">
+                            <div class="field">
+                                <input name="phone1" placeholder="Phone Number" pattern="[1-9]{1}[0-9]{9}" size="10"
+                                       maxlength="10" type="text" required>
+                            </div>
+                            <div class="field">
+                                <input name="phone2" placeholder="Alternate Phone Number" pattern="[1-9]{1}[0-9]{9}"
+                                       size="10" maxlength="10" type="text">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="clr-sml"></div>
+
+                    <div class="field">
+                        <label style="font-size: 16px;">Login Details</label>
+                        <div class="clr-sml"></div>
+                        <div class="field">
+                            <input name="username" placeholder="Username" type="text" required>
+                        </div>
+                        <div class="two fields">
+                            <div class="field">
+                                <input name="password" id="password" minlength="6" data-val-required="Please enter valid password"
+                                       placeholder="Password" type="password" required>
+                            </div>
+                            <div class="field">
+                                <input name="confirmPassword" id="confirm_password" minlength="6" data-val-required="Password not same"
+                                       placeholder="Confirm Password" type="password" required>
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="clr-sml"></div>
+                    <div class="field text-center">
+                        <button class="ui button" type="submit">Submit</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="clr-sml"></div>
+    <br>
+
+</div>
+<%- include('components/footer'); %>
 </body>
 </html>
