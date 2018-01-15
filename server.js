@@ -84,8 +84,30 @@ require("./routes/auth")(app);
  */
 
 //Render Landing Page
+// Modified By Bhavya
 app.get("/", (req, res) => {
-    res.render("index");
+
+    models.Products.find(
+        {
+            endDate: {
+                $gt: Date.now()
+            }
+        }
+    )
+        .then((items)=>{
+            let itemsTobeSent=[];
+
+            for(let i = items.length-1;i>=0;i--)
+                itemsTobeSent.push(items[i]);
+
+            res.render("index",{
+                items: itemsTobeSent
+            });
+        })
+        .catch((err)=>{
+            console.log(err);
+        })
+
 });
 
 

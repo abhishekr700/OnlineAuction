@@ -4,26 +4,162 @@
     <meta charset="UTF-8">
     <title>Home | Online Auction</title>
     <%- include('components/headers'); %>
+    <script src="/js/lib/easytimer.js"></script>
     <script type="text/javascript" src="js/main.js"></script>
+    <script src="/js/index.js"></script>
 </head>
-
+<style>
+    #main{
+        margin-top: 3.6em;
+        height: 45em;
+        background-image: url("/e6.png");
+        background-size: 100% 100%;
+        background-repeat: no-repeat;
+        border: 0;
+    }
+    #main-container{
+        padding-top: 9em;
+    }
+    #main-container .ui.header{
+        color: white;
+        font-size: 4.3em;
+    }
+    #main-container .ui.huge.teal.button{
+        opacity: 0.9;
+    }
+    .home-inputs{
+        opacity: 0.9;
+    }
+    #feature-container{
+        margin-top: 4em;
+    }
+    .t5{
+       font-size: 2.3em;
+    }
+    #items-container{
+        margin-top: 4em;
+    }
+    #productlist{
+        margin-top: 2em;
+        margin-bottom: 5em;
+    }
+</style>
 <body>
 <%- include('components/navbar'); %>
-<br><br>
+<!--Jumbotron-->
+<div id="main" class="ui center aligned segment">
+    <div class="ui text container" id="main-container">
+        <h1 class="ui header">
+            Find A Auction for You
+        </h1>
+        <div class="ui two column centered grid">
 
-<a href="/signup">
-    <button>Sign Up</button>
-</a><br>
-<a href="/login">
-    <button>Login</button>
-</a><br>
-<a href="/logout">
-    <button>Logout</button>
-</a><br>
-<a href="/items?show=all">
-    <button>View All Items</button>
-</a>
-<div id="time"></div>
+            <div class="centered row">
+                <div class="five wide column ui input">
+                    <input type="text" placeholder="Item to Search" class="home-inputs">
+                </div>
+                <div class="five wide column ui input">
+                    <input type="text" placeholder="Cateogary" class="home-inputs">
+                </div>
+            </div>
+        </div>
+        <br>
+        <div class="ui huge teal button">Find Auction</div>
+    </div>
+</div>
+<!--Features-->
+<div class="ui container" id="feature-container">
+    <div class="ui header center aligned">
+        <h1 class="t5"  style="color: dimgrey">Auctionator Highlights</h1>
+    </div>
+    <div class="ui horizontal segments">
+        <div class="ui segment">
+            <h2 class="ui icon header">
+                <i class="wait icon" style="color: darkorange"></i>
+                <div class="content">
+                    <span style="color: darkorange">Round The Clock Bidding</span>
+                    <div class="ui inverted section divider"></div>
+                    <div class="sub header">
+                        Your auction runs 24x7 to cater to various users around the world.
+                        We make sure everyone gets a fair chance to compete.
+                    </div>
+                </div>
+            </h2>
+        </div>
+        <div class="ui segment">
+            <h2 class="ui icon header">
+                <i class="alarm outline icon" style="color: limegreen;"></i>
+                <div class="content">
+                    <span style="color: limegreen;">Live Notifications</span>
+                    <div class="ui inverted section divider"></div>
+                    <div class="sub header">
+                        Get live notification to your items and your own auctions.
+                        Whether you win or lose, you get to know it first !!!
+                    </div>
+                </div>
+            </h2>
+        </div>
+        <div class="ui segment">
+            <h2 class="ui icon header">
+                <i class="privacy icon" style="color: #309ef2;"></i>
+                <div class="content">
+                    <span style="color: #309ef2;">Privacy</span>
+                    <div class="ui inverted section divider"></div>
+                    <div class="sub header">
+                        Only the product owner gets your contact and no one else !
+                        We are dedicated to provide best possible privacy to our users.</div>
+                </div>
+            </h2>
+        </div>
+    </div>
+</div>
+<!--Items-->
+<div class="ui container" id="items-container">
+    <!--Items Heading-->
+    <div class="ui header center aligned">
+        <h1 class="t5"  style="color: dimgrey">Popular Live Auctions</h1>
+    </div>
+    <!--Item Cards-->
+    <div class="ui special cards container"  id="productlist">
+        <% items.forEach((item)=>{%>
+        <div class="card"  id="<%= item._id%>" style="margin-left: 5vw ; height: 50vh">
+            <div class="blurring dimmable image">
+                <div class="ui inverted dimmer">
+                    <div class="content" >
+                        <div class="center" id="<%= item._id%>">
+                            <button class="ui primary button" data-btn="details">View Details</button>
+                        </div>
+                    </div>
+                </div>
+                <img  src="../Images/<%= item._id%>.jpg" style="height: 30vh">
+            </div>
+            <div class="content">
+                <div class="header"><%= item.name %></div>
+                <div class="meta">
+                    <span class="date"><%= item.category%></span>
+                </div>
+            </div>
+            <div class="extra content" id="timer">
+                <div data-timer=<%= item._id %>>
+                    <span class="days"></span><span> days</span>
+                    <span class="hours"></span><span> hours</span>
+                    <span class="minutes"></span><span> minutes</span>
+                    <span class="seconds"></span><span> seconds</span>
+                </div>
+            </div>
+        </div>
+        <%})%>
+        <div class="ui container center aligned" style="margin-top: 2em">
+            <a href="/items?show=all">
+            <button class="ui right labeled icon button blue big">
+                <i class="right arrow icon"></i>
+                <span style="">View All</span>
+            </button>
+        </a>
+        </div>
+    </div>
+
+</div>
 <%- include('components/footer'); %>
 </body>
 </html>
