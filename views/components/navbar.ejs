@@ -1,36 +1,44 @@
-<!--navbar-->
+<!--Navbar-->
 <style>
-a{
- color: black;
-}
-a:hover{
-    color: #4c4f52;
-}
+    #navbar-main{
+        border-radius: 0px;
+        margin-top: 0em;
+        margin-bottom: 1em;
+    }
+
+    #navbar-logo{
+        margin-right: 1.5em;
+        margin-left: 3em;
+    }
+
+    #site-title{
+        font-size: 1.3em;
+    }
+    #nav-adjust{
+        margin-top: 3.6em;
+    }
 </style>
-<div class="ui inverted fixed menu">
-    <div class="ui fluid container">
+<div class="ui fixed inverted menu" id="navbar-main">
         <a href="/" class="header item">
-           <img  src="http://via.placeholder.com/70x50" class="logo">
-        </a>
-        <a href="/" class="item">
-            OnlineAuction
-        </a>
-        <a href="/items?show=all" class="item">
-            Ongoing Bids
+            <img src="http://via.placeholder.com/70x70" alt="" class="logo" id="navbar-logo">
+            <span id="site-title">Auctionator</span>
         </a>
         <div class="right menu">
-        <div class="ui pointing dropdown link item">
-            <span class="text">Welcome!!</span>
+            <a href="/items?show=all" class="item">All Auctions</a>
+
+            <div class="ui pointing dropdown link item">
+            <span class="text">Welcome User</span>
             <i class="dropdown icon"></i>
             <div class="menu">
-                <div class="item"><a href="/signup" class="ui">Sign Up</a></div>
-                <div class="item"><a href="/login" class="ui">Login</a></div>
-                <div class="item"><a href="/users/profile" class="ui">My Profile</a></div>
-                <div class="item"><a href="/items?show=user" class="ui">Your Items</a></div>
-                <div class="item"><a href="/items?show=userbids" class="ui">Your Bids</a></div>
-                <div class="item"><a href="/logout" class="ui">Logout</a></div>
+                <a class="item" href="/login">Login</a>
+                <a class="item" href="/signup">Sign Up</a>
+                <a class="item" href="/items?show=user">Your Bids</a>
+                <a class="item" href="/users/profile">View Profile</a>
+                <a class="item" href="/logout">Logout</a>
             </div>
         </div>
         </div>
-    </div>
+</div>
+<div id="nav-adjust">
+
 </div>
