@@ -1,4 +1,21 @@
 $(function () {
+    $('.special.cards .image').dimmer({
+        on: 'hover'
+    });
+
+    $('#filter').click(()=> {
+
+        $('.ui.sidebar').sidebar('toggle');
+
+    });
+    $('.context.example .ui.sidebar')
+        .sidebar({
+            context: $('.context.example .bottom.segment'),
+            dimPage:false
+        })
+        .sidebar('attach events', '.context.example .menu .item')
+    ;
+
     //Update timers for each item displayed
     let list = $("#productlist").children();
     for (let item of list) {
