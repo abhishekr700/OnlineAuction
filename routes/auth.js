@@ -238,7 +238,7 @@ module.exports = function (app) {
         if(req.user)
             res.redirect("/users");
         else
-            res.render("signup");
+            res.render("login");
     });
 
 //New User via SignUp route
