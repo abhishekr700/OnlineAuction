@@ -2,17 +2,74 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>SignUp</title>
+    <%- include('components/headers'); %>
 </head>
 <body>
-<form action="/signup" method="post">
-    <input name="name" placeholder="Full Name" type="text" required>
-    <input name="email" placeholder="E-Mail" type="email" required>
-    <input name="username" placeholder="Username" type="text" required>
-    <input name="password" placeholder="Password" type="password" required>
-    <input name="phone1" placeholder="Phone No." type="number" required>
-    <input name="phone2" placeholder="Alt. Phone" type="number">
-    <button>SignUp</button>
-</form>
+
+<%- include('components/navbar'); %>
+
+<div class="ui container" style="margin-top: 13vh ; margin-bottom: 10vh">
+    <div class="ui stackable divided grid">
+        <div class="seven wide column">
+            <h4 class="ui  header">About</h4>
+            <p>why to sign up  </p>
+        </div>
+        <div class="nine wide column">
+            <div class=" ui segment ">
+
+                <% if(passwordDoNotMatch){%>
+                <div class="ui error message">
+                    <div class="header">Action Forbidden</div>
+                    <p>Passwords do not match</p>
+                </div>
+                <%}%>
+                <% if(duplicateUser){%>
+                <div class="ui error message">
+                    <div class="header">Action Forbidden</div>
+                    <p>User Already Existing</p>
+                </div>
+                <%}%>
+                <form class="ui form"  action="/signup" method="post">
+                    <div class=" field">
+                        <label>Full Name</label>
+                        <input name="name" placeholder="Full Name" type="text" required>
+                    </div>
+                    <div class=" field">
+                        <label>E-mail</label>
+                        <input name="email" placeholder="E-Mail" type="email" required>
+                    </div>
+                    <div class=" field">
+                        <label>Username</label>
+                        <input name="username" placeholder="Username" type="text" required>
+                    </div>
+                    <div class=" field">
+                        <label>Password</label>
+                        <input name="password" placeholder="Password" type="password" required>
+                    </div>
+                    <div class=" field">
+                        <label>Re-enter Password</label>
+                        <input name="password2" placeholder="Re-enter Password" type="password" required>
+                    </div>
+                    <div class=" field">
+                        <label>Phone No.</label>
+                        <input name="phone1" placeholder="Phone No." type="number" required>
+                    </div>
+                    <div class=" field">
+                        <label>Alt. Phone</label>
+                        <input name="phone2" placeholder="Alt. Phone" type="number">
+                    </div>
+                    <button class="ui submit button">SignUp</button>
+
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class=" ui grid">
+</div>
+
+<%- include('components/footer'); %>
 </body>
 </html>

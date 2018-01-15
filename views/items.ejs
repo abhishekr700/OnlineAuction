@@ -2,30 +2,87 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
-    <script src="/lib/jquery-3.2.1.min.js" type="text/javascript"></script>
+    <title>All Items</title>
+    <%- include('components/headers'); %>
     <script src="js/lib/easytimer.js" type="text/javascript"></script>
     <script type="text/javascript" src="/js/items.js"></script>
 </head>
 <body>
 
-<ul id="productlist">
+<%- include('components/navbar'); %>
 
-    <% items.forEach(function(item){ %>
-    <li id=<%= item._id %>>
-        <img src="../Images/<%= item._id %>.jpg" height="100">
-        <div>Product Name:<%= item.name %></div>
-        <div>Category:<%= item.category %></div>
-        <div data-timer=<%= item._id %>>
-            <span class="days"></span><span> days</span>
-            <span class="hours"></span><span> hours</span>
-            <span class="minutes"></span><span> minutes</span>
-            <span class="seconds"></span><span> seconds</span>
+<div class="context example" style="margin: 1vmax ; margin-top: 5vmax">
+<!--<div class="ui top attached demo menu">-->
+<a class="ui primary button" id="filter">
+    <i class="filter icon" ></i>
+    Refine Your Choice
+</a>
+
+<div class="ui bottom attached segment pushable" style="border: none">
+    <div class="ui  labeled icon left inline vertical sidebar menu">
+        <a class="item">
+
+            Home
+        </a>
+        <a class="item">
+
+            Topics
+        </a>
+        <a class="item">
+
+            Friends
+        </a>
+        <a class="item">
+
+            History
+        </a>
+    </div>
+    <div class="pusher">
+        <div class="ui basic segment">
+
+
+            <div class="ui special cards container"  id="productlist" >
+                <% items.forEach((item)=>{%>
+
+
+                <div class="card"  id="<%= item._id%>" style="margin-left: 5vw ; height: 50vh">
+                    <div class="blurring dimmable image">
+                        <div class="ui inverted dimmer">
+                            <div class="content" >
+                                <div class="center" id="<%= item._id%>">
+                                    <button class="ui primary button" data-btn="details">View Details</button>
+                                </div>
+                            </div>
+                        </div>
+                        <img  src="../Images/<%= item._id%>.jpg" style="height: 30vh">
+                    </div>
+                    <div class="content">
+                        <div class="header"><%= item.name %></div>
+                        <div class="meta">
+                            <span class="date"><%= item.category%></span>
+                        </div>
+                    </div>
+                    <div class="extra content" id="timer">
+                        <div data-timer=<%= item._id %>>
+                            <span class="days"></span><span> days</span>
+                            <span class="hours"></span><span> hours</span>
+                            <span class="minutes"></span><span> minutes</span>
+                            <span class="seconds"></span><span> seconds</span>
+                        </div>
+                    </div>
+                </div>
+
+                <%})%>
+            </div>
+
         </div>
-        <button data-btn="details">View Item Details</button>
-    </li>
-    <% }) %>
+    </div>
+</div>
 
-</ul>
+</div>
+
+<%- include('components/footer'); %>
+
+
 </body>
 </html>

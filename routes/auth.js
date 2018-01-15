@@ -238,7 +238,10 @@ module.exports = function (app) {
         if(req.user)
             res.redirect("/users");
         else
-            res.render("signup");
+            res.render("signup",{
+                passwordDoNotMatch : false,
+                duplicateUser:false
+            });
     });
 
 //New User via SignUp route
@@ -254,43 +257,54 @@ module.exports = function (app) {
         })
             .then((user) => {
                 if (!user) {
-                    bcrypt.genSalt(10, function (err, salt) {
-                        bcrypt.hash(req.body.password, salt, function (err, hash) {
-                            // Store hash in your password DB.
-
-                            Users.create({
-                                username: req.body.username,
-                                password: hash,
-                                name: req.body.name,
-                                email: req.body.email,
-                                phone1: req.body.phone1,
-                                phone2: req.body.phone2
-                            })
-                                .then((user) => {
-
-                                    models.UserBidsMap.create({
-                                        userID: user.id,
-                                        bidsOn: []
-                                    })
-                                        .then((data)=>{
-                                            console.log("Userbid: ",data);
-                                            req.login(user, () => {
-                                                res.redirect("/users");
-                                            });
-                                        })
-                                        .catch((err)=>{
-                                            console.log(err);
-                                        })
-                                })
-                                .catch((err) => {
-                                    console.log(err);
-                                })
+                    if (req.body.password !== req.body.password2) {
+                        res.render('signup',{
+                            passwordDoNotMatch : true,
+                            duplicateUser:false
                         });
-                    });
+                    }
+                    else {
+                        bcrypt.genSalt(10, function (err, salt) {
+                            bcrypt.hash(req.body.password, salt, function (err, hash) {
+                                // Store hash in your password DB.
 
+                                Users.create({
+                                    username: req.body.username,
+                                    password: hash,
+                                    name: req.body.name,
+                                    email: req.body.email,
+                                    phone1: req.body.phone1,
+                                    phone2: req.body.phone2
+                                })
+                                    .then((user) => {
+
+                                        models.UserBidsMap.create({
+                                            userID: user.id,
+                                            bidsOn: []
+                                        })
+                                            .then((data) => {
+                                                console.log("Userbid: ", data);
+                                                req.login(user, () => {
+                                                    res.redirect("/users");
+                                                });
+                                            })
+                                            .catch((err) => {
+                                                console.log(err);
+                                            })
+                                    })
+                                    .catch((err) => {
+                                        console.log(err);
+                                    })
+                            });
+                        });
+
+                    }
                 }
                 else {
-                    res.send("duplicate user")
+                    res.render('signup',{
+                        passwordDoNotMatch : false,
+                        duplicateUser:true
+                    });
                 }
             })
             .catch((err) => {

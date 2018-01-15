@@ -27,6 +27,7 @@ route.get("/", (req, res) => {
     if (req.query.show === "all") {
         models.Products.find({})
             .then((items) => {
+               items.reverse();
                 res.render("items", {
                     items
                 })

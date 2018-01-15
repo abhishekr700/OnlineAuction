@@ -2,14 +2,18 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Login</title>
+    <%- include('components/headers'); %>
 </head>
 <body>
+<%- include('components/navbar'); %>
+<br><br>
 <form action="/login" method="post">
     <input name="username" placeholder="Username" type="text">
     <input name="password" placeholder="Password" type="password">
     <button>Login</button>
 </form>
 <a href="/forgot">forgot password</a>
+<%- include('components/footer'); %>
 </body>
 </html>
