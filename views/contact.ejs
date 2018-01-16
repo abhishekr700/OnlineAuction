@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Contact-Us</title>
+    <%- include('components/headers'); %>
+    <style>
+
+        .margin-top-147 {
+            margin-top: 80px;
+        }
+        .clr-sml{
+            height: 10px;
+        }
+        body{
+            height: auto;
+        }
+        .text-center{
+            text-align: center;
+        }
+        .margin-left-right-20{
+            margin-left: 20px;
+            margin-right: 20px;
+        }
+        .t18{
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+
+<%- include('components/navbar'); %>
+<div class="margin-top-147">
+    <div class="ui container">
+        <div class="text-center" style="font-size: 35px;"><strong>Contact Us</strong></div>
+        <br><br>
+            <div class="ui grid">
+                <div class="one wide column"></div>
+                <div class="six wide column t22 text-center">
+                    <div class="clr-sml"></div>
+                    <div class="text-center"><img src="/contact.png" height="100"></div>
+                    <div class="clr-sml"></div>
+                    <div class="t18 margin-left-right-20 text-center">Thank you for your interest in Auctionator. You can reach us at  </div>
+                </div>
+                <div class="one wide column"></div>
+                <div class="six wide column">
+                    <div class="ui divided list">
+                        <div class="item">
+                            <i class="volume control phone icon" style="font-size: 20px;"></i>
+                            <div class="content">
+                                <a class="header" style="font-size: 20px;">Phone Number:</a>
+                                <div class="clr-sml"></div>
+                                <div class="description" style="font-size: 18px;">0123456789</div>
+                            </div>
+                        </div>
+                        <div class="clr-sml"></div>
+                        <div class="item">
+                            <div class="clr-sml"></div>
+                            <i class="marker icon" style="font-size: 20px;"></i>
+                            <div class="content">
+                                <a class="header" style="font-size: 20px;">Address:</a>
+                                <div class="clr-sml"></div>
+                                <div class="description" style="font-size: 18px;">Prem Marg,Roop Nagar, New Tola</div>
+                            </div>
+                        </div>
+                        <div class="clr-sml"></div>
+                        <div class="item">
+                            <div class="clr-sml"></div>
+
+                            <i class="mail icon" style="font-size: 20px;"></i>
+                            <div class="content">
+                                <a class="header" style="font-size: 20px;">Email Id:</a>
+                                <div class="clr-sml"></div>
+                                <div class="description" style="font-size: 18px;">placeholder@example.com</div>
+                            </div>
+                        </div>
+                        <div class="clr-sml"></div>
+                        <div class="item">
+                            <div class="clr-sml"></div>
+                            <i class="linkify icon" style="font-size: 20px;"></i>
+                            <div class="content">
+                                <a class="header" style="font-size: 20px;">Web:</a>
+                                <div class="clr-sml"></div>
+                                <div class="description" style="font-size: 18px;">http://localhost:4444</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+    </div>
+</div>
+<div class="clr-sml"></div>
+
+<br><br><br>
+<%- include('components/footer'); %>
+</body>
+</html>
