@@ -1,6 +1,6 @@
 //CheckLoggedIN
 function checkLoggedIn(req, res, next) {
-    if (req.user.dataValues.isVerified===false) {
+    if (req.user && req.user.dataValues.isVerified===false) {
         res.send("email not verified");
     }else if(req.user)
         next();
