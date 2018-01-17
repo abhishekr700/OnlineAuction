@@ -110,7 +110,11 @@ app.get("/", (req, res) => {
 
 });
 
+//render contact us page
 
+app.get("/contact",(req,res)=>{
+    res.render('contact');
+})
 //404 Handler
 app.use(function (req, res) {
     res.send("404 Error !!!")
