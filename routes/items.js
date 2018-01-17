@@ -154,7 +154,7 @@ route.post('/add', HELPERS.checkLoggedIn, upload.single('imgUploader'), function
                 allBids: []
             })
                 .then(() => {
-                    res.redirect('/items/add');
+                    res.redirect(`/items/${item._id}`);
                 })
                 .catch((err) => {
                     console.log(err);
