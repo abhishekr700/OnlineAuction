@@ -6,7 +6,9 @@ const models = require("../models/mongodb/mongo");
 
 route.get('/', function (req, res) {
     // console.log("render /users page");
-    res.render("user");
+    res.render("user",{
+        user:req.user.dataValues.username
+    });
 });
 
 //Show all users TODO: Remove this later
