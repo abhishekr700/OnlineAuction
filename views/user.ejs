@@ -3,28 +3,55 @@
 <head>
     <meta charset="UTF-8">
     <title>User | Online Auction</title>
-    <script src="lib/jquery-3.2.1.min.js" type="text/javascript"></script>
+    <%-include('components/headers');%>
+    <script src="js/user.js"></script>
     <script src="js/main.js"></script>
 </head>
 <body>
-<a href="/items?show=user">
-    <button id="products">view your items</button>
-</a>
-<a href="/items/add">
-    <button id="place_product">add a new item</button>
-</a>
-<a href="/items?show=all">
-    <button>view items</button>
-</a>
-<a href="/items?show=others">
-    <button>bid a item</button>
-</a>
-<a href="/items?show=userbids">
-    <button>bidded  items</button>
-</a>
-<br>
-<a href="/users/profile">
-    <button>View Profile</button>
-</a>
+<%- include('components/navbar'); %>
+<div style="margin: 12vmin">
+
+    <h1 style="font-size:xx-large">
+        Welcome <%=user%> !!!
+    </h1>
+    <div class=" ui grid" >
+        <div class="thirteen wide column"></div>
+        <div class="three wide column">
+            <div class="ui compact vertical labeled icon menu" style="border: none ; box-shadow: none">
+                <a href="/users/profile" >
+                    <button class="circular ui icon yellow button massive" data-tooltip="View Profile" style="margin: 2vh">
+                        <img src="../dashboard-images/profile.png" height="100vmax">
+                    </button>
+                </a>
+                <a href="/items?show=user">
+                    <button class="circular ui icon orange button massive" data-tooltip="View items placed" style="margin: 2vh">
+                        <img src="../dashboard-images/itemplaced.png" height="100vmax">
+                    </button>
+                </a>
+                <a href="/items?show=userbids">
+                    <button class="circular ui icon teal button massive" data-tooltip="View items bid on " style="margin: 2vh">
+                        <img src="../dashboard-images/userbids.png" height="100vmax">
+                    </button>
+                </a>
+                <a href="/items?show=others">
+                    <button class="circular ui icon olive button massive" data-tooltip="Buy" style="margin: 2vh">
+                        <img src="../dashboard-images/buy.png" height="100vmax">
+                    </button>
+                </a>
+                <a href="/items/add">
+                    <button class="circular ui icon pink button massive" data-tooltip="Sell" style="margin: 2vh">
+                        <img src="../dashboard-images/sell.png" height="100vmax">
+                    </button>
+                </a>
+            </div>
+        </div>
+    </div>
+
+
+
+
+</div>
+
+<%- include('components/footer'); %>
 </body>
 </html>
