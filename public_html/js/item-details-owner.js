@@ -17,12 +17,15 @@ $(() => {
         } else {
 
             bid.allBids.forEach((Bid) => {
-                var li = $("<li></\li>");
-                var div = $(`<div>user Id:${Bid.userID}</div>
-                <div>price:${Bid.price}</div>
-                <div>Time:${Bid.time}</div>`);
-                li.append(div);
-                ul.append(li);
+                ul.prepend(`
+                                <div class="item">
+                    <img class="ui avatar image" src="../u.jpg">
+                    <div class="content">
+                      <div class="header">${Bid.userID}</div>
+                      <div class="description">Placed a bid for <strong>${Bid.price}</strong></div>
+                    </div>
+                  </div>
+                `)
             });
 
         }
