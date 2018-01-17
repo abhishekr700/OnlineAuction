@@ -136,6 +136,68 @@ module.exports = function (app) {
         }(user);
     }
 
+    async function mailVerifyEmail(user) {
+        //console.log("in mail password");
+
+        // generate the token
+        let token = await  function () {
+            return new Promise((resolve) => {
+                crypto.randomBytes(20, function (err, buf) {
+                    let token = buf.toString('hex');
+                    resolve(token);
+                    //console.log(token);
+                    //console.log("f1 ", new Date());
+                });
+            })
+        }();
+
+        // update user table with token and expiry time
+        await  function (token) {
+            return new Promise((resolve) => {
+                //console.log("f2", new Date());
+                user.verifyEmailToken = token;
+                user.save().then(() => {
+                    // console.log("user saved");
+                    resolve();
+                }).catch((err) => {
+                    console.log(err);
+                });
+            })
+        }(token);
+
+        // send the mail to the user's email id
+        await  function (token, user) {
+            return new Promise((resolve, reject) => {
+                //console.log("f3", new Date());
+                let smtpTransport = nodemailer.createTransport({
+                    service: 'gmail',
+                    // TODO: add username and password
+                    auth: {
+                        user: CONFIG.SERVER.MAIL,
+                        pass: CONFIG.SERVER.PASS
+                    }
+                });
+                let mailOptions = {
+                    to: user.email,
+                    from: CONFIG.SERVER.MAIL,
+                    subject: 'verify email',
+                    text: 'You are receiving this because you (or someone else) have requested for verification of email for your account.\n\n' +
+                    'Please click on the following link, or paste this into your browser to complete the process:\n\n' +
+                    'http://' + CONFIG.SERVER.HOST + ":" + CONFIG.SERVER.PORT + '/verify/' + token + '\n\n' +
+                    'If you did not request this, please ignore this email.\n'
+                };
+                smtpTransport.sendMail(mailOptions, function (err) {
+                    console.log("sendmail",err);
+                    if (err) {
+                        //console.log("rejected");
+                        reject();
+                    } else {
+                        resolve();
+                    }
+                });
+            })
+        }(token, user);
+    }
 
 // when user clicks on forgot password
     app.get('/forgot', (req, res) => {
@@ -241,6 +303,26 @@ module.exports = function (app) {
             res.render("login");
     });
 
+//verify email
+    app.get("/verify/:token",(req,res)=>{
+        Users.find({
+            where: {
+                verifyEmailToken: req.params.token,
+            }
+        }).then((user) => {
+            if (!user) {
+                //TODO: Flash message
+                res.send('verify email token is invalid.');
+            } else {
+                user.isVerified=true;
+                user.save();
+                req.login(user, () => {
+                    res.redirect("/users");
+                });
+            }
+        })
+    })
+
 //New User via SignUp route
     app.post("/signup", (req, res) => {
 
@@ -264,7 +346,8 @@ module.exports = function (app) {
                                 name: req.body.name,
                                 email: req.body.email,
                                 phone1: req.body.phone1,
-                                phone2: req.body.phone2
+                                phone2: req.body.phone2,
+                                isVerified:false
                             })
                                 .then((user) => {
 
@@ -273,10 +356,16 @@ module.exports = function (app) {
                                         bidsOn: []
                                     })
                                         .then((data)=>{
-                                            console.log("Userbid: ",data);
-                                            req.login(user, () => {
-                                                res.redirect("/users");
-                                            });
+                                            // console.log("Userbid: ",data);
+                                            mailVerifyEmail(user).then(()=>{
+                                                // req.login(user, () => {
+                                                //     res.redirect("/users");
+                                                // });
+                                                res.send("email not verified");
+                                            }).catch((err)=>{
+                                                console.log(err);
+                                            })
+
                                         })
                                         .catch((err)=>{
                                             console.log(err);
