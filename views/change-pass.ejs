@@ -2,16 +2,85 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Password Change</title>
+    <%- include('components/headers'); %>
+    <style>
+        .margin-top-167 {
+            margin-top: 167px;
+        }
+        .clr-sml{
+            height: 10px;
+        }
+        body{
+            height: auto;
+        }
+        .text-center{
+            text-align: center;
+        }
+        .margin-left-right-20{
+            margin-left: 20px;
+            margin-right: 20px;
+        }
+        .t18{
+            font-size: 18px;
+        }
+        .t16 {
+            font-size: 16px;
+        }
+        .margin-top-40{
+            margin-top: 40px;
+        }
+    </style>
 </head>
 <body>
+<%- include('components/navbar'); %>
+<div class="margin-top-167">
+    <div class="ui container">
+        <form class="ui form" action="/users/changePass" method="post">
+            <div class="ui grid">
+                <div class="six wide field t22 text-center">
+                    <div class="text-center"><img src="/images/reset_password.png" height="80"></div>
+                    <div class="clr-sml"></div>
+                    <div class="text-center t18" style="color: #0d71bb"><b>Change Your Password</b></div>
+                    <div class="clr-sml"></div>
+                    <div class="t16 margin-left-right-20 text-center">We maintain your privacy completely by using encryption so that no one can get into your account..</div>
+                </div>
+                <div class="one wide field"></div>
+                <div class="eight wide field margin-top-40">
+                    <h4 class="ui dividing header" style="color: #9e1317;font-size: 22px;">Change Password</h4>
+                    <div class="clr-sml"></div>
 
-<form action="/users/changePass" method="post">
-    <input type="password" name="currentpass" placeholder="Enter current password" required>
-    <input type="password" name="newpass" placeholder="Enter new password" required>
-    <button>Submit</button>
-    <!--<input type="password" placeholder="Enter current password">-->
-</form>
+                    <div class="clr-sml"></div>
+                    <div class="field">
+                        <input type="password" name="currentpass" placeholder="Enter current password" required>
+
+                    </div>
+                    <div class="field">
+                        <input type="password" name="newpass" placeholder="Enter new password" required>
+
+                    </div>
+                    <div class="clr-sml"></div>
+                    <div class="field text-center">
+                        <button class="ui primary button" type="submit">Submit</button>
+                    </div>
+                </div>
+
+            </div>
+        </form>
+    </div>
+</div>
+<div class="clr-sml"></div>
+<br><br><br><br><br>
+<%- include('components/footer'); %>
 
 </body>
 </html>
+
+
+
+<!--<form action="/users/changePass" method="post">-->
+    <!--<input type="password" name="currentpass" placeholder="Enter current password" required>-->
+    <!--<input type="password" name="newpass" placeholder="Enter new password" required>-->
+    <!--<button>Submit</button>-->
+    <!--&lt;!&ndash;<input type="password" placeholder="Enter current password">&ndash;&gt;-->
+<!--</form>-->
