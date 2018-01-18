@@ -73,6 +73,11 @@ app.use(Passport.session());
     Routes
  */
 
+app.use((req,res,next)=>{
+    res.locals.user = req.user;
+    next();
+});
+
 //Items route
 app.use("/items", require("./routes/items"));
 app.use("/bids", require("./routes/bids"));

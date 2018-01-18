@@ -1,33 +1,34 @@
 <!--Navbar-->
 <style>
-    #navbar-main{
+    #navbar-main {
         border-radius: 0px;
         margin-top: 0em;
         margin-bottom: 1em;
     }
 
-    #navbar-logo{
+    #navbar-logo {
         margin-right: 1.5em;
         margin-left: 3em;
     }
 
-    #site-title{
+    #site-title {
         font-size: 1.3em;
     }
-    #nav-adjust{
+
+    #nav-adjust {
         margin-top: 3.6em;
     }
 </style>
 <div class="ui fixed inverted menu" id="navbar-main">
-        <a href="/" class="header item">
-            <img src="http://via.placeholder.com/70x70" alt="" class="logo" id="navbar-logo">
-            <span id="site-title">Auctionator</span>
-        </a>
-        <div class="right menu">
-            <a href="/items?show=all" class="item">All Auctions</a>
-
-            <div class="ui pointing dropdown link item">
-            <span class="text">Welcome User</span>
+    <a href="/" class="header item">
+        <img src="http://via.placeholder.com/70x70" alt="" class="logo" id="navbar-logo">
+        <span id="site-title">Auctionator</span>
+    </a>
+    <div class="right menu">
+        <a href="/items?show=all" class="item">All Auctions</a>
+        <% if(user){ %>
+        <div class="ui pointing dropdown link item">
+            <span class="text">Welcome <%= user.dataValues.username %></span>
             <i class="dropdown icon"></i>
             <div class="menu">
                 <a class="item" href="/login">Login/SignUp</a>
@@ -36,7 +37,12 @@
                 <a class="item" href="/logout">Logout</a>
             </div>
         </div>
+        <%} else {%>
+        <div class="right item">
+            <a class="ui inverted button" href="/login">Log In/Sign Up</a>
         </div>
+        <%}%>
+    </div>
 </div>
 <div id="nav-adjust">
 
