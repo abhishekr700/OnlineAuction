@@ -7,13 +7,17 @@
     <script src="js/user.js"></script>
     <script src="js/main.js"></script>
     <style>
-        .points{
+        .points {
             font-size: 16px;
             color: #9e1317;
         }
-        .clr-sml{
+
+        .clr-sml {
             height: 0.5em;
         }
+        [contenteditable] { padding: 5px; outline: 0px solid transparent; border-radius: 3px; }
+        [contenteditable]:not(:focus) { border: 1px solid #ddd; }
+        [contenteditable]:focus { border: 1px solid #51a7e8; box-shadow: inset 0 1px 2px rgba(0,0,0,0.075),0 0 5px rgba(81,167,232,0.5); }
     </style>
 </head>
 <body>
@@ -27,27 +31,61 @@
             <div class="ui horizontal divider">Your Details</div>
             <div style="font-size: 18px;" class="ui left aligned">
                 <div class="clr-sml"></div>
-                <div style="font-size: 20px;"><strong ><%= user %></strong></div>
+                <div style="font-size: 20px;"><strong><%= user.dataValues.username %></strong></div>
                 <div class="clr-sml"></div>
                 <div class="clr-sml"></div>
-            <div>Username: Username</div><div class="clr-sml"></div>
-            <div>Email-Id: Email-id</div><div class="clr-sml"></div>
-            <div>Phone Number 1: Number</div><div class="clr-sml"></div>
-            <div>Phone Number 2: Number</div><div class="clr-sml"></div>
+                    <div>Username: <strong><%= user.dataValues.username %></strong></div>
+                    <div class="clr-sml"></div>
+                    <div>Email-Id: <strong><%= user.dataValues.email %></strong></div>
+                    <div class="clr-sml"></div>
+                    <div class="ui grid">
+                        <div class="eight wide column" style="text-align: right">
+                            Phone1: &nbsp;&nbsp;&nbsp;<span id="ChangePhone1Button" data-phone="<%=user.dataValues.phone1%>">
+                                <i class="edit icon" style="font-size: 1.3em;color: #bd081c;"></i>
+                            </span>
+                        </div>
+                        <div class="eight wide column" style="margin: 0; text-align: left">
+                            <div id="contentedit">
+                                <%=user.dataValues.phone1%>
+                            </div>
+                        </div>
 
+                    </div>
+                    <div class="clr-sml"></div>
+                    <div class="ui grid">
+                        <div class="eight wide column" style="text-align: right">
+                            Phone2:&nbsp;&nbsp;&nbsp;&nbsp;<span id="ChangePhone2Button" data-phone="<%=user.dataValues.phone2%>" style="width: 0.5em;">
+                                <i class="edit icon" style="font-size: 1.3em; color: #bd081c;"></i>
+                            </span>
+
+                        </div>
+
+
+                        <div class="eight wide column" style="text-align: left;margin: 0">
+                            <div id="contentedit2">
+                                <%=user.dataValues.phone2%>
+                            </div>
+
+                        </div>
+
+                    </div>
+                    <div class="clr-sml"></div>
+
+                <div id="edit-message"></div>
+                <div class="clr-sml"></div>
+                    <button class="ui right button blue" id="editProfile">Edit Profile</button>
             </div>
             <div class="clr-sml"></div>
-            <div class="clr-sml"></div>
-            <a href="">
-                <button class="ui right labeled icon button blue big">
+            <a href="/users/changePass">
+                <button class="ui right labeled icon button red">
                     <i class="right arrow icon"></i>
-                    <span style="">Edit Profile</span>
+                    <span style="">Edit Password</span>
                 </button>
             </a>
         </div>
         <div class="eleven wide column center aligned">
             <h1 style="font-size:xx-large">
-                Welcome <%= user %> !!!
+                Welcome <%= user.dataValues.username %> !!!
             </h1>
             <div class="ui compact vertical labeled icon menu grid" style="border: none ; box-shadow: none">
                 <div class="four wide column center aligned">
