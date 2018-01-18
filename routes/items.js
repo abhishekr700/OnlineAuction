@@ -197,14 +197,14 @@ route.get("/:id", (req, res) => {
             //             .then((item) => {
             //                 console.log("user: " + req.user);
                             if (!req.user || item.userID !== req.user.id) {
-                                res.render("item-details-owner", {
+                                res.render("item-details", {
                                     item: item,
                                     isOwner: false,
                                     bidplaced: false
                                 });
                             }
                             else {
-                                res.render("item-details-owner", {
+                                res.render("item-details", {
                                     item: item,
                                     isOwner: true,
                                     bidplaced: false
@@ -226,16 +226,17 @@ route.get("/:id/bidplaced",HELPERS.checkLoggedIn, (req, res) => {
     })
         .then((item) => {
                             if (!req.user || item.userID !== req.user.id) {
-                                res.render("item-details-owner", {
+                                res.render("item-details", {
                                     item: item,
                                     bidplaced: true,
                                     isOwner: false
                                 });
                             }
                             else {
-                                res.render("item-details-owner", {
+                                res.render("item-details", {
                                     item: item,
-                                    isOwner: true
+                                    isOwner: true,
+                                    bidplaced: true,
                                 });
                             }
                         })

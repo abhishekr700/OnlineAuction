@@ -123,6 +123,9 @@ app.get("/contact",(req,res)=>{
 app.get("/privacy-policy",(req,res)=>{
     res.render('privacy-policy');
 });
+app.get("/terms-and-conditions",(req,res)=>{
+    res.render('termsAndConditions');
+});
 //404 Handler
 app.use(function (req, res) {
     res.send("404 Error !!!")
@@ -135,7 +138,7 @@ io.use(function(socket, next){
         // Wrap the express middleware
     sessionMiddleware(socket.request, {}, next);
         console.log("After next");
-    })
+    });
 
 io.on('connection', (socket) => {
 

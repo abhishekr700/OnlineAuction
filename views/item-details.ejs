@@ -4,51 +4,186 @@
     <meta charset="UTF-8">
     <title>Item Details</title>
     <%- include('components/headers'); %>
-    <script src="/lib/jquery-3.2.1.min.js" type="text/javascript"></script>
     <script src="/socket.io/socket.io.js"></script>
     <script src="/js/lib/easytimer.js" type="text/javascript"></script>
-
     <script src="/js/item-details.js" type="text/javascript"></script>
 </head>
+<style>
+    @font-face {
+        font-family: 'clockfont';
+        src: url('/lib/DSEG7Classic-Bold.woff') format('woff'), /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */ url('/lib/DSEG7Classic-Bold.ttf') format('truetype'); /* Chrome 4+, Firefox 3.5, Opera 10+, Safari 3—5 */
+    }
+
+    #main-container {
+        margin-top: 10em;
+        margin-bottom: 10em;
+    }
+
+    #list {
+        height: 22em;
+        overflow-y: scroll;
+        overflow-x: hidden;
+    }
+
+    #admin-row {
+        margin-top: 1em;
+
+    }
+
+    #inctime-container {
+        margin-top: 2em;
+    }
+
+    #min-bid-cont {
+        margin-top: 1em;
+    }
+
+    #timer {
+        margin-top: 2em;
+        /*font-family: clockfont;*/
+    }
+
+    .timerValues {
+        font-family: clockfont;
+        font-size: 2em;
+    }
+</style>
 <body>
 <%- include('components/navbar'); %>
+<div id="item-detail" data-itemid=<%= item._id %>>
+    <div class="ui container" id="main-container">
 
-<div id="item-detail" data-itemid=<%= item._id %> class="">
-    <% if(bidplaced){ %>
-    <img src=../../Images/<%= item._id %>.jpg><br>
-    <% } else{ %>
-    <img src=../Images/<%= item._id %>.jpg><br>
-    <% } %>
-    Name: <%= item.name %> <br>
-    Description: <%= item.desc %><br>
-    by User: <%= item.userID %><br>
-    category: <%= item.category %><br>
-    basevalue: <%= item.basevalue %><br>
-    maxbid:<%= item.minbid %><br>
+        <div class="ui grid">
+            <div class="ui header">
+                <div class="content">
+                    <h1 class="ui header"><%= item.name %></h1>
+                    <div class="extra">
+                        <div class="ui label"><i class="globe icon"></i> <%= item.category %></div>
+                    </div>
 
-    duration:
-    <div id="timer">
-        <span class="days"></span><span> days</span>
-        <span class="hours"></span><span> hours</span>
-        <span class="minutes"></span><span> minutes</span>
-        <span class="seconds"></span><span> seconds</span>
+                </div>
+            </div>
+
+            <div class="row owner" id="isOwner" style="position: relative">
+                <div class="six wide column">
+                    <% if(bidplaced){ %>
+                    <img src=../../Images/<%= item._id %>.jpg><br>
+                    <% } else{ %>
+                    <img src=../Images/<%= item._id %>.jpg><br>
+                    <% } %>
+                </div>
+                <div class="five wide column">
+                    <!--Current Value-->
+                    <div class="row">
+                        <!--<span></span>Owner: <%= item.userID %>-->
+                        <!--<span></span>category: <%= item.category %><br>-->
+                        <div class="ui statistic">
+                            <div class="value" style="color: red; text-align: left">
+                                <%= item.minbid %>
+                            </div>
+                            <div class="label" id="max-price" style="color: red; text-align: left">
+                                Current Value
+                            </div>
+                        </div>
+                    </div>
+                    <!--Min-Bid-->
+                    <div class="row" id="min-bid-cont">
+                        <div class="ui statistic">
+
+                            <div class="value" style="font-size: 2em!important; color: blue; text-align: left">
+                                <%= item.basevalue %>
+                            </div>
+                            <div class="label" style="color: blue; text-align: left; font-size: 0.8em;">
+                                Minimum Bid
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div id="timer">
+                            <span class="days" style="font-weight: bolder;font-size: 1.5em "></span>
+                            <span style="font-weight: bolder;font-size: 1.5em ">&nbsp;Days</span>
+                            <br>
+                            <br>
+                            <span class="hours timerValues"></span><span class="timerValues">:</span>
+                            <span class="minutes timerValues"></span><span class="timerValues">:</span>
+                            <span class="seconds timerValues"></span><span class="timerValues"></span>
+                        </div>
+                        <% if(isOwner){ %>
+                        <div id="inctime-container">
+
+                            <form action="/items/<%= item._id %>/incTime" method="post" class="ui form">
+                                <div class="ui input focus">
+                                    <div class="field">
+                                        <label>Increase Auction Time</label>
+                                        <input type="text" placeholder="Duration" name="duration">
+                                    </div>
+                                </div>
+                                <div class="ui input focus">
+                                    <div class="field">
+                                        <label for="">&nbsp</label>
+                                        <button type="submit" id="bid" name="<%= item._id %> class="ui button teal">Submit</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <% } else { %>
+                        <form action="/items/<%= item._id %>/bid" method="post" class="ui form">
+
+                            <div class="ui input focus ">
+                                <div class="field">
+                                    <label>Place Your Bid</label>
+                                    <input type="number" name="bidprice" class="bidplaced"
+                                           min="<%= item.minbid %>" required id="<%= bidplaced %>">
+                                </div>
+                            </div>
+                            <div class="ui input focus ">
+                                <div class="field">
+                                    <label for="">&nbsp</label>
+                                    <button id="bid" name="<%= item._id %>">
+                                        Submit
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+
+                        <% } %>
+                    </div>
+                </div>
+                <div class="one wide column">
+                    <div class="ui vertical divider">
+                        Bids
+                    </div>
+                </div>
+                <div class="four wide column" id="list">
+                    <ul id="bids" class="ui middle aligned animated divided list"></ul>
+                </div>
+            </div>
+            <div class="ui divider"></div>
+            <div class="row">
+                <div class="column">
+                    <h2>Item Details</h2>
+                    <p><%= item.desc %><br></p>
+                </div>
+            </div>
+            <% if(isOwner){ %>
+            <div class="row center aligned" id="admin-row">
+
+                <div class="column center aligned" >
+                    <a href="/items/<%= item._id %>/delete">
+                        <label for="">&nbsp</label>
+                        <button class="ui button red">Delete This Item</button>
+                    </a>
+                </div>
+            </div>
+            <% } %>
+        </div>
     </div>
-
-
-    <form action="/items/<%= item._id %>/bid" method="post">
-
-        <input type="number" name="bidprice" class="bidplaced" id="<%= bidplaced %>" min="<%= item.minbid %>" required>
-
-        <button id="bid" name="<%= item._id %>">
-            Submit
-        </button>
-    </form>
     <div id="msg"></div>
-    <ul id="bids"></ul>
 
+</div>
 
 </div>
 <%- include('components/footer'); %>
-
 </body>
 </html>

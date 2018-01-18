@@ -1,12 +1,15 @@
 var socket = io();
-
+let queryString = decodeURIComponent(window.location);
+queryString = queryString.split('/');
+queryString = queryString[queryString.length - 1];
 $(() => {
-    let name = $(".bidplaced")[0].id;
-
-    socket.emit("prodID", {
-        prodId: $('#bid')[0].name
-    })
+    var name=false;
+    let isOwner=$(".owner")[0].id;
+    if(!isOwner)
+      name = $(".bidplaced")[0].id;
+    socket.emit('prodID', {prodId:  $('#bid')[0].name});
     socket.on('bid', (data) => {
+        console.log(data);
         var bid = data.bids;
         var ul = $("#bids");
         ul.html("");
@@ -14,51 +17,75 @@ $(() => {
         } else {
 
             bid.allBids.forEach((Bid) => {
-                var li = $("<li></\li>");
-                var div = $(`<div>user Id:${Bid.userID}</div>
-                <div>price:${Bid.price}</div>
-                <div>Time:${Bid.time}</div>`);
-                li.append(div);
-                ul.append(li);
+                if(name)
+                {
+                    ul.prepend(`
+                                <div class="item">
+                    <img class="ui avatar image" src="../../u.jpg">
+                    <div class="content">
+                      <div class="header">${Bid.userID}</div>
+                      <div class="description">Placed a bid for <strong>${Bid.price}</strong></div>
+                    </div>
+                  </div>
+                `)
+
+                }else {
+                    ul.prepend(`
+                                <div class="item">
+                    <img class="ui avatar image" src="../u.jpg">
+                    <div class="content">
+                      <div class="header">${Bid.userID}</div>
+                      <div class="description">Placed a bid for <strong>${Bid.price}</strong></div>
+                    </div>
+                  </div>
+                `)
+                }
             });
 
         }
-    })
+    });
     if (name) {
-        console.log($('#bid')[0].name);
         socket.emit('bid2'
             , {prodId: $('#bid')[0].name});
 
     }
 
+    Number.prototype.zeroPad = function(length) {
+        length = length || 2; // defaults to 2 if no parameter is passed
+        return (new Array(length).join('0')+this).slice(length*-1);
+    };
     let timer = new Timer();
     $.get(`/items/${$("#item-detail").data("itemid")}/time`, function (data) {
-        // console.log("ll");
-        console.log(data.timeRemaining);
         if (data.timeRemaining > 0) {
             timer.start({countdown: true, startValues: {seconds: data.timeRemaining}});
 
             timer.addEventListener("secondsUpdated", function (e) {
                 $('#timer .days').html(timer.getTimeValues().days);
-                $('#timer .hours').html(timer.getTimeValues().hours);
-                $('#timer .minutes').html(timer.getTimeValues().minutes);
-                $('#timer .seconds').html(timer.getTimeValues().seconds);
+                $('#timer .hours').html(timer.getTimeValues().hours.zeroPad());
+                $('#timer .minutes').html(timer.getTimeValues().minutes.zeroPad());
+                $('#timer .seconds').html(timer.getTimeValues().seconds.zeroPad());
             });
 
             timer.addEventListener('targetAchieved', function (e) {
-                $('#timer').html("Bid Closed");
+                $('#timer').html("Bid Closed").css('font-size','x-large');
                 //Emit event on timer ends
+                $('#max-price').html("Sold At");
                 socket.emit("bid-closed",{
-                    prodID: $('#bid')[0].name
+                    prodID: $("#item-detail").data("itemid")
                 });
             });
         }
         else {
-            $('#timer').html("Bid Closed");
+            $('#max-price').html("Sold At");
+            $('#timer').html("Bid Closed").css('font-size','x-large');
+            socket.emit("bid-closed",{
+                prodID: $("#item-detail").data("itemid")
+            });
         }
-    })
+    });
 
     socket.on("msg",(data)=>{
+        console.log(data);
         $("#msg").html(data.msg);
     })
 });
