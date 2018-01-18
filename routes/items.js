@@ -170,7 +170,7 @@ route.post('/add', HELPERS.checkLoggedIn, upload.single('imgUploader'), function
 
 //Get item details
 route.get("/:id", (req, res) => {
-    console.log("in gett");
+
     models.Products.findById(req.params.id, {
         // _id: 0
     })
@@ -221,7 +221,6 @@ route.get("/:id", (req, res) => {
 
 //Get item details
 route.get("/:id/bidplaced",HELPERS.checkLoggedIn, (req, res) => {
-    console.log("in gett");
     models.Products.findById(req.params.id, {
         // _id: 0
     })
@@ -245,7 +244,7 @@ route.get("/:id/bidplaced",HELPERS.checkLoggedIn, (req, res) => {
             //         // console.log("Item:",item);
             //         models.Products.findById(req.params.id)
             //             .then((item) => {
-                            console.log("user: " + req.user);
+            //                 console.log("user: " + req.user);
                             if (!req.user || item.userID !== req.user.id) {
                                 res.render("item-details", {
                                     item: item,
