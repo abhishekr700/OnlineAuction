@@ -176,7 +176,7 @@ io.on('connection', (socket) => {
     })
 
     socket.on("bid-closed",(data)=>{
-
+  console.log("biddcloseesss");
         models.Products.findById(data.prodID)
             .then((item) => {
                 // console.log(item);
@@ -197,14 +197,17 @@ io.on('connection', (socket) => {
                             let userID = socket.request.session.passport.user;
                             //Check if user is winner\
                             let winner = bidentry.allBids[bidentry.allBids.length -1];
-                            if(userID === winner.userID){
+                            if(winner && userID === winner.userID){
                                 socket.emit("msg",{
                                     msg: "You won the bid"
                                 });
                             }
                             else if(userID === item.userID){
                                 console.log("Socket msg to owner",item.userID,userID);
-                                socket.emit("msg",{msg: "Your product was purchased by " + winner.userID })
+                                if(winner)
+                                    socket.emit("msg",{msg: "Your product was purchased by " + winner.userID })
+                                else
+                                    socket.emit("msg",{msg: "Your product went unsold" })
                             }
                             else{
                                 for(let bid of bidentry.allBids){

@@ -1,7 +1,7 @@
 $(function () {
-    $('.special.cards .image').dimmer({
-        on: 'hover'
-    });
+    // $('.special.cards .image').dimmer({
+    //     on: 'hover'
+    // });
 
     $('#filter').click(()=> {
 
@@ -18,7 +18,7 @@ $(function () {
 
     //Update timers for each item displayed
     let list = $("#productlist").children();
-    for (let item of list) {
+    for (let item of list.children()) {
         updateTimer(item.getAttribute("id"));
     }
 
@@ -26,7 +26,10 @@ $(function () {
     $("button[data-btn='details']").click(RedirectToItemDetails);
 
 });
-
+Number.prototype.zeroPad = function(length) {
+    length = length || 2; // defaults to 2 if no parameter is passed
+    return (new Array(length).join('0')+this).slice(length*-1);
+};
 //Update timer of a single product
 function updateTimer(prodID) {
     let timer = new Timer();
@@ -39,18 +42,27 @@ function updateTimer(prodID) {
 
             timer.addEventListener("secondsUpdated", function (e) {
                 $(`div[data-timer="${prodID}"] .days`).html(timer.getTimeValues().days);
-                $(`div[data-timer="${prodID}"] .hours`).html(timer.getTimeValues().hours);
-                $(`div[data-timer="${prodID}"] .minutes`).html(timer.getTimeValues().minutes);
-                $(`div[data-timer="${prodID}"] .seconds`).html(timer.getTimeValues().seconds);
+                $(`div[data-timer="${prodID}"] .hours`).html(timer.getTimeValues().hours.zeroPad());
+                $(`div[data-timer="${prodID}"] .minutes`).html(timer.getTimeValues().minutes.zeroPad());
+                $(`div[data-timer="${prodID}"] .seconds`).html(timer.getTimeValues().seconds.zeroPad());
+                $(`div[data-max-price="${prodID}"]`).html("Current Value");
             });
 
             timer.addEventListener('targetAchieved', function (e) {
-                $(`div[data-timer="${prodID}"]`).html("Bid Closed");
+                let timer=`div[data-timer="${prodID}"]`;
+                $(timer).html("Bid Closed");
+                $(`div[data-max-price="${prodID}"]`).html("Sold At");
+                $(timer).css("font-size","x-large");
+                $(timer).css("color","blue");
             });
         }
         else {
             //If bid already closed
-            $(`div[data-timer="${prodID}"]`).html("Bid Closed");
+            let timer=`div[data-timer="${prodID}"]`;
+            $(`div[data-max-price="${prodID}"]`).html("Sold At")
+            $(timer).html("Bid Closed");
+            $(timer).css("font-size"," x-large");
+            $(timer).css("color","purple");
         }
     })
 }
@@ -58,6 +70,5 @@ function updateTimer(prodID) {
 //Event handler for "View Item Details" button (Open the Item's details page in a new tab)
 function RedirectToItemDetails(ev) {
     let id = ev.target.parentNode.id;
-    console.log(id);
     window.open('/items/' + id);
 }

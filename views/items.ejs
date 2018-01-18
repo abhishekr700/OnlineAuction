@@ -11,11 +11,21 @@
             margin-top: 3em;
             margin-bottom: 5em;
         }
+        @font-face {
+            font-family: 'clockfont';
+            src: url('/lib/DSEG7Classic-Bold.woff') format('woff'), /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
+            url('/lib/DSEG7Classic-Bold.ttf') format('truetype'); /* Chrome 4+, Firefox 3.5, Opera 10+, Safari 3—5 */
+        }
+        .timerValues {
+            font-family: clockfont;
+            font-size: 2em;
+        }
     </style>
 </head>
 <body>
 
 <%- include('components/navbar'); %>
+
 
 <div class="context example" style="margin: 1vmax ; margin-top: 5vmax">
     <!--<div class="ui top attached demo menu">-->
@@ -25,7 +35,7 @@
     </a>
 
     <div class="ui bottom attached segment pushable" style="border: none">
-        <div class="ui  labeled icon left inline vertical sidebar menu">
+     <div class="ui  labeled icon left inline vertical sidebar menu">
             <a class="item">
 
                 Home
@@ -43,49 +53,71 @@
                 History
             </a>
         </div>
-        <div class="pusher" id="all-item-container">
-            <div class="ui basic segment">
+     <div class="pusher" id="all-item-container">
+        <div class="ui basic segment">
 
-
-                <div class="ui special cards container"  id="productlist" >
+                <div class="ui"  id="productlist" style="margin-left: 12em!important;margin-right: 12em!important;">
+                    <div class="ui items" >
                     <% items.forEach((item)=>{%>
 
+                            <div class="ui item" id="<%= item._id%>" style="width: 100%; margin-left: 2vw ;border: 1px solid #dddddd; border-radius: 2px; padding: 1em;">
+                                <div class="image">
+                                    <img src="./Images/<%= item._id%>.jpg">
+                                </div>
+                                <div class="ui grid content">
+                                    <div class="row">
+                                        <div class="eleven wide column">
+                                            <div class="header" style="font-weight: bolder; font-size: x-large"><%= item.name %></div><br>
+                                            <div class="meta" style="font-size: large">
+                                                <div><%= item.category%></div>
+                                            </div> <br>
+                                            <div class="extra" id="timer">
+                                                <div data-timer=<%= item._id %>>
+                                                    <span class="days" style="font-weight: bolder;font-size: 1.5em "></span>
+                                                    <span style="font-weight: bolder;font-size: 1.5em ">&nbsp;Days</span>
+                                                    <br>
+                                                    <br>
+                                                    <span class="hours timerValues"></span><span class="timerValues">:</span>
+                                                    <span class="minutes timerValues"></span><span class="timerValues">:</span>
+                                                    <span class="seconds timerValues"></span><span class="timerValues"></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                      <div class=" five wide column">
+                                        <div class="ui statistic">
+                                            <div class="value" style="color: red; text-align: left">
+                                                <%= item.minbid %>
+                                            </div>
+                                            <div class="label" data-max-price="<%= item._id %>" style="color: red; text-align: left">
+                                                Current Value
+                                            </div>
+                                        </div>
+                                        <div  id="<%= item._id%>" style="margin-top: 5vh">
 
-                    <div class="card"  id="<%= item._id%>" style="margin-left: 5vw ; height: 50vh">
-                        <div class="blurring dimmable image">
-                            <div class="ui inverted dimmer">
-                                <div class="content" >
-                                    <div class="center" id="<%= item._id%>">
-                                        <button class="ui primary button" data-btn="details">View Details</button>
+                                            <button class="ui right floated primary button" data-btn="details" >
+                                                View Details
+                                                <i class="right chevron icon"></i>
+                                            </button>
+                                        </div>
+                                    </div>
                                     </div>
                                 </div>
                             </div>
-                            <img  src="../Images/<%= item._id%>.jpg" style="height: 30vh">
-                        </div>
-                        <div class="content">
-                            <div class="header"><%= item.name %></div>
-                            <div class="meta">
-                                <span class="date"><%= item.category%></span>
-                            </div>
-                        </div>
-                        <div class="extra content" id="timer">
-                            <div data-timer=<%= item._id %>>
-                                <span class="days"></span><span> days</span>
-                                <span class="hours"></span><span> hours</span>
-                                <span class="minutes"></span><span> minutes</span>
-                                <span class="seconds"></span><span> seconds</span>
-                            </div>
-                        </div>
-                    </div>
-
                     <%})%>
+                    </div>
                 </div>
 
-            </div>
         </div>
-    </div>
+        </div>
 
-</div>
+
+     </div>
+
+ </div>
+
+
+
+
 
 <%- include('components/footer'); %>
 

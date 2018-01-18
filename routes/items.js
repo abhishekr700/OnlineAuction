@@ -27,6 +27,7 @@ route.get("/", (req, res) => {
     if (req.query.show === "all") {
         models.Products.find({})
             .then((items) => {
+            items.reverse();
                 res.render("items", {
                     items
                 })
@@ -47,6 +48,7 @@ route.get("/", (req, res) => {
                     }
                 })
                     .then((items) => {
+                     items.reverse();
                         res.render("items", {
                             items
                         })
@@ -63,6 +65,7 @@ route.get("/", (req, res) => {
                     userID: req.user.id
                 })
                     .then((items) => {
+                      items.reverse();
                         res.render("items", {
                             items
                         })
@@ -92,7 +95,7 @@ route.get("/", (req, res) => {
                             }
                         })
                             .then((items)=>{
-                                console.log(arr);
+                                items.reverse();
                                 res.render("items",{
                                     items
                                 })
