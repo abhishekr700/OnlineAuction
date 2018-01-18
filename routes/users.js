@@ -38,6 +38,21 @@ route.get("/profile", (req, res) => {
         })
 });
 
+//edit Profile
+route.post("/editProfile",(req,res)=>{
+    Users.findById(req.user.id)
+        .then((user)=>{
+            user.phone1=req.body.phone1;
+            user.phone2=req.body.phone2;
+            user.save();
+            res.redirect('/users');
+        })
+        .catch((err)=>{
+            console.log(err);
+        })
+
+})
+
 //Render change password page
 route.get("/changePass",(req,res)=>{
     res.render("change-pass");
