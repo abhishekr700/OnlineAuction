@@ -26,18 +26,6 @@ route.get("/userbids",(req,res)=>{
 })
 
 
-//Get User details
-route.get("/profile", (req, res) => {
-    Users.findById(req.user.id, {
-        attributes: ["username", "name", "email", "phone1", "phone2"]
-    })
-        .then((user) => {
-            res.render("profile",{
-                user
-            })
-        })
-});
-
 //edit Profile
 route.post("/editProfile",(req,res)=>{
     Users.findById(req.user.id)

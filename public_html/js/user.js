@@ -39,21 +39,32 @@ $(() => {
         }
     });
 
+
     //edit profile post
     var editProfile=$('#editProfile');
     editProfile.click(function () {
+
+        var content1=contentedit1.html().replace(/\s/g,'');
+        var content2=contentedit2.html().replace(/\s/g,'');
         //update only if fields changed
-        if(contentedit1.html().replace(/\s/g,'')!=buttonclick.attr("data-phone").replace(/\s/g,'')||contentedit2.html().replace(/\s/g,'')!=buttonclick2.attr("data-phone").replace(/\s/g,'')) {
-            $.post('/users/editprofile', {
-                    phone1: contentedit1.html(),
-                    phone2: contentedit2.html()
-                },
-                function () {
-                    $('#edit-message').text("Updated Profile Page");
-                    contentedit1.removeAttr("contenteditable");
-                    contentedit2.removeAttr("contenteditable");
-                    console.log("done");
-                })
+        if(content1!=buttonclick.attr("data-phone").replace(/\s/g,'')||content2!=buttonclick2.attr("data-phone").replace(/\s/g,'')) {
+
+            if (content1.length == 10&&content2.length&&content1.match(/^[0-9]+$/) != null&&content2.match(/^[0-9]+$/) != null) {
+                $.post('/users/editprofile', {
+                        phone1: contentedit1.html(),
+                        phone2: contentedit2.html()
+                    },
+                    function () {
+                        $('#edit-message').text("Updated Profile Page");
+                        contentedit1.removeAttr("contenteditable");
+                        contentedit2.removeAttr("contenteditable");
+                        console.log("done");
+                    })
+            }
+            else {
+                $('#edit-message').text("Number Pattern not matched");
+            }
+
         }
         else{
             $('#edit-message').text("Already Updated");
