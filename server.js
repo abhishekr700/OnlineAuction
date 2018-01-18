@@ -119,7 +119,10 @@ app.get("/", (req, res) => {
 
 app.get("/contact",(req,res)=>{
     res.render('contact');
-})
+});
+app.get("/privacy-policy",(req,res)=>{
+    res.render('privacy-policy');
+});
 //404 Handler
 app.use(function (req, res) {
     res.send("404 Error !!!")
