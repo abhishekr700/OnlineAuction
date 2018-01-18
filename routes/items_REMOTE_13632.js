@@ -197,17 +197,17 @@ route.get("/:id", (req, res) => {
             //             .then((item) => {
             //                 console.log("user: " + req.user);
                             if (!req.user || item.userID !== req.user.id) {
-                                res.render("item-details-owner", {
+                                res.render("item-details", {
                                     item: item,
-                                    isOwner: false,
+                                    // minbid: minbid,
                                     bidplaced: false
                                 });
                             }
                             else {
                                 res.render("item-details-owner", {
                                     item: item,
-                                    isOwner: true,
-                                    bidplaced: false
+                                    // minbid: minbid,
+
                                 });
                             }
                         })
@@ -225,17 +225,36 @@ route.get("/:id/bidplaced",HELPERS.checkLoggedIn, (req, res) => {
         // _id: 0
     })
         .then((item) => {
+            // console.log(item);
+            // models.Bids.find({
+            //     ProdID: item._id
+            // })
+            //     .then((itembid) => {
+            //         //to compute minimum bid allowed
+            //         var minbid = item.basevalue;
+            //         //selecting base value as minimum value
+            //         // console.log(itembid);
+            //         (itembid[0].allBids).forEach(function (data) {
+            //                 if (minbid < data.price) {
+            //                     minbid = data.price;
+            //                 }
+            //             }
+            //         );
+            //         // console.log(minbid);
+            //         // console.log("Item:",item);
+            //         models.Products.findById(req.params.id)
+            //             .then((item) => {
+            //                 console.log("user: " + req.user);
                             if (!req.user || item.userID !== req.user.id) {
-                                res.render("item-details-owner", {
+                                res.render("item-details", {
                                     item: item,
-                                    bidplaced: true,
-                                    isOwner: false
+                                    bidplaced: true
                                 });
                             }
                             else {
                                 res.render("item-details-owner", {
                                     item: item,
-                                    isOwner: true
+
                                 });
                             }
                         })

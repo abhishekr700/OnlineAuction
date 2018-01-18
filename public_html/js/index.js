@@ -13,7 +13,10 @@ $(()=> {
     // console.log( $("button[data-btn='details']"));
     $("button[data-btn='details']").click(RedirectToItemDetails);
 });
-
+Number.prototype.zeroPad = function(length) {
+    length = length || 2; // defaults to 2 if no parameter is passed
+    return (new Array(length).join('0')+this).slice(length*-1);
+};
 //Update timer of a single product
 function updateTimer(prodID) {
     let timer = new Timer();
@@ -26,9 +29,9 @@ function updateTimer(prodID) {
 
             timer.addEventListener("secondsUpdated", function (e) {
                 $(`div[data-timer="${prodID}"] .days`).html(timer.getTimeValues().days);
-                $(`div[data-timer="${prodID}"] .hours`).html(timer.getTimeValues().hours);
-                $(`div[data-timer="${prodID}"] .minutes`).html(timer.getTimeValues().minutes);
-                $(`div[data-timer="${prodID}"] .seconds`).html(timer.getTimeValues().seconds);
+                $(`div[data-timer="${prodID}"] .hours`).html(timer.getTimeValues().hours.zeroPad());
+                $(`div[data-timer="${prodID}"] .minutes`).html(timer.getTimeValues().minutes.zeroPad());
+                $(`div[data-timer="${prodID}"] .seconds`).html(timer.getTimeValues().seconds.zeroPad());
             });
 
             timer.addEventListener('targetAchieved', function (e) {

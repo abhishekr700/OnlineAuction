@@ -9,6 +9,15 @@
     <script src="/js/index.js"></script>
 </head>
 <style>
+    @font-face {
+        font-family: 'clockfont';
+        src: url('/lib/DSEG7Classic-Bold.woff') format('woff'), /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
+        url('/lib/DSEG7Classic-Bold.ttf') format('truetype'); /* Chrome 4+, Firefox 3.5, Opera 10+, Safari 3—5 */
+    }
+    .timerValues {
+        font-family: clockfont;
+        font-size: 1em;
+    }
     #main{
         margin-top: 3.6em;
         height: 45em;
@@ -122,7 +131,7 @@
     <!--Item Cards-->
     <div class="ui special cards container"  id="productlist">
         <% items.forEach((item)=>{%>
-        <div class="card"  id="<%= item._id%>" style="margin-left: 5vw ; height: 50vh">
+        <div class="card"  id="<%= item._id%>" style="margin-left: 5vw ; height: 60vh">
             <div class="blurring dimmable image">
                 <div class="ui inverted dimmer">
                     <div class="content" >
@@ -138,13 +147,23 @@
                 <div class="meta">
                     <span class="date"><%= item.category%></span>
                 </div>
+                <div class="ui statistic">
+                    <div class="value" style="font-size: 2em!important; color: red; text-align: left">
+                        <%= item.minbid %>
+                    </div>
+                    <div class="label" data-max-price="<%= item._id %>" style="font-size:1em; color: red; text-align: left">
+                        Current Value
+                    </div>
+                </div>
             </div>
             <div class="extra content" id="timer">
                 <div data-timer=<%= item._id %>>
-                    <span class="days"></span><span> days</span>
-                    <span class="hours"></span><span> hours</span>
-                    <span class="minutes"></span><span> minutes</span>
-                    <span class="seconds"></span><span> seconds</span>
+                    <span class="days" style="font-weight: bolder;font-size: 1em "></span>
+                    <span style="font-weight: bolder;font-size: 1em ">&nbsp;Days</span>
+                    <br>
+                    <span class="hours timerValues"></span><span class="timerValues">:</span>
+                    <span class="minutes timerValues"></span><span class="timerValues">:</span>
+                    <span class="seconds timerValues"></span><span class="timerValues"></span>
                 </div>
             </div>
         </div>
