@@ -11,9 +11,9 @@
 <style>
     @font-face {
         font-family: 'clockfont';
-        src: url('/lib/DSEG7Classic-Bold.woff') format('woff'), /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
-        url('/lib/DSEG7Classic-Bold.ttf') format('truetype'); /* Chrome 4+, Firefox 3.5, Opera 10+, Safari 3—5 */
+        src: url('/lib/DSEG7Classic-Bold.woff') format('woff'), /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */ url('/lib/DSEG7Classic-Bold.ttf') format('truetype'); /* Chrome 4+, Firefox 3.5, Opera 10+, Safari 3—5 */
     }
+
     #main-container {
         margin-top: 10em;
         margin-bottom: 10em;
@@ -29,16 +29,20 @@
         margin-top: 1em;
 
     }
-    #inctime-container{
+
+    #inctime-container {
         margin-top: 2em;
     }
-    #min-bid-cont{
+
+    #min-bid-cont {
         margin-top: 1em;
     }
-    #timer{
+
+    #timer {
         margin-top: 2em;
         /*font-family: clockfont;*/
     }
+
     .timerValues {
         font-family: clockfont;
         font-size: 2em;
@@ -62,7 +66,11 @@
 
             <div class="row" style="position: relative">
                 <div class="six wide column">
-                    <img src=../Images/<%= item._id %>.jpg style="border-radius: 0.5em"><br>
+                    <% if(bidplaced){ %>
+                    <img src=../../Images/<%= item._id %>.jpg><br>
+                    <% } else{ %>
+                    <img src=../Images/<%= item._id %>.jpg><br>
+                    <% } %>
                 </div>
                 <div class="five wide column">
                     <!--Current Value-->
@@ -101,6 +109,7 @@
                             <span class="minutes timerValues"></span><span class="timerValues">:</span>
                             <span class="seconds timerValues"></span><span class="timerValues"></span>
                         </div>
+                        <% if(isOwner){ %>
                         <div id="inctime-container">
 
                             <form action="/items/<%= item._id %>/incTime" method="post" class="ui form">
@@ -118,6 +127,27 @@
                                 </div>
                             </form>
                         </div>
+                        <% } else { %>
+                        <form action="/items/<%= item._id %>/bid" method="post" class="ui form">
+
+                            <div class="ui input focus disabled">
+                                <div class="field">
+                                    <label>Place Your Bid</label>
+                                    <input type="number" name="bidprice" class="bidplaced"
+                                           min="<%= item.minbid %>" required>
+                                </div>
+                            </div>
+                            <div class="ui input focus disabled">
+                                <div class="field">
+                                    <label for="">&nbsp</label>
+                                    <button id="bid" name="<%= item._id %>">
+                                        Submit
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+
+                        <% } %>
                     </div>
                 </div>
                 <div class="one wide column">
@@ -136,6 +166,7 @@
                     <p><%= item.desc %><br></p>
                 </div>
             </div>
+            <% if(isOwner){ %>
             <div class="row center aligned" id="admin-row">
 
                 <div class="column center aligned">
@@ -144,15 +175,8 @@
                         <button class="ui button red">Delete This Item</button>
                     </a>
                 </div>
-                <!--<div class="six wide column">-->
-
-                <!--</div>-->
-                <!--<div class="five wide column center aligned">-->
-                <!--<a href="/items/<%= item._id %>/delete">-->
-                <!--<button class="ui button orange disabled">Contact Owner</button>-->
-                <!--</a>-->
-                <!--</div>-->
             </div>
+            <% } %>
         </div>
     </div>
     <div id="msg"></div>
