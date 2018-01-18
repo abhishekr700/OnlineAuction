@@ -138,7 +138,7 @@ io.use(function(socket, next){
         // Wrap the express middleware
     sessionMiddleware(socket.request, {}, next);
         console.log("After next");
-    })
+    });
 
 io.on('connection', (socket) => {
 
