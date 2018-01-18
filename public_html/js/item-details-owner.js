@@ -2,12 +2,9 @@ var socket = io();
 let queryString = decodeURIComponent(window.location);
 queryString = queryString.split('/');
 queryString = queryString[queryString.length - 1];
-//queryString=queryString.substr(6);
-//console.log(" prodId: "+queryString[queryString.length-1]);
 $(() => {
     socket.emit('prodID', {prodId: queryString});
     socket.on('bid', (data) => {
-        console.log("def");
         var bid = data.bids;
         console.log(bid);
         var ul = $("#bids");
@@ -35,7 +32,6 @@ $(() => {
     };
     let timer = new Timer();
     $.get(`/items/${$("#item-detail").data("itemid")}/time`, function (data) {
-        // console.log("ll");
         if (data.timeRemaining > 0) {
             timer.start({countdown: true, startValues: {seconds: data.timeRemaining}});
 
