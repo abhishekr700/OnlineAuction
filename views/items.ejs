@@ -7,6 +7,23 @@
     <script src="js/lib/easytimer.js" type="text/javascript"></script>
     <script type="text/javascript" src="/js/items.js"></script>
     <style>
+        #refine-items {
+            margin:1vmax;
+            margin-top: 10vh;
+        }
+        #filter {
+            margin-left:35vmax;
+        }
+        @media(min-width: 450px){
+            #filter{
+                margin-left:55vmax;
+            }
+        }
+        @media(min-width: 770px){
+           #filter{
+             margin-left:1vmax;
+           }
+        }
         #all-item-container{
             margin-top: 3em;
             margin-bottom: 5em;
@@ -27,7 +44,7 @@
 <%- include('components/navbar'); %>
 
 
-<div class="context example" style="margin: 1vmax ; margin-top: 5vmax">
+<div class="context example " id="refine-items" style=" ">
     <!--<div class="ui top attached demo menu">-->
     <a class="ui primary button" id="filter">
         <i class="filter icon" ></i>
@@ -56,11 +73,11 @@
      <div class="pusher" id="all-item-container">
         <div class="ui basic segment">
 
-                <div class="ui"  id="productlist" style="margin-left: 12em!important;margin-right: 12em!important;">
-                    <div class="ui items" >
+                <div class="ui relaxed container"  id="productlist">
+                    <div class="ui relaxed items" >
                     <% items.forEach((item)=>{%>
 
-                            <div class="ui item" id="<%= item._id%>" style="width: 100%; margin-left: 2vw ;border: 1px solid #dddddd; border-radius: 2px; padding: 1em;">
+                            <div class="ui item" id="<%= item._id%>" style="width: 85% ;margin-left:7vw ;border: 1px solid #dddddd; border-radius: 2px; padding: 1em;">
                                 <div class="image">
                                     <img src="./Images/<%= item._id%>.jpg">
                                 </div>
@@ -85,10 +102,10 @@
                                         </div>
                                       <div class=" five wide column">
                                         <div class="ui statistic">
-                                            <div class="value" style="color: red; text-align: left">
+                                            <div class="" style="color: red; text-align: left; font-size: 3em; height: 1em">
                                                 <%= item.minbid %>
                                             </div>
-                                            <div class="label" data-max-price="<%= item._id %>" style="color: red; text-align: left">
+                                            <div class="" data-max-price="<%= item._id %>" style="color: red; text-align: left; font-size: 1.5em">
                                                 Current Value
                                             </div>
                                         </div>

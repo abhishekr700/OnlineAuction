@@ -52,24 +52,31 @@
         margin-top: 2em;
         margin-bottom: 5em;
     }
+    .highlights{
+        border: 1px solid #dddddd;
+        border-radius: 2px;
+        margin: 10px;
+    }
 </style>
 <body>
 <%- include('components/navbar'); %>
 <!--Jumbotron-->
 <div id="main" class="ui center aligned segment">
-    <div class="ui text container" id="main-container">
-        <h1 class="ui header">
+    <div class="ui text relaxed container" id="main-container">
+        <div class="ui" style="color: white; font-weight: bolder; font-size: 5vmax">
             Find A Auction for You
-        </h1>
-        <div class="ui two column centered grid">
+        </div>
+        <div class="ui stackable four column  grid">
 
-            <div class="centered row">
+            <div class=" row">
+                <div class="three wide column"></div>
                 <div class="five wide column ui input">
                     <input type="text" placeholder="Item to Search" class="home-inputs">
                 </div>
                 <div class="five wide column ui input">
                     <input type="text" placeholder="Cateogary" class="home-inputs">
                 </div>
+                <div class="three wide column"></div>
             </div>
         </div>
         <br>
@@ -77,12 +84,14 @@
     </div>
 </div>
 <!--Features-->
-<div class="ui container" id="feature-container">
+<div class="ui relaxed container" id="feature-container">
     <div class="ui header center aligned">
         <h1 class="t5"  style="color: dimgrey">Auctionator Highlights</h1>
     </div>
-    <div class="ui horizontal segments">
-        <div class="ui segment">
+    <br>
+    <div class="ui stackable three column grid">
+    <!--<div class="ui horizontal segments">-->
+        <div class="ui five wide column highlights" >
             <h2 class="ui icon header">
                 <i class="wait icon" style="color: darkorange"></i>
                 <div class="content">
@@ -95,7 +104,7 @@
                 </div>
             </h2>
         </div>
-        <div class="ui segment">
+        <div class="ui five wide column highlights" >
             <h2 class="ui icon header">
                 <i class="alarm outline icon" style="color: limegreen;"></i>
                 <div class="content">
@@ -108,7 +117,7 @@
                 </div>
             </h2>
         </div>
-        <div class="ui segment">
+        <div class="ui five wide column highlights">
             <h2 class="ui icon header">
                 <i class="privacy icon" style="color: #309ef2;"></i>
                 <div class="content">
@@ -120,10 +129,11 @@
                 </div>
             </h2>
         </div>
+    <!--</div>-->
     </div>
 </div>
 <!--Items-->
-<div class="ui container" id="items-container">
+<div class="ui relaxed container" id="items-container">
     <!--Items Heading-->
     <div class="ui header center aligned">
         <h1 class="t5"  style="color: dimgrey">Popular Live Auctions</h1>
@@ -131,7 +141,7 @@
     <!--Item Cards-->
     <div class="ui special cards container"  id="productlist">
         <% items.forEach((item)=>{%>
-        <div class="card"  id="<%= item._id%>" style="margin-left: 5vw ; height: 60vh">
+        <div class="card"  id="<%= item._id%>" style="margin-left: 5vw ;">
             <div class="blurring dimmable image">
                 <div class="ui inverted dimmer">
                     <div class="content" >

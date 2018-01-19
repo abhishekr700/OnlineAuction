@@ -6,11 +6,17 @@
     <%- include('components/headers'); %>
     <style>
 
+
         .margin-top-147 {
-            margin-top: 80px;
+            margin-top: 22vh;
+        }
+        @media(min-width: 700px){
+            .margin-top-147 {
+                margin-top: 15vh;
+            }
         }
         .clr-sml{
-            height: 10px;
+            height: 2vh;
         }
         body{
             height: auto;
@@ -23,7 +29,7 @@
             margin-right: 20px;
         }
         .t18{
-            font-size: 18px;
+            font-size: 1.5em;
         }
     </style>
 </head>
@@ -31,10 +37,9 @@
 
 <%- include('components/navbar'); %>
 <div class="margin-top-147">
-    <div class="ui container">
-        <div class="text-center" style="font-size: 35px;"><strong>Contact Us</strong></div>
-        <br><br>
-            <div class="ui grid">
+    <div class="ui relaxed container">
+        <div class="text-center" style="font-size: 3em;"><strong>Contact Us</strong></div>
+            <div class="ui stackable four column grid" style="margin-top:3vh">
                 <div class="one wide column"></div>
                 <div class="six wide column t22 text-center">
                     <div class="clr-sml"></div>
