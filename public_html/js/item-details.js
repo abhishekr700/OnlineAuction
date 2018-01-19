@@ -6,7 +6,7 @@ $(() => {
     var name=false;
     let isOwner=$(".owner")[0].id;
     if(!isOwner)
-      name = $(".bidplaced")[0].id;
+      name = $(".bidplace3.bidplacedd")[0].id;
     socket.emit('prodID', {prodId:  $('#bid')[0].name});
     socket.on('bid', (data) => {
         console.log(data);
