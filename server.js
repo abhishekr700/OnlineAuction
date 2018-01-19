@@ -128,7 +128,7 @@ app.get("/terms-and-conditions", (req, res) => {
 });
 //404 Handler
 app.use(function (req, res) {
-    res.send("404 Error !!!")
+    res.render('404');
 });
 
 let ProductSocketMap = {};
@@ -159,7 +159,9 @@ io.on('connection', (socket) => {
         arr.push(socket.id);
         ProductSocketMap[data.prodId] = arr;
         arr = [];
-        Users.findAll({})
+        Users.findAll({
+            attributes: ['id', 'username']
+        })
             .then((users) => {
                 models.Bids.findOne({ProdID: data.prodId})
                     .then((bids) => {
@@ -208,7 +210,7 @@ io.on('connection', (socket) => {
                             else if (userID === item.userID) {
                                 console.log("Socket msg to owner", item.userID, userID);
                                 if (winner)
-                                    socket.emit("msg", {msg: "Your product was purchased by " + winner.userID})
+                                    socket.emit("msg", {msg: "Your product was purchased by " + winner.userID});
                                 else
                                     socket.emit("msg", {msg: "Your product went unsold"})
                             }
@@ -231,7 +233,6 @@ io.on('connection', (socket) => {
             })
             .catch((err) => {
                 console.log(err);
-                res.redirect(`/items/${req.params.id}`);
             })
     })
 

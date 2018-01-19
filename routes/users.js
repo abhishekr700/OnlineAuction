@@ -25,6 +25,9 @@ route.get("/userbids",(req,res)=>{
         })
 })
 
+route.get("/profile",(req,res)=>{
+    res.redirect('/users');
+})
 
 //edit Profile
 route.post("/editProfile",(req,res)=>{
