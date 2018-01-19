@@ -3,11 +3,10 @@ let queryString = decodeURIComponent(window.location);
 queryString = queryString.split('/');
 queryString = queryString[queryString.length - 1];
 $(() => {
-    var name=false;
-    let isOwner=$(".owner")[0].id;
-    if(!isOwner)
-      name = $(".bidplace3.bidplacedd")[0].id;
-    socket.emit('prodID', {prodId:  $('#bid')[0].name});
+
+    let isOwner = $(".owner")[0].id;
+
+    socket.emit('prodID', {prodId: queryString});
     socket.on('bid', (data) => {
         console.log(data);
         var bid = data.bids;
@@ -15,22 +14,9 @@ $(() => {
         ul.html("");
         if (bid.allBids.length === 0) {
         } else {
-
             bid.allBids.forEach((Bid) => {
-                if(name)
-                {
-                    ul.prepend(`
-                                <div class="item">
-                    <img class="ui avatar image" src="../../u.jpg">
-                    <div class="content">
-                      <div class="header">${Bid.userID}</div>
-                      <div class="description">Placed a bid for <strong>${Bid.price}</strong></div>
-                    </div>
-                  </div>
-                `)
 
-                }else {
-                    ul.prepend(`
+                ul.prepend(`
                                 <div class="item">
                     <img class="ui avatar image" src="../u.jpg">
                     <div class="content">
@@ -39,20 +25,13 @@ $(() => {
                     </div>
                   </div>
                 `)
-                }
-            });
 
+            });
         }
     });
-    if (name) {
-        socket.emit('bid2'
-            , {prodId: $('#bid')[0].name});
-
-    }
-
-    Number.prototype.zeroPad = function(length) {
+    Number.prototype.zeroPad = function (length) {
         length = length || 2; // defaults to 2 if no parameter is passed
-        return (new Array(length).join('0')+this).slice(length*-1);
+        return (new Array(length).join('0') + this).slice(length * -1);
     };
     let timer = new Timer();
     $.get(`/items/${$("#item-detail").data("itemid")}/time`, function (data) {
@@ -67,24 +46,24 @@ $(() => {
             });
 
             timer.addEventListener('targetAchieved', function (e) {
-                $('#timer').html("Bid Closed").css('font-size','x-large');
+                $('#timer').html("Bid Closed").css('font-size', 'x-large');
                 //Emit event on timer ends
                 $('#max-price').html("Sold At");
-                socket.emit("bid-closed",{
+                socket.emit("bid-closed", {
                     prodID: $("#item-detail").data("itemid")
                 });
             });
         }
         else {
             $('#max-price').html("Sold At");
-            $('#timer').html("Bid Closed").css('font-size','x-large');
-            socket.emit("bid-closed",{
+            $('#timer').html("Bid Closed").css('font-size', 'x-large');
+            socket.emit("bid-closed", {
                 prodID: $("#item-detail").data("itemid")
             });
         }
     });
 
-    socket.on("msg",(data)=>{
+    socket.on("msg", (data) => {
         console.log(data);
         $("#msg").html(data.msg);
     })

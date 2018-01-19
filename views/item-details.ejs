@@ -66,11 +66,9 @@
 
             <div class="row owner" id="isOwner" style="position: relative">
                 <div class="six wide column">
-                    <% if(bidplaced){ %>
-                    <img src=../../Images/<%= item._id %>.jpg><br>
-                    <% } else{ %>
+
                     <img src=../Images/<%= item._id %>.jpg><br>
-                    <% } %>
+
                 </div>
                 <div class="five wide column">
                     <!--Current Value-->
@@ -133,8 +131,8 @@
                             <div class="ui input focus ">
                                 <div class="field">
                                     <label>Place Your Bid</label>
-                                    <input type="number" name="bidprice" class="bidplaced"
-                                           min="<%= item.minbid %>" required id="<%= bidplaced %>">
+                                    <input type="number" name="bidprice"
+                                           min="<%= item.minbid %>" required>
                                 </div>
                             </div>
                             <div class="ui input focus ">

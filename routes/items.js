@@ -199,49 +199,16 @@ route.get("/:id", (req, res) => {
                             if (!req.user || item.userID !== req.user.id) {
                                 res.render("item-details", {
                                     item: item,
-                                    isOwner: false,
-                                    bidplaced: false
-                                });
-                            }
-                            else {
-                                res.render("item-details", {
-                                    item: item,
-                                    isOwner: true,
-                                    bidplaced: false
-                                });
-                            }
-                        })
-        .catch((err) => {
-            console.log(err);
-            res.send({
-                message: "error finding item"
-            });
-        })
-});
-
-//Get item details
-route.get("/:id/bidplaced",HELPERS.checkLoggedIn, (req, res) => {
-    models.Products.findById(req.params.id, {
-        // _id: 0
-    })
-        .then((item) => {
-                            if (!req.user || item.userID !== req.user.id) {
-                                res.render("item-details", {
-                                    item: item,
-                                    bidplaced: true,
                                     isOwner: false
                                 });
                             }
                             else {
                                 res.render("item-details", {
                                     item: item,
-                                    isOwner: true,
-                                    bidplaced: true,
+                                    isOwner: true
                                 });
                             }
                         })
-                // })
-        //})
         .catch((err) => {
             console.log(err);
             res.send({
@@ -366,7 +333,7 @@ route.post("/:id/bid", HELPERS.checkLoggedIn, (req, res) => {
                                             .then(()=>{
                                                 console.log("after push",item);
                                                 if (item !== null)
-                                                    res.redirect('/items/' + req.params.id + '/bidplaced');
+                                                    res.redirect('/items/' + req.params.id );
                                                 else
                                                 //TODO: Add flash message
                                                     res.send({

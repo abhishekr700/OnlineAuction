@@ -153,41 +153,28 @@ io.on('connection', (socket) => {
     }
     console.log("Your User ID is", userId);
 
-    // console.log("socket created " + socket.id);
     socket.on('prodID', (data) => {
-        // console.log("1", ProductSocketMap);
         arr = ProductSocketMap[data.prodId];
         if (!arr) {
             arr = [];
         }
-        // console.log(arr);
-        arr.push(socket.id)
-        // console.log(arr);
+        arr.push(socket.id);
         ProductSocketMap[data.prodId] = arr;
-        // console.log(ProductSocketMap);
         arr = [];
-        // console.log(ProductSocketMap);
-        console.log("ProdId: " + data.prodId);
-        models.Bids.findOne({ProdID: data.prodId})
-            .then((bids) => {
-
-                socket.emit('bid', {bids: bids})
-            });
-    });
-
-
-    socket.on('bid2', (data) => {
-        // console.log("abc");
-
+        console.log(ProductSocketMap[data.prodId]);
         models.Bids.findOne({ProdID: data.prodId})
             .then((bids) => {
                 for (let i of ProductSocketMap[data.prodId])
-                    socket.to(i).emit('bid', {bids: bids})
+                    if(i===socket.id)
+                    {
+                         socket.emit('bid', {bids: bids})
+                    }else {
+                        socket.to(i).emit('bid', {bids: bids})
+                    }
             });
-    })
+    });
 
     socket.on("bid-closed",(data)=>{
-  console.log("biddcloseesss");
         models.Products.findById(data.prodID)
             .then((item) => {
                 // console.log(item);
