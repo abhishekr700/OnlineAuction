@@ -6,23 +6,25 @@
     <%- include('components/headers'); %>
     <style>
         .margin-top-40{
-            margin-top: 40px;
+            margin-top: 10vh;
         }
         .text-center{
             text-align: center;
         }
         .clr-sml{
-            height: 10px;
+            height: 2vh;
         }
-
+        ::placeholder{
+            opacity:1;
+        }
     </style>
 </head>
 <body>
 
 <%- include('components/navbar'); %>
 <br><br><br>
-<div class="ui container margin-top-40">
-    <div class="ui grid">
+<div class="ui relaxed container margin-top-40">
+    <div class="ui stackable grid">
         <div class="three wide column"></div>
         <div class="margin-left-right-20 ten wide column">
             <form class="ui form" enctype="multipart/form-data" action="/items/add" method="post">

@@ -15,8 +15,14 @@
     }
 
     #main-container {
-        margin-top: 10em;
-        margin-bottom: 10em;
+        margin-top: 12em;
+        margin-bottom: 5em;
+    }
+
+    @media (min-width: 770px) {
+        #main-container {
+            margin-top: 7em;
+        }
     }
 
     #list {
@@ -51,9 +57,9 @@
 <body>
 <%- include('components/navbar'); %>
 <div id="item-detail" data-itemid=<%= item._id %>>
-    <div class="ui container" id="main-container">
+    <div class="ui relaxed container" id="main-container">
 
-        <div class="ui grid">
+        <div class="ui stackable  four column grid">
             <div class="ui header">
                 <div class="content">
                     <h1 class="ui header"><%= item.name %></h1>
@@ -120,7 +126,9 @@
                                 <div class="ui input focus">
                                     <div class="field">
                                         <label for="">&nbsp</label>
-                                        <button type="submit" id="bid" name="<%= item._id %> class="ui button teal">Submit</button>
+                                        <button type="submit" id="bid" name="<%= item._id %> " class="ui button teal">
+                                            Submit
+                                        </button>
                                     </div>
                                 </div>
                             </form>
@@ -138,7 +146,7 @@
                             <div class="ui input focus ">
                                 <div class="field">
                                     <label for="">&nbsp</label>
-                                    <button id="bid" name="<%= item._id %>">
+                                    <button id="bid" name="<%= item._id %>" class="ui button teal">
                                         Submit
                                     </button>
                                 </div>
@@ -164,18 +172,19 @@
                     <p><%= item.desc %><br></p>
                 </div>
             </div>
-            <% if(isOwner){ %>
-            <div class="row center aligned" id="admin-row">
 
-                <div class="column center aligned" >
-                    <a href="/items/<%= item._id %>/delete">
-                        <label for="">&nbsp</label>
-                        <button class="ui button red">Delete This Item</button>
-                    </a>
-                </div>
-            </div>
-            <% } %>
         </div>
+        <% if(isOwner){ %>
+        <div class="ui grid" id="admin-row">
+
+            <div class="ui column center aligned">
+                <a href="/items/<%= item._id %>/delete">
+                    <label for="">&nbsp</label>
+                    <button class="ui button red">Delete This Item</button>
+                </a>
+            </div>
+        </div>
+        <% } %>
     </div>
     <div id="msg"></div>
 
