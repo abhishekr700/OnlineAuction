@@ -262,7 +262,6 @@ models.Products.findById(req.params.id)
                 }
                 }
             ).then(function (data) {
-                console.log("bid timed out" + item._id)
             });
             res.send({
                 timeRemaining: 0
