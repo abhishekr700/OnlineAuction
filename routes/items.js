@@ -172,7 +172,7 @@ route.get("/add", HELPERS.checkLoggedIn, (req, res) => {
 //Post route to add products to DB
 route.post('/add', HELPERS.checkLoggedIn, upload.single('imgUploader'), function (req, res) {
     let curDate = new Date();
-    let finalDate = curDate.getTime() + req.body.duration *3600 * 1000;
+    let finalDate = curDate.getTime() + req.body.duration * 3600 * 1000;
     let endDate = new Date(finalDate);
     models.Products.create({
         userID: req.user.id,
@@ -370,7 +370,7 @@ route.post("/:id/incTime", HELPERS.checkLoggedIn, (req, res) => {
     if (req.body.duration) {
         models.Products.findById(req.params.id)
             .then((item) => {
-                let updatedDate = new Date(item.endDate.getTime() + req.body.duration  *3600* 1000);
+                let updatedDate = new Date(item.endDate.getTime() + req.body.duration  * 3600 * 1000);
                 // console.log(updatedDate);
                 item.endDate = updatedDate;
                 item.save().then(()=>{

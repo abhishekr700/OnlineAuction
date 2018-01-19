@@ -4,49 +4,70 @@
     <meta charset="UTF-8">
     <title>Password Change</title>
     <%- include('components/headers'); %>
+    <script src="/js/change-pass.js"></script>
     <style>
         .margin-top-167 {
             margin-top: 22vh;
         }
-        ::placeholder{
+
+        ::placeholder {
             opacity: 1;
         }
-        .clr-sml{
+
+        .clr-sml {
             height: 2vh;
         }
-        body{
+
+        body {
             height: auto;
         }
-        .text-center{
+
+        .text-center {
             text-align: center;
         }
-        .margin-left-right-20{
+
+        .margin-left-right-20 {
             margin-left: 20px;
             margin-right: 20px;
         }
-        .t18{
+
+        .t18 {
             font-size: 18px;
         }
+
         .t16 {
             font-size: 16px;
         }
-        .margin-top-40{
+
+        .margin-top-40 {
             margin-top: 40px;
         }
     </style>
+    <script>
+
+        console.log("test");
+        $('#pass-form').submit(function (e) {
+            e.preventDefault();
+            let val1 = $("#newpass1").val();
+            let val2 = $("#newpass2").val();
+            console.log(val1, val2);
+        });
+    </script>
 </head>
 <body>
 <%- include('components/navbar'); %>
 <div class="margin-top-167">
     <div class="ui relaxed container">
-        <form class="ui form" action="/users/changePass" method="post">
+        <form class="ui form" action="/users/changePass" method="post" id="pass-form" onsubmit="return checkSame()">
             <div class="ui stackable three column grid">
                 <div class="six wide column t22 text-center">
                     <div class="text-center"><img src="/images/reset_password.png" height="80"></div>
                     <div class="clr-sml"></div>
                     <div class="text-center t18" style="color: #0d71bb"><b>Change Your Password</b></div>
                     <div class="clr-sml"></div>
-                    <div class="t16 margin-left-right-20 text-center">We maintain your privacy completely by using encryption so that no one can get into your account..</div>
+                    <div class="t16 margin-left-right-20 text-center">We maintain your privacy completely by using
+                        encryption so that no one can get into your account..
+                    </div>
                 </div>
                 <div class="one wide column"></div>
                 <div class="eight wide column margin-top-40">
@@ -55,21 +76,34 @@
 
                     <div class="clr-sml"></div>
                     <div class="field">
-                        <input type="password" name="currentpass" placeholder="Enter current password" required>
+                        <input type="password" name="currentpass" placeholder="Enter Current Password" required>
 
                     </div>
                     <div class="field">
-                        <input type="password" name="newpass" placeholder="Enter new password" required>
+                        <input type="password" name="newpass" id="newpass1" placeholder="Enter New Password" required>
+
+                    </div>
+                    <div class="field">
+                        <input type="password" id="newpass2" placeholder="Re-Enter New Password" required>
 
                     </div>
                     <div class="clr-sml"></div>
                     <div class="field text-center">
                         <button class="ui primary button" type="submit">Submit</button>
                     </div>
+                    <div class="ui negative message hidden">
+                        <i class="close icon"></i>
+                        <div class="header">
+                            The Passwords you entered do not match !
+                        </div>
+                        <p>Please re-check the values and try again.
+                        </p>
+                    </div>
                 </div>
 
             </div>
         </form>
+
     </div>
 </div>
 <div class="clr-sml"></div>
