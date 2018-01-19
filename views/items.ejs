@@ -4,38 +4,59 @@
     <meta charset="UTF-8">
     <title>All Items</title>
     <%- include('components/headers'); %>
-    <script src="js/lib/easytimer.js" type="text/javascript"></script>
+    <script src="/js/lib/easytimer.js" type="text/javascript"></script>
     <script type="text/javascript" src="/js/items.js"></script>
     <style>
         #refine-items {
-            margin:1vmax;
+            margin: 1vmax;
             margin-top: 10vh;
         }
+
         #filter {
-            margin-left:35vmax;
+            margin-left: 35vmax;
         }
-        @media(min-width: 450px){
-            #filter{
-                margin-left:55vmax;
+
+        @media (min-width: 450px) {
+            #filter {
+                margin-left: 55vmax;
             }
         }
-        @media(min-width: 770px){
-           #filter{
-             margin-left:1vmax;
-           }
+
+        @media (min-width: 770px) {
+            #filter {
+                margin-left: 1vmax;
+            }
         }
-        #all-item-container{
+
+        #all-item-container {
             margin-top: 3em;
             margin-bottom: 5em;
         }
+
         @font-face {
             font-family: 'clockfont';
-            src: url('/lib/DSEG7Classic-Bold.woff') format('woff'), /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
-            url('/lib/DSEG7Classic-Bold.ttf') format('truetype'); /* Chrome 4+, Firefox 3.5, Opera 10+, Safari 3—5 */
+            src: url('/lib/DSEG7Classic-Bold.woff') format('woff'), /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */ url('/lib/DSEG7Classic-Bold.ttf') format('truetype'); /* Chrome 4+, Firefox 3.5, Opera 10+, Safari 3—5 */
         }
+
         .timerValues {
             font-family: clockfont;
             font-size: 2em;
+        }
+        @media (min-width: 450px) {
+
+            .fixdiv {
+                width:20%;
+                height: 100%;
+                position: fixed;
+            }
+        }
+
+        a {
+            color: black;
+        }
+
+        .clr-sml {
+            height: 0.5em;
         }
     </style>
 </head>
@@ -44,96 +65,143 @@
 <%- include('components/navbar'); %>
 
 
-<div class="context example " id="refine-items" style=" ">
-    <!--<div class="ui top attached demo menu">-->
-    <a class="ui primary button" id="filter">
-        <i class="filter icon" ></i>
-        Refine Your Choice
-    </a>
+<div class="ui grid">
+    <div class="ui segment four wide column">
+        <div class="ui fixdiv" style="margin: 1.7em;">
+            <div class="clr-sml"></div>
+            <div style="font-size: 1.7em;text-align: center"><strong>Refine your Choice</strong></div>
+            <div class="ui middle aligned list" style="font-size: 1.2em;">
+                <div class="clr-sml"></div>
+                <div class="item">
+                    <div class="content">
+                        <a class="item" href="/items">
+                            All items
+                        </a>
+                    </div>
+                </div>
+                <div class="clr-sml"></div>
+                <div class="item">
+                    <div class="content">
+                        <a class="item" href="/items/filterBidPrice/1">
+                            Highest to Lowest Price
+                        </a>
+                    </div>
+                </div>
+                <div class="clr-sml"></div>
+                <div class="item">
+                    <div class="content">
 
-    <div class="ui bottom attached segment pushable" style="border: none">
-     <div class="ui  labeled icon left inline vertical sidebar menu">
-            <a class="item">
-
-                Home
-            </a>
-            <a class="item">
-
-                Topics
-            </a>
-            <a class="item">
-
-                Friends
-            </a>
-            <a class="item">
-
-                History
-            </a>
+                        <a class="item" href="/items/filterBidPrice/-1">
+                            Lowest to Highest Price
+                        </a>
+                    </div>
+                </div>
+                <div class="clr-sml"></div>
+                <div class="item">
+                    <div class="content" style="text-align: center">
+                        <form class="ui form" action="/items/filterByName" method="post">
+                            <input type="text" name="name" placeholder="Search by Name of item">
+                            <div class="ui horizontal divider">or</div>
+                            <input type="text" name="category" placeholder="Search by Category of item">
+                            <div class="clr-sml"></div>
+                            <button class="ui primary button">Submit</button>
+                        </form>
+                    </div>
+                </div>
+                <!--<div class="clr-sml"></div>-->
+                <!--<div class="item">-->
+                    <!--<div class="content" style="text-align: center">-->
+                        <!--<form class="ui form" action="/items/filterByCategory" method="post">-->
+                            <!--<input type="text" name="category" placeholder="Search by Category of item">-->
+                            <!--<button class="ui primary button">Submit</button>-->
+                        <!--</form>-->
+                    <!--</div>-->
+                <!--</div>-->
+                <div class="clr-sml"></div>
+            </div>
         </div>
-     <div class="pusher" id="all-item-container">
+    </div>
+    <!--<a class="item" href="/items/filterBidPrice/1">-->
+    <!--Highest to Lowest Price-->
+    <!--</a>-->
+    <!--<a class="item" href="/items/filterBidPrice/-1">-->
+    <!--Lowest to Highest Price-->
+    <!--</a>-->
+    <!--<a class="item">-->
+    <!--<form action="/items/filterByName" method="post">-->
+    <!--<input type="text" id="name" name="name">-->
+    <!--<button id="namesubmit">Submit</button>-->
+    <!--</form>-->
+    <!--</a>-->
+    <!--<a class="item">-->
+    <!--<form action="/items/filterByCategory" method="post">-->
+    <!--<input type="text" id="category" name="category">-->
+    <!--<button id="categorysubmit">Submit</button>-->
+    <!--</form>-->
+    <!--</a>-->
+
+    <div id="all-item-container" class="twelve wide column">
         <div class="ui basic segment">
 
-                <div class="ui relaxed container"  id="productlist">
-                    <div class="ui relaxed items" >
-                    <% items.forEach((item)=>{%>
+            <div class="ui relaxed container" id="productlist">
+                <div class="ui relaxed items">
+                    <% items.forEach((item)=>{ %>
 
-                            <div class="ui item" id="<%= item._id%>" style="width: 85% ;margin-left:7vw ;border: 1px solid #dddddd; border-radius: 2px; padding: 1em;">
-                                <div class="image">
-                                    <img src="./Images/<%= item._id%>.jpg">
-                                </div>
-                                <div class="ui grid content">
-                                    <div class="row">
-                                        <div class="eleven wide column">
-                                            <div class="header" style="font-weight: bolder; font-size: x-large"><%= item.name %></div><br>
-                                            <div class="meta" style="font-size: large">
-                                                <div><%= item.category%></div>
-                                            </div> <br>
-                                            <div class="extra" id="timer">
-                                                <div data-timer=<%= item._id %>>
-                                                    <span class="days" style="font-weight: bolder;font-size: 1.5em "></span>
-                                                    <span style="font-weight: bolder;font-size: 1.5em ">&nbsp;Days</span>
-                                                    <br>
-                                                    <br>
-                                                    <span class="hours timerValues"></span><span class="timerValues">:</span>
-                                                    <span class="minutes timerValues"></span><span class="timerValues">:</span>
-                                                    <span class="seconds timerValues"></span><span class="timerValues"></span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                      <div class=" five wide column">
-                                        <div class="ui statistic">
-                                            <div class="" style="color: red; text-align: left; font-size: 3em; height: 1em">
-                                                <%= item.minbid %>
-                                            </div>
-                                            <div class="" data-max-price="<%= item._id %>" style="color: red; text-align: left; font-size: 1.5em">
-                                                Current Value
-                                            </div>
-                                        </div>
-                                        <div  id="<%= item._id%>" style="margin-top: 5vh">
-
-                                            <button class="ui right floated primary button" data-btn="details" >
-                                                View Details
-                                                <i class="right chevron icon"></i>
-                                            </button>
+                    <div class="ui item" id="<%= item._id %>"
+                         style="width: 85% ;margin-left:7vw ;border: 1px solid #dddddd; border-radius: 2px; padding: 1em;">
+                        <div class="image">
+                            <img src="/Images/<%= item._id %>.jpg">
+                        </div>
+                        <div class="ui grid content">
+                            <div class="row">
+                                <div class="eleven wide column">
+                                    <div class="header"
+                                         style="font-weight: bolder; font-size: x-large"><%= item.name %></div>
+                                    <br>
+                                    <div class="meta" style="font-size: large">
+                                        <div><%= item.category %></div>
+                                    </div>
+                                    <br>
+                                    <div class="extra" id="timer">
+                                        <div data-timer=<%= item._id %>>
+                                            <span class="days" style="font-weight: bolder;font-size: 1.5em "></span>
+                                            <span style="font-weight: bolder;font-size: 1.5em ">&nbsp;Days</span>
+                                            <br>
+                                            <br>
+                                            <span class="hours timerValues"></span><span class="timerValues">:</span>
+                                            <span class="minutes timerValues"></span><span class="timerValues">:</span>
+                                            <span class="seconds timerValues"></span><span class="timerValues"></span>
                                         </div>
                                     </div>
+                                </div>
+                                <div class=" five wide column">
+                                    <div class="ui statistic">
+                                        <div class="" style="color: red; text-align: left; font-size: 3em; height: 1em">
+                                            <%= item.minbid %>
+                                        </div>
+                                        <div class="" data-max-price="<%= item._id %>"
+                                             style="color: red; text-align: left; font-size: 1.5em">
+                                            Current Value
+                                        </div>
+                                    </div>
+                                    <div id="<%= item._id %>" style="margin-top: 5vh">
+
+                                        <button class="ui right floated primary button" data-btn="details">
+                                            View Details
+                                            <i class="right chevron icon"></i>
+                                        </button>
                                     </div>
                                 </div>
                             </div>
-                    <%})%>
+                        </div>
                     </div>
+                    <% }) %>
                 </div>
+            </div>
 
         </div>
-        </div>
-
-
-     </div>
-
- </div>
-
-
-
+    </div>
+</div>
 
 
 <%- include('components/footer'); %>

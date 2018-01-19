@@ -63,24 +63,28 @@
 <!--Jumbotron-->
 <div id="main" class="ui center aligned segment">
     <div class="ui text relaxed container" id="main-container">
-        <div class="ui" style="color: white; font-weight: bolder; font-size: 5vmax">
+        <div class="ui" style="color: white; font-weight: bolder; font-size: 4.5vmax">
             Find A Auction for You
         </div>
-        <div class="ui stackable four column  grid">
-
-            <div class=" row">
+        <div class="ui stackable four column grid center aligned">
+        <form class="ui form" action="/items/filterByName" method="post">
+            <div class="row">
+                <div style="height: 1em"></div>
                 <div class="three wide column"></div>
                 <div class="five wide column ui input">
-                    <input type="text" placeholder="Item to Search" class="home-inputs">
+                    <input type="text" name="name" placeholder="Search by Name of item" class="home-inputs">
                 </div>
                 <div class="five wide column ui input">
-                    <input type="text" placeholder="Cateogary" class="home-inputs">
+                    <input type="text" name="category" placeholder="Search by Category of item" class="home-inputs">
                 </div>
                 <div class="three wide column"></div>
             </div>
+
+            <br>
+            <button class="ui huge teal button">Find Auction</button>
+        </form>
         </div>
-        <br>
-        <div class="ui huge teal button">Find Auction</div>
+
     </div>
 </div>
 <!--Features-->
