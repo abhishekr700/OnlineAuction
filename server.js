@@ -18,7 +18,6 @@ const Users = require("./models/sql/sequelize").Users;
 const HELPERS = require("./helpers");
 const Passport = require("./passport");
 const models = require("./models/mongodb/mongo");
-//const async=require('async');
 
 //Initialise Server
 const app = express();
@@ -139,6 +138,7 @@ io.use(function (socket, next) {
     sessionMiddleware(socket.request, {}, next);
 });
 
+
 io.on('connection', (socket) => {
 
 
@@ -182,6 +182,7 @@ io.on('connection', (socket) => {
     });
 
     socket.on("bid-closed", (data) => {
+
         models.Products.findById(data.prodID)
             .then((item) => {
                 // console.log(item);
@@ -210,7 +211,7 @@ io.on('connection', (socket) => {
                             else if (userID === item.userID) {
                                 console.log("Socket msg to owner", item.userID, userID);
                                 if (winner)
-                                    socket.emit("msg", {msg: "Your product was purchased by " + winner.userID});
+                                    socket.emit("msg", {msg: "Your product was purchased by " + winner.userID})
                                 else
                                     socket.emit("msg", {msg: "Your product went unsold"})
                             }

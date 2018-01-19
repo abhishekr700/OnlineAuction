@@ -2,13 +2,15 @@ const multer = require('multer');
 const route = require("express").Router();
 const fs = require("fs");
 const path = require("path");
+const Scheduler = require("mongo-scheduler-more");
+
 
 //Import MongoDB models
 const models = require("../models/mongodb/mongo");
 
 //Import HELPERS
 const HELPERS = require("../helpers");
-
+const CONFIG = require("../configs");
 
 let Storage = multer.diskStorage({
     destination: './public_html/Images',
@@ -18,6 +20,42 @@ let Storage = multer.diskStorage({
 });
 let upload = multer({storage: Storage});
 
+/*
+    Scheduler
+ */
+const scheduler = new Scheduler(`mongodb://${CONFIG.MONGO.HOST}:${CONFIG.MONGO.PORT}/${CONFIG.MONGO.DB_NAME}`, {
+    pollInterval: 1000
+});
+
+
+scheduler.on("error", (err, event) => {
+    console.log(err, event);
+});
+
+scheduler.on("close-bid",(err,event)=>{
+    console.log("Closing Bid on Item:",event.data);
+    models.Bids.findOne({
+        ProdID: event.data
+    })
+        .then((biditem)=>{
+            console.log("BidItem:",biditem);
+            biditem.isOpen = false;
+            biditem.save()
+                .then(()=>{
+                    console.log("Bid-Successfully-closed");
+                })
+                .catch((err)=>{
+                    console.log(err);
+                })
+        })
+        .catch((err)=>{
+            console.log(err);
+        })
+})
+
+scheduler.on("inc-time",(err,event)=>{
+
+})
 
 //Items default page
 route.get("/", (req, res) => {
@@ -133,9 +171,8 @@ route.get("/add", HELPERS.checkLoggedIn, (req, res) => {
 
 //Post route to add products to DB
 route.post('/add', HELPERS.checkLoggedIn, upload.single('imgUploader'), function (req, res) {
-    //console.log("ADD: ", req.user);
     let curDate = new Date();
-    let finalDate = curDate.getTime() + req.body.duration * 3600 * 1000;
+    let finalDate = curDate.getTime() + req.body.duration  * 1000;
     let endDate = new Date(finalDate);
     models.Products.create({
         userID: req.user.id,
@@ -157,6 +194,13 @@ route.post('/add', HELPERS.checkLoggedIn, upload.single('imgUploader'), function
                 allBids: []
             })
                 .then(() => {
+
+                    scheduler.schedule({
+                        name: "close-bid",
+                        data: item._id,
+                        after: item.endDate
+                    })
+
                     res.redirect(`/items/${item._id}`);
                 })
                 .catch((err) => {
@@ -222,11 +266,39 @@ route.post("/:id/incTime", HELPERS.checkLoggedIn, (req, res) => {
     if (req.body.duration) {
         models.Products.findById(req.params.id)
             .then((item) => {
-                let updatedDate = new Date(item.endDate.getTime() + req.body.duration * 3600 * 1000);
-                console.log(updatedDate);
+                let updatedDate = new Date(item.endDate.getTime() + req.body.duration  * 1000);
+                // console.log(updatedDate);
                 item.endDate = updatedDate;
-                item.save();
-                res.redirect(`/items/${req.params.id}`);
+                item.save().then(()=>{
+                    // scheduler.schedule({
+                    //     name: "inc-time",
+                    //     data: item._id
+                    // });
+                    console.log("Increasing time for :",item._id);
+                    scheduler.list((err,events)=>{
+                        console.log(events);
+                        for(let eve of events){
+                            // console.log(eve.data);
+                            // console.log(item._id);
+                            // console.log(eve.data.toString() === item._id.toString());
+                            if(eve.data.toString() === item._id.toString()){
+                                // console.log("found event");
+                                // console.log(eve);
+                                scheduler.remove("close-bid",eve._id,null,(err,event)=>{
+                                    // console.log("Removed event !");
+                                });
+
+                                break;
+                            }
+                        }
+                        scheduler.schedule({
+                            name: "close-bid",
+                            data: item._id,
+                            after: item.endDate
+                        });
+                        });
+                    res.redirect(`/items/${req.params.id}`);
+                })
             })
             .catch((err) => {
                 console.log(err);
