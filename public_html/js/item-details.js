@@ -12,21 +12,21 @@ $(() => {
         var bid = data.bids;
         var ul = $("#bids");
         ul.html("");
-        var username;
+        var usernames={};
+        for(var user of users)
+        {
+                usernames[user.id]=user.username;
+        }
         if (bid.allBids.length === 0) {
         } else {
 
             bid.allBids.forEach((Bid) => {
-                for(var user of users)
-                {
-                    if(user.id ==Bid.userID)
-                        username=user.username;
-                }
+
                 ul.prepend(`
                                 <div class="item">
                     <img class="ui avatar image" src="../u.jpg">
                     <div class="content">
-                      <div class="header">${username}</div>
+                      <div class="header">${usernames[Bid.userID]}</div>
                       <div class="description">Placed a bid for <strong>${Bid.price}</strong></div>
                     </div>
                   </div>
