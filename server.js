@@ -7,7 +7,7 @@ const http = require("http");
 const socketIo = require('socket.io');
 const Sequelize = require("sequelize");
 const session = require("express-session");
-const mongoose=require("mongoose");
+const mongoose = require("mongoose");
 const MongoStore = require('connect-mongo')(session);
 
 /*
@@ -18,7 +18,6 @@ const Users = require("./models/sql/sequelize").Users;
 const HELPERS = require("./helpers");
 const Passport = require("./passport");
 const models = require("./models/mongodb/mongo");
-//const async=require('async');
 
 //Initialise Server
 const app = express();
@@ -41,9 +40,9 @@ app.use(express.urlencoded({
 const connection = mongoose.createConnection(`mongodb://${CONFIG.MONGO.HOST}:${CONFIG.MONGO.PORT}/${CONFIG.MONGO.DB_NAME}`, {
     useMongoClient: true
 });
-const store= new MongoStore({mongooseConnection: connection});
-let sessionModel=mongoose.model('sessions',new mongoose.Schema({ session: Object, expires: Date}));
-let Sessions=sessionModel.base.models.sessions;
+const store = new MongoStore({mongooseConnection: connection});
+let sessionModel = mongoose.model('sessions', new mongoose.Schema({session: Object, expires: Date}));
+let Sessions = sessionModel.base.models.sessions;
 
 //Set View Engine
 app.set("view engine", "ejs");
@@ -55,8 +54,8 @@ let sessionMiddleware = session({
     secret: "Boli_Lagegi",
     store: store,
     //if maxAge not set, cookie valid for current session only(until browser restart)
-    cookie : {
-        maxAge: 1000* 60 * 60 *24 * 10      //10 days
+    cookie: {
+        maxAge: 1000 * 60 * 60 * 24 * 10      //10 days
     },
 
 })
@@ -73,7 +72,7 @@ app.use(Passport.session());
     Routes
  */
 
-app.use((req,res,next)=>{
+app.use((req, res, next) => {
     res.locals.user = req.user;
     next();
 });
@@ -99,17 +98,17 @@ app.get("/", (req, res) => {
             }
         }
     )
-        .then((items)=>{
-            let itemsTobeSent=[];
+        .then((items) => {
+            let itemsTobeSent = [];
 
-            for(let i = items.length-1;i>=0;i--)
+            for (let i = items.length - 1; i >= 0; i--)
                 itemsTobeSent.push(items[i]);
 
-            res.render("index",{
+            res.render("index", {
                 items: itemsTobeSent
             });
         })
-        .catch((err)=>{
+        .catch((err) => {
             console.log(err);
         })
 
@@ -117,10 +116,10 @@ app.get("/", (req, res) => {
 
 //render contact us page
 
-app.get("/contact",(req,res)=>{
+app.get("/contact", (req, res) => {
     res.render('contact');
 });
-app.get("/privacy-policy",(req,res)=>{
+app.get("/privacy-policy", (req, res) => {
     res.render('privacy-policy');
 });
 //404 Handler
@@ -131,24 +130,23 @@ app.use(function (req, res) {
 let ProductSocketMap = {};
 let arr = [];
 
-io.use(function(socket, next){
-        // Wrap the express middleware
+io.use(function (socket, next) {
+    // Wrap the express middleware
     sessionMiddleware(socket.request, {}, next);
-        console.log("After next");
-    })
+    // console.log("After next");
+})
 
 io.on('connection', (socket) => {
 
 
     let pass = socket.request.session.passport;
     let userId;
-    if(!pass)
-    {
+    if (!pass) {
 
-    }else{
-        userId=pass.user;
+    } else {
+        userId = pass.user;
     }
-    console.log("Your User ID is", userId);
+    // console.log("Your User ID is", userId);
 
     // console.log("socket created " + socket.id);
     socket.on('prodID', (data) => {
@@ -183,15 +181,15 @@ io.on('connection', (socket) => {
             });
     })
 
-    socket.on("bid-closed",(data)=>{
-  console.log("biddcloseesss");
+    socket.on("bid-closed", (data) => {
+        console.log("biddcloseesss");
         models.Products.findById(data.prodID)
             .then((item) => {
                 // console.log(item);
                 let curDate = new Date();
                 let timeRemaining = (item.endDate - curDate) / 1000;
                 if (timeRemaining > 0) {
-                    socket.emit("msg",{msg: "Time left for bid close !"})
+                    socket.emit("msg", {msg: "Time left for bid close !"})
                 }
                 //Bid actually closed Therefore, update isOpen values
                 else {
@@ -204,23 +202,23 @@ io.on('connection', (socket) => {
 
                             let userID = socket.request.session.passport.user;
                             //Check if user is winner\
-                            let winner = bidentry.allBids[bidentry.allBids.length -1];
-                            if(winner && userID === winner.userID){
-                                socket.emit("msg",{
+                            let winner = bidentry.allBids[bidentry.allBids.length - 1];
+                            if (winner && userID === winner.userID) {
+                                socket.emit("msg", {
                                     msg: "You won the bid"
                                 });
                             }
-                            else if(userID === item.userID){
-                                console.log("Socket msg to owner",item.userID,userID);
-                                if(winner)
-                                    socket.emit("msg",{msg: "Your product was purchased by " + winner.userID })
+                            else if (userID === item.userID) {
+                                console.log("Socket msg to owner", item.userID, userID);
+                                if (winner)
+                                    socket.emit("msg", {msg: "Your product was purchased by " + winner.userID})
                                 else
-                                    socket.emit("msg",{msg: "Your product went unsold" })
+                                    socket.emit("msg", {msg: "Your product went unsold"})
                             }
-                            else{
-                                for(let bid of bidentry.allBids){
-                                    if(bid.userID === userID){
-                                        socket.emit("msg",{
+                            else {
+                                for (let bid of bidentry.allBids) {
+                                    if (bid.userID === userID) {
+                                        socket.emit("msg", {
                                             msg: "You lost the bid"
                                         });
                                     }
@@ -229,7 +227,7 @@ io.on('connection', (socket) => {
 
 
                         })
-                        .catch((err)=>{
+                        .catch((err) => {
                             console.log(err);
                         })
                 }
