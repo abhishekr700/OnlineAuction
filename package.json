@@ -19,6 +19,7 @@
   "dependencies": {
     "bcrypt": "^1.0.3",
     "bcryptjs": "^2.4.3",
+    "cloudinary": "^1.9.1",
     "connect-mongo": "^2.0.1",
     "crypto": "^1.0.1",
     "ejs": "^2.5.7",

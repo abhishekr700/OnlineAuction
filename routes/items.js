@@ -4,9 +4,9 @@ const fs = require("fs");
 const path = require("path");
 const nodemailer = require("nodemailer");
 const Scheduler = require("mongo-scheduler-more");
+const cloudinary = require('cloudinary');
 
-
-//Import MongoDB models
+//Import models
 const models = require("../models/mongodb/mongo");
 const Users = require("../models/sql/sequelize").Users;
 
@@ -28,7 +28,6 @@ let upload = multer({storage: Storage});
 const scheduler = new Scheduler(`mongodb://${CONFIG.MONGO.HOST}:${CONFIG.MONGO.PORT}/${CONFIG.MONGO.DB_NAME}`, {
     pollInterval: 1000
 });
-
 
 scheduler.on("error", (err, event) => {
     console.log(err, event);
@@ -136,6 +135,13 @@ scheduler.on("close-bid", (err, event) => {
 
 scheduler.on("inc-time", (err, event) => {
 
+});
+
+//Cloudiniary Configs
+cloudinary.config({
+    cloud_name: 'auctioneeer',
+    api_key: '553296924422138',
+    api_secret: 'YNGylxUU6jLGb9Ioc2P44b07gfQ'
 });
 
 //Items default page
@@ -269,24 +275,50 @@ route.post('/add', HELPERS.checkLoggedIn, upload.single('imgUploader'), function
                 console.log(err);
             });
 
-            models.Bids.create({
-                ProdID: item._id,
-                isOpen: true,
-                allBids: []
-            })
-                .then(() => {
+            //Upload image
+            cloudinary.uploader.upload(path.join(__dirname, "../", "public_html/Images/", item._id + ".jpg"), function (result) {
+                console.log(result);
 
-                    scheduler.schedule({
-                        name: "close-bid",
-                        data: item._id,
-                        after: item.endDate
+                //Delete image from server
+                fs.stat(path.join(__dirname, "../", "public_html/Images/", item._id + ".jpg"), function (err, stats) {
+                    console.log(stats);//here we got all information of file in stats variable
+                    if (err) {
+                        return console.error(err);
+                    }
+
+                    fs.unlink(path.join(__dirname, "../", "public_html/Images/", item._id + ".jpg"), function (err) {
+                        if (err) return console.log(err);
+                        console.log('file deleted successfully');
                     });
+                });
 
-                    res.redirect(`/items/${item._id}`);
-                })
-                .catch((err) => {
-                    console.log(err);
-                })
+                //Store image url in DB
+                item.img = result.url;
+                item.save()
+                    .then(() => {
+
+                        //Create entry in bids table
+                        models.Bids.create({
+                            ProdID: item._id,
+                            isOpen: true,
+                            allBids: []
+                        })
+                            .then(() => {
+
+                                scheduler.schedule({
+                                    name: "close-bid",
+                                    data: item._id,
+                                    after: item.endDate
+                                });
+
+                                res.redirect(`/items/${item._id}`);
+                            })
+                            .catch((err) => {
+                                console.log(err);
+                            })
+
+                    })
+            });
         })
         .catch((err) => {
             console.error(err)
@@ -335,7 +367,7 @@ route.post("/filterByName", (req, res) => {
                     items
                 });
             })
-     .catch((err) => {
+            .catch((err) => {
                 console.log(err);
             })
     }
@@ -648,18 +680,16 @@ route.get("/:id/delete", HELPERS.checkLoggedIn, (req, res) => {
                             // console.log(item);
                             item.remove();
                             bidentry.remove();
-                            fs.stat(path.join(__dirname, "../", "public_html/Images/", item._id + ".jpg"), function (err, stats) {
-                                console.log(stats);//here we got all information of file in stats variable
-
-                                if (err) {
-                                    return console.error(err);
-                                }
-
-                                fs.unlink(path.join(__dirname, "../", "public_html/Images/", item._id + ".jpg"), function (err) {
-                                    if (err) return console.log(err);
-                                    console.log('file deleted successfully');
-                                });
+                            let publicID = item.img;
+                            publicID = publicID.split('/');
+                            publicID = publicID[publicID.length - 1];
+                            publicID = publicID.split('.');
+                            publicID = publicID[0];
+                            console.log(publicID);
+                            cloudinary.v2.uploader.destroy(publicID, function(error, result){
+                                console.log(result)
                             });
+
                             res.redirect("/items?show=user");
                         })
                         .catch((err) => {
