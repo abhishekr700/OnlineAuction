@@ -3,7 +3,7 @@ const route = require("express").Router();
 const fs = require("fs");
 const path = require("path");
 const Scheduler = require("mongo-scheduler-more");
-
+const alert=require('alert-node');
 
 //Import MongoDB models
 const models = require("../models/mongodb/mongo");
@@ -33,23 +33,22 @@ scheduler.on("error", (err, event) => {
 });
 
 scheduler.on("close-bid", (err, event) => {
-    console.log("Closing Bid on Item:", event.data);
     models.Bids.findOne({
         ProdID: event.data
     })
         .then((biditem) => {
-            console.log("BidItem:", biditem);
             biditem.isOpen = false;
             biditem.save()
                 .then(() => {
-                    console.log("Bid-Successfully-closed");
                 })
                 .catch((err) => {
                     console.log(err);
+                    res.redirect('/404');
                 })
         })
         .catch((err) => {
             console.log(err);
+            res.redirect('/404');
         })
 })
 
@@ -59,7 +58,6 @@ scheduler.on("inc-time", (err, event) => {
 
 //Items default page
 route.get("/", (req, res) => {
-    console.log(typeof req.query.showall);
     if (!req.query.show)
         req.query.show = "all";
     if (req.query.show === "all") {
@@ -72,6 +70,7 @@ route.get("/", (req, res) => {
             })
             .catch((err) => {
                 console.log(err);
+                res.redirect('/404');
             })
     }
     else {
@@ -93,6 +92,7 @@ route.get("/", (req, res) => {
                     })
                     .catch((err) => {
                         console.log(err);
+                        res.redirect('/404');
                     })
             else
                 res.redirect("/login");
@@ -110,7 +110,8 @@ route.get("/", (req, res) => {
                     })
                     .catch((err) => {
                         console.log(err);
-                    })
+                        res.redirect('/404');
+                    });
             else
                 res.redirect("/login");
 
@@ -121,7 +122,6 @@ route.get("/", (req, res) => {
                     userID: req.user.id
                 })
                     .then((biditems) => {
-                        console.log(biditems.bidsOn);
                         let arr = [];
                         for (let biditem of biditems.bidsOn) {
                             arr.push(biditem.ProdID);
@@ -143,7 +143,8 @@ route.get("/", (req, res) => {
             }
         }
         else {
-            res.send("Don't mess with me ! ~Mr.Server")
+            alert("Error message: Frontend Altered!");
+            res.redirect('/items');
         }
 
     }
@@ -153,7 +154,6 @@ route.get("/", (req, res) => {
 //TODO:remove later
 //Return all the products
 route.get('/all', function (req, res) {
-    // console.log("showing products");
     models.Products.find({})
         .then((productlist) => {
             res.send(productlist)
@@ -186,6 +186,7 @@ route.post('/add', HELPERS.checkLoggedIn, upload.single('imgUploader'), function
         .then((item) => {
             fs.rename(path.join(__dirname, "../", "public_html/Images/", req.file.filename), path.join(__dirname, "../", "public_html/Images/", item._id + ".jpg"), (err) => {
                 console.log(err);
+                res.redirect('/404');
             });
 
             models.Bids.create({
@@ -205,6 +206,7 @@ route.post('/add', HELPERS.checkLoggedIn, upload.single('imgUploader'), function
                 })
                 .catch((err) => {
                     console.log(err);
+                    res.redirect('/404');
                 })
         })
         .catch((err) => {
@@ -226,6 +228,7 @@ route.get("/filterBidPrice/:id", (req, res) => {
         })
         .catch((err) => {
             console.log(err);
+            res.redirect('/404');
         })
 
 });
@@ -239,6 +242,7 @@ route.post("/filterByName", (req, res) => {
             })
             .catch((err) => {
                 console.log(err);
+                res.redirect('/404');
             })
     }
     else if (!req.body.category) {
@@ -258,6 +262,7 @@ route.post("/filterByName", (req, res) => {
 
             .catch((err) => {
                 console.log(err);
+                res.redirect('/404');
             })
     }
     else if (!req.body.name) {
@@ -274,11 +279,12 @@ route.post("/filterByName", (req, res) => {
             })
             .catch((err) => {
                 console.log(err);
+                res.redirect('/404');
             })
     }
     else {
         models.Products.find({
-            name: checkvariable,
+            name: req.body.name,
             category: req.body.category,
             endDate: {
                 $gt: Date.now()
@@ -291,28 +297,11 @@ route.post("/filterByName", (req, res) => {
             })
             .catch((err) => {
                 console.log(err);
+                res.redirect('/404');
             })
     }
 
 });
-
-// //filter by category
-// route.post("/filterByCategory",(req,res)=>{
-//     models.Products.find({
-//         category:req.body.category,
-//         endDate: {
-//             $gt: Date.now()
-//         }
-//     })
-//         .then((items)=>{
-//             res.render("items",{
-//                 items
-//             })
-//         })
-//         .catch((err)=>{
-//             console.log(err);
-//         })
-// });
 
 //filter by time left
 route.get("/filterByTime", (req, res) => {
@@ -335,27 +324,6 @@ route.get("/:id", (req, res) => {
         // _id: 0
     })
         .then((item) => {
-            // console.log(item);
-            // models.Bids.find({
-            //     ProdID: item._id
-            // })
-            //     .then((itembid) => {
-            //         //to compute minimum bid allowed
-            //         //var minbid = item.basevalue;
-            //         //selecting base value as minimum value
-            //         // console.log(itembid);
-            //         (itembid[0].allBids).forEach(function (data) {
-            //                 if (data.price)
-            //                     if (minbid < data.price) {
-            //                         minbid = data.price;
-            //                     }
-            //             }
-            //         );
-            //         // console.log(minbid);
-            //         // console.log("Item:",item);
-            //         models.Products.findById(req.params.id)
-            //             .then((item) => {
-            //                 console.log("user: " + req.user);
             if (!req.user || item.userID !== req.user.id) {
                 res.render("item-details", {
                     item: item,
@@ -371,11 +339,11 @@ route.get("/:id", (req, res) => {
         })
         .catch((err) => {
             console.log(err);
-            res.send({
-                message: "error finding item"
-            });
-        })
-});
+            alert("error finding item");
+            res.redirect("/items");
+
+            })
+        });
 
 //Route to increase bid duration
 route.post("/:id/incTime", HELPERS.checkLoggedIn, (req, res) => {
@@ -383,25 +351,12 @@ route.post("/:id/incTime", HELPERS.checkLoggedIn, (req, res) => {
         models.Products.findById(req.params.id)
             .then((item) => {
                 let updatedDate = new Date(item.endDate.getTime() + req.body.duration * 3600 * 1000);
-                // console.log(updatedDate);
                 item.endDate = updatedDate;
                 item.save().then(() => {
-                    // scheduler.schedule({
-                    //     name: "inc-time",
-                    //     data: item._id
-                    // });
-                    console.log("Increasing time for :", item._id);
                     scheduler.list((err, events) => {
-                        console.log(events);
                         for (let eve of events) {
-                            // console.log(eve.data);
-                            // console.log(item._id);
-                            // console.log(eve.data.toString() === item._id.toString());
                             if (eve.data.toString() === item._id.toString()) {
-                                // console.log("found event");
-                                // console.log(eve);
                                 scheduler.remove("close-bid", eve._id, null, (err, event) => {
-                                    // console.log("Removed event !");
                                 });
 
                                 break;
@@ -418,24 +373,21 @@ route.post("/:id/incTime", HELPERS.checkLoggedIn, (req, res) => {
             })
             .catch((err) => {
                 console.log(err);
+                res.redirect('/404');
             })
     }
-    else {  //TODO: Flash message
-        res.send("Time is null !");
+    else {
+        res.redirect(`/items/${req.params.id}`)
     }
 });
 
 //Get time for a item
 route.get("/:id/time", (req, res) => {
-//console.log("In /:id/time");
     models.Products.findById(req.params.id)
         .then((item) => {
-            // console.log(item);
             let curDate = new Date();
             let timeRemaining = (item.endDate - curDate) / 1000;
             if (timeRemaining > 0) {
-                // console.log("sec:", timeRemaining);
-                // console.log(item.duration);
                 res.send({timeRemaining});
             }
             else {
@@ -464,12 +416,9 @@ route.get("/:id/time", (req, res) => {
 
 //Add a bid
 route.post("/:id/bid", HELPERS.checkLoggedIn, (req, res) => {
-    // console.log(req.params.id);
-    // console.log(req.body.bidprice);
     if (req.body.bidprice) {
         models.Products.findById(req.params.id)
             .then((item) => {
-                console.log(item);
                 if (item.userID !== req.user.id) {
                     if (req.body.bidprice > item.minbid) {
                         models.Bids.findOneAndUpdate(
@@ -517,41 +466,40 @@ route.post("/:id/bid", HELPERS.checkLoggedIn, (req, res) => {
                                             }
                                         )
                                             .then(() => {
-                                                console.log("after push", item);
                                                 if (item !== null)
                                                     res.redirect('/items/' + req.params.id);
                                                 else
                                                 //TODO: Add flash message
-                                                    res.send({
-                                                        msg: "Bid closed"
-                                                    })
+                                                    alert("Bid is Closed");
+                                                res.redirect(`/items/${req.params.id}`)
                                             })
                                     })
 
                             })
                             .catch((err) => {
                                 console.log(err);
-                                res.send({
-                                    message: "error finding item"
-                                });
+                                alert("error finding item");
+                                res.redirect(`/items/${req.params.id}`);
                             })
                     }
                     else {
-                        res.send("Majje le rha hai ladke ?");
+                        alert("Error Message: Frontend Altered");
+                        res.redirect(`/items/${req.params.id}`)
                     }
                 }
                 else {
-                    // console.log("User bidding own item");
-                    res.redirect(`/items/ ${req.params.id}`)
+                    res.redirect(`/items/${req.params.id}`)
                 }
             })
             .catch((err) => {
                 console.log(err);
+                res.redirect('/404');
             })
     }
     else {
         //If bidprice is null
-        res.send("Front end se maze na le ~Mr. Server");
+        alert("Error Message: Frontend Altered!");
+        res.redirect(`/items/${req.params.id}`);
     }
 });
 
@@ -563,41 +511,43 @@ route.get("/:id/delete", HELPERS.checkLoggedIn, (req, res) => {
         .then((bidentry) => {
             if (bidentry) {
                 if (bidentry.allBids === undefined || bidentry.allBids.length === 0) {
-                    // console.log("No bids...Proceed to delete");
                     models.Products.findById(req.params.id)
                         .then((item) => {
-                            // console.log(item);
                             item.remove();
                             bidentry.remove();
                             fs.stat(path.join(__dirname, "../", "public_html/Images/", item._id + ".jpg"), function (err, stats) {
-                                console.log(stats);//here we got all information of file in stats variable
-
                                 if (err) {
                                     return console.error(err);
                                 }
 
                                 fs.unlink(path.join(__dirname, "../", "public_html/Images/", item._id + ".jpg"), function (err) {
-                                    if (err) return console.log(err);
-                                    console.log('file deleted successfully');
+                                    if (err) {
+                                        console.log(err);
+                                        res.redirect('/404');
+                                    }
                                 });
                             });
                             res.redirect("/items?show=user");
                         })
                         .catch((err) => {
                             console.log("Error deleting item:", err);
+                            alert("Error in Deleting The Item ");
+                            res.redirect(`/items/${req.params.id}`)
                         })
                 }
                 else {
-                    res.send("Cannot remove item ! Bids Placed !");
+                    alert("Cannot delete item: Bid placed on item");
+                    res.redirect(`/items/${req.params.id}`)
                 }
             }
             else {
-                // console.log("Item not found");
-                res.send("Item not found");
+                alert("Item not found");
+                res.redirect(`/items/`)
             }
         })
         .catch((err) => {
-            console.log(err);
+        console.log(err);
+            res.redirect('/404');
         })
 });
 
