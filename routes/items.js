@@ -7,7 +7,7 @@ const Scheduler = require("mongo-scheduler-more");
 const cloudinary = require('cloudinary');
 
 //Import models
-const alert=require('alert-node');
+const alert = require('alert-node');
 
 //Import MongoDB models
 const models = require("../models/mongodb/mongo");
@@ -272,8 +272,10 @@ route.post('/add', HELPERS.checkLoggedIn, upload.single('imgUploader'), function
     })
         .then((item) => {
             fs.rename(path.join(__dirname, "../", "public_html/Images/", req.file.filename), path.join(__dirname, "../", "public_html/Images/", item._id + ".jpg"), (err) => {
-                console.log(err);
-                res.redirect('/404');
+                if(err) {
+                    console.log(err);
+                    res.redirect('/404');
+                }
             });
 
             //Upload image
@@ -314,13 +316,15 @@ route.post('/add', HELPERS.checkLoggedIn, upload.single('imgUploader'), function
 
                                 res.redirect(`/items/${item._id}`);
                             })
-                .catch((err) => {
-                    console.log(err);
-                    res.redirect('/404');
-                })
-        })
-        .catch((err) => {
-            console.error(err)
+                            .catch((err) => {
+                                console.log(err);
+                                res.redirect('/404');
+                            })
+                    })
+                    .catch((err) => {
+                        console.error(err)
+                    })
+            });
         })
 });
 
@@ -450,8 +454,8 @@ route.get("/:id", (req, res) => {
             alert("error finding item");
             res.redirect("/items");
 
-            })
-        });
+        })
+});
 
 //Route to increase bid duration
 route.post("/:id/incTime", HELPERS.checkLoggedIn, (req, res) => {
@@ -545,6 +549,7 @@ route.post("/:id/bid", HELPERS.checkLoggedIn, (req, res) => {
                             }
                         )
                             .then((bidItem) => {
+                            if(bidItem) {
                                 item.minbid = req.body.bidprice;
                                 item.save();
 
@@ -574,16 +579,29 @@ route.post("/:id/bid", HELPERS.checkLoggedIn, (req, res) => {
                                             }
                                         )
                                             .then(() => {
-                                                if (item !== null)
-                                                    res.redirect('/items/' + req.params.id);
-                                                else
-                                                //TODO: Add flash message
-                                                    alert("Bid is Closed");
+                                                // if (item !== null)
+                                                //     res.redirect('/items/' + req.params.id);
+                                                // else
+                                                // //TODO: Add flash message
+                                                //     alert("Bid is Closed");
                                                 res.redirect(`/items/${req.params.id}`)
                                             })
+                                            .catch((err)=>{
+                                                console.log(err);
+                                                res.redirect('/404');
+                                            })
+                                    })
+                                    .catch((err)=>{
+                                    console.log(err);
+                                    res.redirect('/404');
                                     })
 
-                            })
+                            }
+                            else{
+                                alert("Bid Is Closed");
+                                res.redirect(`/items/${req.params.id}`);
+                            }
+                        })
                             .catch((err) => {
                                 console.log(err);
                                 alert("error finding item");
@@ -591,7 +609,7 @@ route.post("/:id/bid", HELPERS.checkLoggedIn, (req, res) => {
                             })
                     }
                     else {
-                        alert("Error Message: Frontend Altered");
+                        alert("Enter the value greater than minimum bid!!");
                         res.redirect(`/items/${req.params.id}`)
                     }
                 }
@@ -606,7 +624,7 @@ route.post("/:id/bid", HELPERS.checkLoggedIn, (req, res) => {
     }
     else {
         //If bidprice is null
-        alert("Error Message: Frontend Altered!");
+        alert("Error Message: Enter the value to bid");
         res.redirect(`/items/${req.params.id}`);
     }
 });
@@ -629,7 +647,7 @@ route.get("/:id/delete", HELPERS.checkLoggedIn, (req, res) => {
                             publicID = publicID.split('.');
                             publicID = publicID[0];
                             console.log(publicID);
-                            cloudinary.v2.uploader.destroy(publicID, function(error, result){
+                            cloudinary.v2.uploader.destroy(publicID, function (error, result) {
                                 console.log(result)
                             });
 
@@ -652,7 +670,7 @@ route.get("/:id/delete", HELPERS.checkLoggedIn, (req, res) => {
             }
         })
         .catch((err) => {
-        console.log(err);
+            console.log(err);
             res.redirect('/404');
         })
 });
