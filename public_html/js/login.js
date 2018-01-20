@@ -18,7 +18,7 @@ function checkSame() {
         return true;
     }
     else {
-        $('.negative.message').removeClass('hidden')
+        $('.negative.message').removeClass('hidden');
         return false;
     }
 }

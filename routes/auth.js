@@ -124,7 +124,7 @@ module.exports = function (app) {
         }(user);
     }
 
-    async function mailVerifyEmail(user) {
+    async function mailVerifyEmail(user,res) {
 
         // generate the token
         let token = await  function () {
@@ -406,7 +406,23 @@ module.exports = function (app) {
 
 
     });
-
+app.get('/resendEmail',(req,res)=>{
+    Users.findOne({
+       where: {
+           id: req.user.dataValues.id
+       }
+    }).then((user)=>{
+        mailVerifyEmail(user,res)
+            .then(()=>{
+            alert("An Email has been sent again with the verification link");
+            res.render('email-not-verified');
+                })
+            .catch((err)=>{
+            console.log(err);
+            res.redirect('/404');
+            })
+    })
+});
 //Logout route
     app.get("/logout", (req, res) => {
         req.logout();
