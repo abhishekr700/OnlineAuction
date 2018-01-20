@@ -30,7 +30,7 @@ $(() => {
 
                 ul.prepend(`
                                 <div class="item">
-                    <img class="ui avatar image" src="../u.jpg">
+                    <img class="ui avatar image" src="../images/u.jpg">
                     <div class="content">
                       <div class="header">${usernames[Bid.userID]}</div>
                       <div class="description">Placed a bid for <strong>${Bid.price}</strong></div>
