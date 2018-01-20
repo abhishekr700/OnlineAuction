@@ -375,8 +375,10 @@ module.exports = function (app) {
                                         bidsOn: []
                                     })
                                         .then((data) => {
-
-                                            fs.rename(path.join(__dirname, "../", "public_html/Images/", req.file.filename), path.join(__dirname, "../", "public_html/Images/", user.id + ".jpg"), (err) => {
+                                            let imgName;
+                                            if (req.file) {
+                                            imgName = req.file.filename;
+                                            fs.rename(path.join(__dirname, "../", "public_html/Images/", imgName), path.join(__dirname, "../", "public_html/Images/", user.id + ".jpg"), (err) => {
                                                 if (err) {
                                                     console.log(err);
                                                     res.redirect('/404');
@@ -437,7 +439,36 @@ module.exports = function (app) {
 
 
                                             })
-                                        })
+                                        }    else{
+                                                user.img="/images/user.png";
+                                                user.save()
+                                                    .then(() => {
+                                                        mailVerifyEmail(user, res)
+                                                            .then(() => {
+                                                                req.login(user, (err) => {
+                                                                    if (err) {
+                                                                        console.log(err);
+                                                                        res.redirect("/404");
+                                                                    }
+                                                                    else {
+                                                                        alert("A link has been sent to your email id to verify it.");
+                                                                        res.redirect('/login');
+                                                                    }
+                                                                });
+
+                                                            })
+                                                            .catch((err) => {
+                                                                console.log(err);
+                                                                res.redirect('/404');
+                                                            })
+
+                                                    })
+                                                    .catch((err) => {
+                                                        console.log(err);
+                                                        res.redirect('/404');
+                                                    })
+                                            }
+                                    })
                                         .catch((err) => {
                                         console.log(err);
                                         res.redirect('/404');

@@ -83,6 +83,6 @@ $(() => {
     });
 
     socket.on("msg", (data) => {
-        $("#msg").html(data.msg);
+        $("#msg").css('display','block').html(data.msg);
     })
 });
