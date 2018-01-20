@@ -23,7 +23,7 @@ let Storage = multer.diskStorage({
 let upload = multer({storage: Storage});
 
 /*
-    Scheduler
+ Scheduler
  */
 const scheduler = new Scheduler(`mongodb://${CONFIG.MONGO.HOST}:${CONFIG.MONGO.PORT}/${CONFIG.MONGO.DB_NAME}`, {
     pollInterval: 1000
@@ -41,6 +41,7 @@ scheduler.on("close-bid", (err, event) => {
     })
         .then((biditem) => {
             // console.log("BidItem:", biditem);
+
             biditem.isOpen = false;
             biditem.save()
                 .then(() => {
@@ -312,7 +313,17 @@ route.get("/filterBidPrice/:id", (req, res) => {
 
 //filter for name of product
 route.post("/filterByName", (req, res) => {
-    if (!req.body.category) {
+
+    if (!req.body.category && !req.body.name) {
+        models.Products.find({})
+            .then((items) => {
+                res.redirect('/items')
+            })
+            .catch((err) => {
+                console.log(err);
+            })
+    }
+    else if (!req.body.category) {
         models.Products.find({
             name: req.body.name,
             endDate: {
@@ -322,9 +333,9 @@ route.post("/filterByName", (req, res) => {
             .then((items) => {
                 res.render("items", {
                     items
-                })
+                });
             })
-            .catch((err) => {
+     .catch((err) => {
                 console.log(err);
             })
     }

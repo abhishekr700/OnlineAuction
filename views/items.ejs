@@ -27,10 +27,12 @@
                 margin-left: 1vmax;
             }
         }
-
+        /*body{*/
+            /*height: 100%;!important;*/
+        /*}*/
         #all-item-container {
             margin-top: 3em;
-            margin-bottom: 5em;
+            margin-bottom: 3em;
         }
 
         @font-face {
@@ -51,6 +53,7 @@
             }
         }
 
+
         a {
             color: black;
         }
@@ -65,13 +68,13 @@
 <%- include('components/navbar'); %>
 
 
-<div class="ui grid">
-    <div class="ui segment four wide column">
-        <div class="ui fixdiv" style="margin: 1.7em;">
+<div class="ui stackable grid">
+    <div class="ui four wide column" style="border-right: 1px solid gainsboro">
+        <div class="ui fixdiv" style="margin: 1.7em; ">
             <div class="clr-sml"></div>
             <div style="font-size: 1.7em;text-align: center"><strong>Refine your Choice</strong></div>
             <div class="ui middle aligned list" style="font-size: 1.2em;">
-                <div class="clr-sml"></div>
+
                 <div class="item">
                     <div class="content">
                         <a class="item" href="/items">
@@ -79,7 +82,6 @@
                         </a>
                     </div>
                 </div>
-                <div class="clr-sml"></div>
                 <div class="item">
                     <div class="content">
                         <a class="item" href="/items/filterBidPrice/1">
@@ -87,12 +89,19 @@
                         </a>
                     </div>
                 </div>
-                <div class="clr-sml"></div>
                 <div class="item">
                     <div class="content">
 
                         <a class="item" href="/items/filterBidPrice/-1">
                             Lowest to Highest Price
+                        </a>
+                    </div>
+                </div>
+                <div class="item">
+                    <div class="content">
+
+                        <a class="item" href="/items/filterByTime">
+                            According to Time left
                         </a>
                     </div>
                 </div>
@@ -140,15 +149,16 @@
     <!--</form>-->
     <!--</a>-->
 
-    <div id="all-item-container" class="twelve wide column">
+    <div id="all-item-container" class="twelve wide column relaxed">
         <div class="ui basic segment">
 
             <div class="ui relaxed container" id="productlist">
+
                 <div class="ui relaxed items">
                     <% items.forEach((item)=>{ %>
 
                     <div class="ui item" id="<%= item._id %>"
-                         style="width: 85% ;margin-left:7vw ;border: 1px solid #dddddd; border-radius: 2px; padding: 1em;">
+                         style="width: 95% ;margin-left:1vw ;border: 1px solid #dddddd; border-radius: 2px; padding: 1em;">
                         <div class="image">
                             <img src="/Images/<%= item._id %>.jpg">
                         </div>
@@ -203,8 +213,9 @@
     </div>
 </div>
 
-
+<div style="bottom: 0;width: 100%">
 <%- include('components/footer'); %>
+</div>
 
 
 </body>
