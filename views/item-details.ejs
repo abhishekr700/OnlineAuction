@@ -65,6 +65,7 @@
                     <h1 class="ui header"><%= item.name %></h1>
                     <div class="extra">
                         <div class="ui label"><i class="globe icon"></i> <%= item.category %></div>
+
                     </div>
 
                 </div>
@@ -76,6 +77,7 @@
                     <img src=../Images/<%= item._id %>.jpg><br>
 
                 </div>
+
                 <div class="five wide column">
                     <!--Current Value-->
                     <div class="row">
@@ -113,6 +115,7 @@
                             <span class="minutes timerValues"></span><span class="timerValues">:</span>
                             <span class="seconds timerValues"></span><span class="timerValues"></span>
                         </div>
+
                         <% if(isOwner){ %>
                         <div id="inctime-container">
 
@@ -161,12 +164,18 @@
                         Bids
                     </div>
                 </div>
+
+
                 <div class="four wide column" id="list">
+                    <div class="header" style="font-size: 1.3em;">Ongoing Bids on this item</div>
                     <ul id="bids" class="ui middle aligned animated divided list"></ul>
                 </div>
             </div>
             <div class="ui divider"></div>
+
+            <div id="msg" style="font-size: 2em; text-align: center; color: orangered"></div>
             <div class="row">
+
                 <div class="column">
                     <h2>Item Details</h2>
                     <p><%= item.desc %><br></p>
@@ -186,7 +195,6 @@
         </div>
         <% } %>
     </div>
-    <div id="msg"></div>
 
 </div>
 
