@@ -28,6 +28,10 @@ function updateTimer(prodID) {
             timer.start({countdown: true, startValues: {seconds: data.timeRemaining}});
 
             timer.addEventListener("secondsUpdated", function (e) {
+                if(timer.getTimeValues().days== '0' && timer.getTimeValues().hours=='0'&& timer.getTimeValues().minutes == '0' && timer.getTimeValues().seconds<10 ) {
+                    $(`div[data-timer="${prodID}"]`).css('color', 'red');
+                    $(`div[data-timer="${prodID}"]`).css('font-size', 'large');
+                }
                 $(`div[data-timer="${prodID}"] .days`).html(timer.getTimeValues().days);
                 $(`div[data-timer="${prodID}"] .hours`).html(timer.getTimeValues().hours.zeroPad());
                 $(`div[data-timer="${prodID}"] .minutes`).html(timer.getTimeValues().minutes.zeroPad());
