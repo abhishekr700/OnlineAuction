@@ -216,7 +216,21 @@ io.on('connection', (socket) => {
                             }
                             else if (userID === item.userID) {
                                 if (winner)
-                                    socket.emit("msg", {msg: "Your product was purchased by " + winner.userID})
+                                {
+                                    Users.findOne({
+                                        where :{
+                                            id: winner.userID
+                                        },
+                                        attributes:[
+                                            'username'
+                                        ]
+                                    }).then((user)=>{
+                                        socket.emit("msg", {msg: "Your product was purchased by " + user.username})
+                                    }).catch((err)=>{
+                                        console.log(err);
+                                    })
+
+                                }
                                 else
                                     socket.emit("msg", {msg: "Your product went unsold"})
                             }

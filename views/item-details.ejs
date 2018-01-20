@@ -58,18 +58,20 @@
 <%- include('components/navbar'); %>
 <div id="item-detail" data-itemid=<%= item._id %>>
     <div class="ui relaxed container" id="main-container">
-
-        <div class="ui stackable  four column grid">
-            <div class="ui header">
-                <div class="content">
+        <div class="ui stackable two column grid">
+            <div class="row">
+                <div class="content eight  wide column ">
                     <h1 class="ui header"><%= item.name %></h1>
                     <div class="extra">
                         <div class="ui label"><i class="globe icon"></i> <%= item.category %></div>
-
                     </div>
-
                 </div>
+                <div class="ui success message eight wide column " id="msg" style=" text-align: center; font-size: x-large"></div>
             </div>
+        </div>
+
+
+        <div class="ui stackable  four column grid">
 
             <div class="row owner" id="isOwner" style="position: relative">
                 <div class="six wide column">
@@ -81,8 +83,6 @@
                 <div class="five wide column">
                     <!--Current Value-->
                     <div class="row">
-                        <!--<span></span>Owner: <%= item.userID %>-->
-                        <!--<span></span>category: <%= item.category %><br>-->
                         <div class="ui statistic">
                             <div class="value" style="color: red; text-align: left">
                                 <%= item.minbid %>
@@ -173,7 +173,6 @@
             </div>
             <div class="ui divider"></div>
 
-            <div id="msg" style="font-size: 2em; text-align: center; color: orangered"></div>
             <div class="row">
 
                 <div class="column">

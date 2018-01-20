@@ -100,7 +100,6 @@ module.exports = function (app) {
             return new Promise((resolve, reject) => {
                 let smtpTransport = nodemailer.createTransport({
                     service: 'gmail',
-                    // TODO: add username and password
                     auth: {
                         user: CONFIG.SERVER.MAIL,
                         pass: CONFIG.SERVER.PASS
@@ -360,7 +359,7 @@ module.exports = function (app) {
                                     })
                                         .then((data) => {
                                             mailVerifyEmail(user, res).then(() => {
-                                                alert("email not verified");
+                                                alert("An E-mail has been sent to your Email-id. Kindly verify it to continue with Auctioneer");
                                                 res.redirect('/login');
                                             }).catch((err) => {
                                                 console.log(err);

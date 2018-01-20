@@ -45,90 +45,115 @@ scheduler.on("close-bid", (err, event) => {
             biditem.save()
                 .then(() => {
                     //Send mail to winner
-                    console.log("Send winner mail");
+                    console.log("Send winner and Owner mail");
                     (async function () {
                         console.log("Inside mailer function");
-                        //Mail to winner
+                        //Mail to winner and Owner
                         await function () {
                             return new Promise((resolve, reject) => {
                                 let winnerId = biditem.allBids[biditem.allBids.length - 1].userID;
-                                console.log("WinenrID:", winnerId);
+                                if(winnerId){
+                                console.log("WinnerID:", winnerId);
                                 Users.findById(winnerId)
                                     .then((winner) => {
                                         console.log("Winner:", winner);
-                                        let smtpTransport = nodemailer.createTransport({
-                                            service: 'gmail',
-                                            auth: {
-                                                user: CONFIG.SERVER.MAIL,
-                                                pass: CONFIG.SERVER.PASS
-                                            }
-                                        });
-                                        let mailOptions = {
-                                            to: winner.email,
-                                            from: CONFIG.SERVER.MAIL,
-                                            subject: 'Auction Won',
-                                            text: 'You won the auction for ' + biditem.ProdID
-                                        };
-                                        smtpTransport.sendMail(mailOptions, function (err) {
-                                            console.log("sendwinnermail", err);
-                                            if (err) {
-                                                //console.log("rejected");
-                                                reject();
-                                            } else {
-                                                console.log("Mail sent");
-                                                resolve();
-                                            }
-                                        });
+                                        models.Products.findOne({
+                                            _id:event.data
+                                        })
+                                            .then((item)=>{
+                                            Users.findById(item.userID)
+                                                .then((owner)=>{
+                                                    let smtpTransport = nodemailer.createTransport({
+                                                        service: 'gmail',
+                                                        auth: {
+                                                            user: CONFIG.SERVER.MAIL,
+                                                            pass: CONFIG.SERVER.PASS
+                                                        }
+                                                    });
+                                                    let mailOptionsWinner = {
+                                                        to: winner.email,
+                                                        from: CONFIG.SERVER.MAIL,
+                                                        subject: 'Auction Won',
+                                                        text: 'You won the auction for ' + biditem.ProdID +".\n Following are The details of the owner of the product.\nKindly contact him/her for further process.\n" + "Username: "+owner.username+"\nName: "+owner.name+"\nEmail-Id: "+owner.email
+                                                    };
+                                                    let mailOptionsOwner = {
+                                                        to: owner.email,
+                                                        from: CONFIG.SERVER.MAIL,
+                                                        subject: 'Item Sold',
+                                                        text: 'Your Product ' + biditem.ProdID + ' has been sold and bought by '+winner.username+".\nKindly contact him/her for further process.\n" + "Username: "+winner.username+"\nName: "+winner.name+"\nEmail-Id: "+owner.email
+                                                    };
+                                                    smtpTransport.sendMail(mailOptionsWinner, function (err) {
+                                                        console.log("sendwinnermail", err);
+                                                        if (err) {
+                                                            //console.log("rejected");
+                                                            reject();
+                                                        } else {
+                                                            console.log("Mail sent to winner");
+                                                            smtpTransport.sendMail(mailOptionsOwner, function (err) {
+                                                                console.log("sendownermail", err);
+                                                                if (err) {
+                                                                    //console.log("rejected");
+                                                                    reject();
+                                                                } else {
+                                                                    console.log("Mail sent to owner");
+                                                                    resolve();
+                                                                }
+                                                            });
+                                                        }
+
+                                                    });
+                                                })
+                                                .catch((err)=>{
+                                                    console.log(err);
+                                                })
+                                        })
+                                            .catch((err)=>{
+                                                console.log(err);
+                                            })
                                     })
+                                    .catch((err)=>{
+                                    console.log(err);
+                                    })
+                            }
                             })
                         }();
                         //Mail to owner
-                        await function () {
-                            return new Promise((resolve, reject) => {
-                                models.Products.findById(biditem.ProdID)
-                                    .then((item) => {
-                                        let ownerId = item.userID;
-                                        console.log("UserID:", ownerId);
-                                        Users.findById(ownerId)
-                                            .then((owner) => {
-                                                console.log("Owner:", owner);
-                                                let smtpTransport = nodemailer.createTransport({
-                                                    service: 'gmail',
-                                                    auth: {
-                                                        user: CONFIG.SERVER.MAIL,
-                                                        pass: CONFIG.SERVER.PASS
-                                                    }
-                                                });
-                                                let mailOptions = {
-                                                    to: owner.email,
-                                                    from: CONFIG.SERVER.MAIL,
-                                                    subject: 'Item Sold',
-                                                    text: 'Your Product ' + biditem.ProdID + ' has been sold.'
-                                                };
-                                                smtpTransport.sendMail(mailOptions, function (err) {
-                                                    console.log("sendownermail", err);
-                                                    if (err) {
-                                                        //console.log("rejected");
-                                                        reject();
-                                                    } else {
-                                                        console.log("Mail sent");
-                                                        resolve();
-                                                    }
-                                                });
-                                            })
-                                    })
-                            })
-                        }();
-                    })();
+                        // await function () {
+                        //     return new Promise((resolve, reject) => {
+                        //         models.Products.findById(biditem.ProdID)
+                        //             .then((item) => {
+                        //                 let ownerId = item.userID;
+                        //                 console.log("UserID:", ownerId);
+                        //                 Users.findById(ownerId)
+                        //                     .then((owner) => {
+                        //                         console.log("Owner:", owner);
+                        //                         let smtpTransport = nodemailer.createTransport({
+                        //                             service: 'gmail',
+                        //                             auth: {
+                        //                                 user: CONFIG.SERVER.MAIL,
+                        //                                 pass: CONFIG.SERVER.PASS
+                        //                             }
+                        //                         });
+                        //
+                        //                     })
+                        //             })
+                        //     })
+                        // }();
+
+                    })()
+                        .then(()=>{
+                        console.log("bid has been closed");
+                        })
+                        .catch((err)=>{
+                        console.log(err);
+                        });
                 })
                 .catch((err) => {
                     console.log(err);
-                    res.redirect('/404');
                 })
         })
         .catch((err) => {
             console.log(err);
-            res.redirect('/404');
         })
 });
 
