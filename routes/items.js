@@ -2,11 +2,13 @@ const multer = require('multer');
 const route = require("express").Router();
 const fs = require("fs");
 const path = require("path");
+const nodemailer = require("nodemailer");
 const Scheduler = require("mongo-scheduler-more");
 
 
 //Import MongoDB models
 const models = require("../models/mongodb/mongo");
+const Users = require("../models/sql/sequelize").Users;
 
 //Import HELPERS
 const HELPERS = require("../helpers");
@@ -32,40 +34,118 @@ scheduler.on("error", (err, event) => {
     console.log(err, event);
 });
 
-scheduler.on("close-bid",(err,event)=>{
-    console.log("Closing Bid on Item:",event.data);
+scheduler.on("close-bid", (err, event) => {
+    console.log("Closing Bid on Item:", event.data);
     models.Bids.findOne({
         ProdID: event.data
     })
-        .then((biditem)=>{
-            console.log("BidItem:",biditem);
+        .then((biditem) => {
+            // console.log("BidItem:", biditem);
             biditem.isOpen = false;
             biditem.save()
-                .then(()=>{
+                .then(() => {
                     console.log("Bid-Successfully-closed");
+
+                    //Send mail to winner
+                    console.log("Send winner mail");
+                    (async function () {
+                        console.log("Inside mailer function");
+                        //Mail to winner
+                        await function () {
+                            return new Promise((resolve, reject) => {
+                                let winnerId = biditem.allBids[biditem.allBids.length - 1].userID;
+                                console.log("WinenrID:", winnerId);
+                                Users.findById(winnerId)
+                                    .then((winner) => {
+                                        console.log("Winner:", winner);
+                                        let smtpTransport = nodemailer.createTransport({
+                                            service: 'gmail',
+                                            auth: {
+                                                user: CONFIG.SERVER.MAIL,
+                                                pass: CONFIG.SERVER.PASS
+                                            }
+                                        });
+                                        let mailOptions = {
+                                            to: winner.email,
+                                            from: CONFIG.SERVER.MAIL,
+                                            subject: 'Auction Won',
+                                            text: 'You won the auction for ' + biditem.ProdID
+                                        };
+                                        smtpTransport.sendMail(mailOptions, function (err) {
+                                            console.log("sendwinnermail", err);
+                                            if (err) {
+                                                //console.log("rejected");
+                                                reject();
+                                            } else {
+                                                console.log("Mail sent");
+                                                resolve();
+                                            }
+                                        });
+                                    })
+                            })
+                        }();
+                        //Mail to owner
+                        await function () {
+                            return new Promise((resolve, reject) => {
+                                models.Products.findById(biditem.ProdID)
+                                    .then((item) => {
+                                        let ownerId = item.userID;
+                                        console.log("UserID:", ownerId);
+                                        Users.findById(ownerId)
+                                            .then((owner) => {
+                                                console.log("Owner:", owner);
+                                                let smtpTransport = nodemailer.createTransport({
+                                                    service: 'gmail',
+                                                    auth: {
+                                                        user: CONFIG.SERVER.MAIL,
+                                                        pass: CONFIG.SERVER.PASS
+                                                    }
+                                                });
+                                                let mailOptions = {
+                                                    to: owner.email,
+                                                    from: CONFIG.SERVER.MAIL,
+                                                    subject: 'Item Sold',
+                                                    text: 'Your Product ' + biditem.ProdID + ' has been sold.'
+                                                };
+                                                smtpTransport.sendMail(mailOptions, function (err) {
+                                                    console.log("sendownermail", err);
+                                                    if (err) {
+                                                        //console.log("rejected");
+                                                        reject();
+                                                    } else {
+                                                        console.log("Mail sent");
+                                                        resolve();
+                                                    }
+                                                });
+                                            })
+                                    })
+                            })
+                        }();
+                    })();
+
                 })
-                .catch((err)=>{
+                .catch((err) => {
                     console.log(err);
                 })
         })
-        .catch((err)=>{
+        .catch((err) => {
             console.log(err);
         })
-})
+});
 
-scheduler.on("inc-time",(err,event)=>{
+scheduler.on("inc-time", (err, event) => {
 
-})
+});
 
 //Items default page
 route.get("/", (req, res) => {
     console.log(typeof req.query.showall);
-    if(!req.query.show)
+    if (!req.query.show)
         req.query.show = "all";
     if (req.query.show === "all") {
         models.Products.find({})
             .then((items) => {
-            items.reverse();
+                items.reverse();
                 res.render("items", {
                     items
                 })
@@ -86,7 +166,7 @@ route.get("/", (req, res) => {
                     }
                 })
                     .then((items) => {
-                     items.reverse();
+                        items.reverse();
                         res.render("items", {
                             items
                         })
@@ -103,7 +183,7 @@ route.get("/", (req, res) => {
                     userID: req.user.id
                 })
                     .then((items) => {
-                      items.reverse();
+                        items.reverse();
                         res.render("items", {
                             items
                         })
@@ -115,15 +195,15 @@ route.get("/", (req, res) => {
                 res.redirect("/login");
 
         }
-        else if(req.query.show === "userbids"){
-            if(req.user){
+        else if (req.query.show === "userbids") {
+            if (req.user) {
                 models.UserBidsMap.findOne({
                     userID: req.user.id
                 })
-                    .then((biditems)=>{
+                    .then((biditems) => {
                         console.log(biditems.bidsOn);
                         let arr = [];
-                        for(let biditem of biditems.bidsOn){
+                        for (let biditem of biditems.bidsOn) {
                             arr.push(biditem.ProdID);
 
                         }
@@ -132,9 +212,9 @@ route.get("/", (req, res) => {
                                 $in: arr
                             }
                         })
-                            .then((items)=>{
+                            .then((items) => {
                                 items.reverse();
-                                res.render("items",{
+                                res.render("items", {
                                     items
                                 })
                             })
@@ -180,7 +260,7 @@ route.post('/add', HELPERS.checkLoggedIn, upload.single('imgUploader'), function
         desc: req.body.desc,
         category: req.body.category,
         basevalue: req.body.basevalue,
-        minbid:req.body.basevalue,
+        minbid: req.body.basevalue,
         endDate: endDate
     })
         .then((item) => {
@@ -199,7 +279,7 @@ route.post('/add', HELPERS.checkLoggedIn, upload.single('imgUploader'), function
                         name: "close-bid",
                         data: item._id,
                         after: item.endDate
-                    })
+                    });
 
                     res.redirect(`/items/${item._id}`);
                 })
@@ -213,61 +293,61 @@ route.post('/add', HELPERS.checkLoggedIn, upload.single('imgUploader'), function
 });
 
 //filter by bid price
-route.get("/filterBidPrice/:id",(req, res)=>{
-        models.Products.find({
-            endDate: {
-                $gt: Date.now()
-            }
-        }).sort({minbid:req.params.id})
-            .then((items)=>{
-                res.render("items",{
-                    items
-                })
+route.get("/filterBidPrice/:id", (req, res) => {
+    models.Products.find({
+        endDate: {
+            $gt: Date.now()
+        }
+    }).sort({minbid: req.params.id})
+        .then((items) => {
+            res.render("items", {
+                items
             })
-            .catch((err)=>{
-                console.log(err);
-            })
+        })
+        .catch((err) => {
+            console.log(err);
+        })
 
 });
 
 //filter for name of product
-route.post("/filterByName",(req,res)=>{
-        if (!req.body.category) {
-            models.Products.find({
-                name: req.body.name,
-                endDate: {
-                    $gt: Date.now()
-                }
+route.post("/filterByName", (req, res) => {
+    if (!req.body.category) {
+        models.Products.find({
+            name: req.body.name,
+            endDate: {
+                $gt: Date.now()
+            }
+        })
+            .then((items) => {
+                res.render("items", {
+                    items
+                })
             })
-                .then((items) => {
-                    res.render("items", {
-                        items
-                    })
-                })
-                .catch((err) => {
-                    console.log(err);
-                })
-        }
-        else if (!req.body.name) {
-            models.Products.find({
-                category: req.body.category,
-                endDate: {
-                    $gt: Date.now()
-                }
+            .catch((err) => {
+                console.log(err);
             })
-                .then((items) => {
-                    res.render("items", {
-                        items
-                    })
+    }
+    else if (!req.body.name) {
+        models.Products.find({
+            category: req.body.category,
+            endDate: {
+                $gt: Date.now()
+            }
+        })
+            .then((items) => {
+                res.render("items", {
+                    items
                 })
-                .catch((err) => {
-                    console.log(err);
-                })
-        }
-    else{
+            })
+            .catch((err) => {
+                console.log(err);
+            })
+    }
+    else {
         models.Products.find({
             name: checkvariable,
-            category:req.body.category,
+            category: req.body.category,
             endDate: {
                 $gt: Date.now()
             }
@@ -303,14 +383,14 @@ route.post("/filterByName",(req,res)=>{
 // });
 
 //filter by time left
-route.get("/filterByTime",(req,res)=>{
+route.get("/filterByTime", (req, res) => {
     models.Products.find({
         endDate: {
             $gt: Date.now()
         }
-    }).sort({endDate:1})
-        .then((items)=>{
-            res.render("items",{
+    }).sort({endDate: 1})
+        .then((items) => {
+            res.render("items", {
                 items
             })
         })
@@ -344,19 +424,19 @@ route.get("/:id", (req, res) => {
             //         models.Products.findById(req.params.id)
             //             .then((item) => {
             //                 console.log("user: " + req.user);
-                            if (!req.user || item.userID !== req.user.id) {
-                                res.render("item-details", {
-                                    item: item,
-                                    isOwner: false
-                                });
-                            }
-                            else {
-                                res.render("item-details", {
-                                    item: item,
-                                    isOwner: true
-                                });
-                            }
-                        })
+            if (!req.user || item.userID !== req.user.id) {
+                res.render("item-details", {
+                    item: item,
+                    isOwner: false
+                });
+            }
+            else {
+                res.render("item-details", {
+                    item: item,
+                    isOwner: true
+                });
+            }
+        })
         .catch((err) => {
             console.log(err);
             res.send({
@@ -370,25 +450,25 @@ route.post("/:id/incTime", HELPERS.checkLoggedIn, (req, res) => {
     if (req.body.duration) {
         models.Products.findById(req.params.id)
             .then((item) => {
-                let updatedDate = new Date(item.endDate.getTime() + req.body.duration  * 3600 * 1000);
+                let updatedDate = new Date(item.endDate.getTime() + req.body.duration * 3600 * 1000);
                 // console.log(updatedDate);
                 item.endDate = updatedDate;
-                item.save().then(()=>{
+                item.save().then(() => {
                     // scheduler.schedule({
                     //     name: "inc-time",
                     //     data: item._id
                     // });
-                    console.log("Increasing time for :",item._id);
-                    scheduler.list((err,events)=>{
+                    console.log("Increasing time for :", item._id);
+                    scheduler.list((err, events) => {
                         console.log(events);
-                        for(let eve of events){
+                        for (let eve of events) {
                             // console.log(eve.data);
                             // console.log(item._id);
                             // console.log(eve.data.toString() === item._id.toString());
-                            if(eve.data.toString() === item._id.toString()){
+                            if (eve.data.toString() === item._id.toString()) {
                                 // console.log("found event");
                                 // console.log(eve);
-                                scheduler.remove("close-bid",eve._id,null,(err,event)=>{
+                                scheduler.remove("close-bid", eve._id, null, (err, event) => {
                                     // console.log("Removed event !");
                                 });
 
@@ -400,7 +480,7 @@ route.post("/:id/incTime", HELPERS.checkLoggedIn, (req, res) => {
                             data: item._id,
                             after: item.endDate
                         });
-                        });
+                    });
                     res.redirect(`/items/${req.params.id}`);
                 })
             })
@@ -416,38 +496,38 @@ route.post("/:id/incTime", HELPERS.checkLoggedIn, (req, res) => {
 //Get time for a item
 route.get("/:id/time", (req, res) => {
 //console.log("In /:id/time");
-models.Products.findById(req.params.id)
-    .then((item) => {
-        // console.log(item);
-        let curDate = new Date();
-        let timeRemaining = (item.endDate - curDate) / 1000;
-        if (timeRemaining > 0) {
-            // console.log("sec:", timeRemaining);
-            // console.log(item.duration);
-            res.send({timeRemaining});
-        }
-        else {
-            models.Bids.updateOne(
-                {
-                    "ProdID": item._id
-                }
-                ,
-                {
-                    $set: {
-                        "isOpen": false
-                }
-                }
-            ).then(function (data) {
-            });
-            res.send({
-                timeRemaining: 0
-            })
-        }
-    })
-    .catch((err) => {
-        console.log(err);
-        res.redirect(`/items/${req.params.id}`);
-    })
+    models.Products.findById(req.params.id)
+        .then((item) => {
+            // console.log(item);
+            let curDate = new Date();
+            let timeRemaining = (item.endDate - curDate) / 1000;
+            if (timeRemaining > 0) {
+                // console.log("sec:", timeRemaining);
+                // console.log(item.duration);
+                res.send({timeRemaining});
+            }
+            else {
+                models.Bids.updateOne(
+                    {
+                        "ProdID": item._id
+                    }
+                    ,
+                    {
+                        $set: {
+                            "isOpen": false
+                        }
+                    }
+                ).then(function (data) {
+                });
+                res.send({
+                    timeRemaining: 0
+                })
+            }
+        })
+        .catch((err) => {
+            console.log(err);
+            res.redirect(`/items/${req.params.id}`);
+        })
 });
 
 //Add a bid
@@ -491,7 +571,7 @@ route.post("/:id/bid", HELPERS.checkLoggedIn, (req, res) => {
                                         }
                                     }
                                 )
-                                    .then(()=>{
+                                    .then(() => {
                                         models.UserBidsMap.findOneAndUpdate(
                                             {
                                                 userID: req.user.id
@@ -504,10 +584,10 @@ route.post("/:id/bid", HELPERS.checkLoggedIn, (req, res) => {
                                                 }
                                             }
                                         )
-                                            .then(()=>{
-                                                console.log("after push",item);
+                                            .then(() => {
+                                                console.log("after push", item);
                                                 if (item !== null)
-                                                    res.redirect('/items/' + req.params.id );
+                                                    res.redirect('/items/' + req.params.id);
                                                 else
                                                 //TODO: Add flash message
                                                     res.send({
@@ -544,16 +624,16 @@ route.post("/:id/bid", HELPERS.checkLoggedIn, (req, res) => {
 });
 
 //Delete an item
-route.get("/:id/delete",HELPERS.checkLoggedIn,(req,res)=>{
+route.get("/:id/delete", HELPERS.checkLoggedIn, (req, res) => {
     models.Bids.findOne({
         ProdID: req.params.id
     })
-        .then((bidentry)=>{
-            if(bidentry){
-                if(bidentry.allBids === undefined || bidentry.allBids.length === 0){
+        .then((bidentry) => {
+            if (bidentry) {
+                if (bidentry.allBids === undefined || bidentry.allBids.length === 0) {
                     // console.log("No bids...Proceed to delete");
                     models.Products.findById(req.params.id)
-                        .then((item)=>{
+                        .then((item) => {
                             // console.log(item);
                             item.remove();
                             bidentry.remove();
@@ -564,27 +644,27 @@ route.get("/:id/delete",HELPERS.checkLoggedIn,(req,res)=>{
                                     return console.error(err);
                                 }
 
-                                fs.unlink(path.join(__dirname, "../", "public_html/Images/", item._id + ".jpg"),function(err){
-                                    if(err) return console.log(err);
+                                fs.unlink(path.join(__dirname, "../", "public_html/Images/", item._id + ".jpg"), function (err) {
+                                    if (err) return console.log(err);
                                     console.log('file deleted successfully');
                                 });
                             });
                             res.redirect("/items?show=user");
                         })
-                        .catch((err)=>{
-                            console.log("Error deleting item:",err);
+                        .catch((err) => {
+                            console.log("Error deleting item:", err);
                         })
                 }
-                else{
+                else {
                     res.send("Cannot remove item ! Bids Placed !");
                 }
             }
-            else{
+            else {
                 // console.log("Item not found");
                 res.send("Item not found");
             }
         })
-        .catch((err)=>{
+        .catch((err) => {
             console.log(err);
         })
 });
