@@ -26,24 +26,36 @@
     </a>
     <div class="right menu">
         <a href="/items?show=all" class="item">All Auctions</a>
-        <% if(user){ %>
-        <div class="ui pointing dropdown link item">
-            <span class="text">Welcome <%= user.dataValues.username %></span>
-            <i class="dropdown icon"></i>
-            <div class="menu">
-                <a class="item" href="/items/add">Create Auction</a>
-                <a class="item" href="/items?show=others">Bid On Items</a>
-                <a class="item" href="/items?show=user">Your Items</a>
-                <a class="item" href="/items?show=userbids">Your Bids</a>
-                <a class="item" href="/users/">View Profile</a>
-                <a class="item" href="/logout">Logout</a>
+        <% if(user) { %>
+            <% if(user.dataValues.isVerified){ %>
+            <div class="ui pointing dropdown link item">
+                <span class="text">Welcome <%= user.dataValues.username %></span>
+                <i class="dropdown icon"></i>
+                <div class="menu">
+                    <a class="item" href="/items/add">Create Auction</a>
+                    <a class="item" href="/items?show=others">Bid On Items</a>
+                    <a class="item" href="/items?show=user">Your Items</a>
+                    <a class="item" href="/items?show=userbids">Your Bids</a>
+                    <a class="item" href="/users/">View Profile</a>
+                    <a class="item" href="/logout">Logout</a>
+                </div>
             </div>
-        </div>
-        <%} else {%>
+            <% } else { %>
+                <div class="ui pointing dropdown link item">
+                    <span class="text">Welcome <%= user.dataValues.username %></span>
+                    <i class="dropdown icon"></i>
+                    <div class="menu">
+                        <a class="item" href="/users/">View Profile</a>
+                        <a class="item" href="/logout">Logout</a>
+                    </div>
+                </div>
+            <%}%>
+
+        <% } else { %>
         <div class="right item">
             <a class="ui inverted button" href="/login">Log In/Sign Up</a>
         </div>
-        <%}%>
+        <% } %>
     </div>
 </div>
 <div id="nav-adjust">
