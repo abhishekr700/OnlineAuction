@@ -17,6 +17,9 @@ passport.deserializeUser(function (id, done) {
         .then((user) => {
             done(null, user);
         })
+        .catch((err)=>{
+        console.log(err);
+        })
 });
 
 //Define LocalStrategy
@@ -44,7 +47,10 @@ const localstrategy = new LocalStrategy(
 
                     });
                 }
-            });
+            })
+           .catch((err)=>{
+            console.log(err);
+        })
     }
 );
 

@@ -132,10 +132,6 @@ scheduler.on("close-bid", (err, event) => {
         })
 });
 
-scheduler.on("inc-time", (err, event) => {
-
-});
-
 //Cloudiniary Configs
 cloudinary.config({
     cloud_name: 'auctioneeer',
@@ -162,7 +158,7 @@ route.get("/", (req, res) => {
     }
     else {
         if (req.query.show === "others") {
-            if (req.user)
+            if (req.user) {
                 models.Products.find({
                     userID: {
                         $ne: req.user.id
@@ -181,6 +177,7 @@ route.get("/", (req, res) => {
                         console.log(err);
                         res.redirect('/404');
                     })
+            }
             else
                 res.redirect("/login");
         }
@@ -227,6 +224,10 @@ route.get("/", (req, res) => {
                             })
 
                     })
+                    .catch((err) => {
+                        console.log(err);
+                        res.redirect('/404');
+                    })
             }
         }
         else {
@@ -272,59 +273,71 @@ route.post('/add', HELPERS.checkLoggedIn, upload.single('imgUploader'), function
     })
         .then((item) => {
             fs.rename(path.join(__dirname, "../", "public_html/Images/", req.file.filename), path.join(__dirname, "../", "public_html/Images/", item._id + ".jpg"), (err) => {
-                if(err) {
+                if (err) {
                     console.log(err);
                     res.redirect('/404');
                 }
-            });
+                else {
+                    //Upload image
+                    cloudinary.uploader.upload(path.join(__dirname, "../", "public_html/Images/", item._id + ".jpg"), function (result) {
+                        console.log(result);
 
-            //Upload image
-            cloudinary.uploader.upload(path.join(__dirname, "../", "public_html/Images/", item._id + ".jpg"), function (result) {
-                console.log(result);
+                        //Delete image from server
+                        fs.stat(path.join(__dirname, "../", "public_html/Images/", item._id + ".jpg"), function (err, stats) {
+                            console.log(stats);//here we got all information of file in stats variable
+                            if (err) {
+                                return console.error(err);
+                            }
+                            else {
+                                fs.unlink(path.join(__dirname, "../", "public_html/Images/", item._id + ".jpg"), function (err) {
+                                    if (err)
+                                    {
+                                        console.log(err);
+                                        res.redirect('/404');
+                                    }
+                                    else{
+                                    console.log('file deleted successfully');
+                                    //Store image url in DB
+                                    item.img = result.url;
+                                    item.save()
+                                        .then(() => {
 
-                //Delete image from server
-                fs.stat(path.join(__dirname, "../", "public_html/Images/", item._id + ".jpg"), function (err, stats) {
-                    console.log(stats);//here we got all information of file in stats variable
-                    if (err) {
-                        return console.error(err);
-                    }
+                                            //Create entry in bids table
+                                            models.Bids.create({
+                                                ProdID: item._id,
+                                                isOpen: true,
+                                                allBids: []
+                                            })
+                                                .then(() => {
 
-                    fs.unlink(path.join(__dirname, "../", "public_html/Images/", item._id + ".jpg"), function (err) {
-                        if (err) return console.log(err);
-                        console.log('file deleted successfully');
-                    });
-                });
+                                                    scheduler.schedule({
+                                                        name: "close-bid",
+                                                        data: item._id,
+                                                        after: item.endDate
+                                                    });
 
-                //Store image url in DB
-                item.img = result.url;
-                item.save()
-                    .then(() => {
-
-                        //Create entry in bids table
-                        models.Bids.create({
-                            ProdID: item._id,
-                            isOpen: true,
-                            allBids: []
-                        })
-                            .then(() => {
-
-                                scheduler.schedule({
-                                    name: "close-bid",
-                                    data: item._id,
-                                    after: item.endDate
+                                                    res.redirect(`/items/${item._id}`);
+                                                })
+                                                .catch((err) => {
+                                                    console.log(err);
+                                                    res.redirect('/404');
+                                                })
+                                        })
+                                        .catch((err) => {
+                                            console.error(err);
+                                            res.redirect('/404');
+                                        })
+                                }
                                 });
-
-                                res.redirect(`/items/${item._id}`);
-                            })
-                            .catch((err) => {
-                                console.log(err);
-                                res.redirect('/404');
-                            })
-                    })
-                    .catch((err) => {
-                        console.error(err)
-                    })
+                            }
+                        });
+                    });
+                }
             });
+        })
+        .catch((err) => {
+            console.log(err);
+            res.redirect('/404');
         })
 });
 
@@ -427,6 +440,10 @@ route.get("/filterByTime", (req, res) => {
                 items
             })
         })
+        .catch((err)=>{
+        console.log(err);
+        res.redirect('/404');
+        })
 });
 
 //Get item details
@@ -464,7 +481,8 @@ route.post("/:id/incTime", HELPERS.checkLoggedIn, (req, res) => {
             .then((item) => {
                 let updatedDate = new Date(item.endDate.getTime() + req.body.duration * 3600 * 1000);
                 item.endDate = updatedDate;
-                item.save().then(() => {
+                item.save()
+                    .then(() => {
                     scheduler.list((err, events) => {
                         for (let eve of events) {
                             if (eve.data.toString() === item._id.toString()) {
@@ -482,6 +500,10 @@ route.post("/:id/incTime", HELPERS.checkLoggedIn, (req, res) => {
                     });
                     res.redirect(`/items/${req.params.id}`);
                 })
+                    .catch((err) => {
+                        console.log(err);
+                        res.redirect('/404');
+                    })
             })
             .catch((err) => {
                 console.log(err);
@@ -514,10 +536,11 @@ route.get("/:id/time", (req, res) => {
                         }
                     }
                 ).then(function (data) {
+                    res.send({
+                        timeRemaining: 0
+                    })
                 });
-                res.send({
-                    timeRemaining: 0
-                })
+
             }
         })
         .catch((err) => {
@@ -549,59 +572,54 @@ route.post("/:id/bid", HELPERS.checkLoggedIn, (req, res) => {
                             }
                         )
                             .then((bidItem) => {
-                            if(bidItem) {
-                                item.minbid = req.body.bidprice;
-                                item.save();
+                                if (bidItem) {
+                                    item.minbid = req.body.bidprice;
+                                    item.save();
 
-                                models.UserBidsMap.findOneAndUpdate(
-                                    {
-                                        userID: req.user.id
-                                    },
-                                    {
-                                        $pull: {
-                                            bidsOn: {
-                                                ProdID: item._id
-                                            }
-                                        }
-                                    }
-                                )
-                                    .then(() => {
-                                        models.UserBidsMap.findOneAndUpdate(
-                                            {
-                                                userID: req.user.id
-                                            },
-                                            {
-                                                $push: {
-                                                    bidsOn: {
-                                                        ProdID: item._id
-                                                    }
+                                    models.UserBidsMap.findOneAndUpdate(
+                                        {
+                                            userID: req.user.id
+                                        },
+                                        {
+                                            $pull: {
+                                                bidsOn: {
+                                                    ProdID: item._id
                                                 }
                                             }
-                                        )
-                                            .then(() => {
-                                                // if (item !== null)
-                                                //     res.redirect('/items/' + req.params.id);
-                                                // else
-                                                // //TODO: Add flash message
-                                                //     alert("Bid is Closed");
-                                                res.redirect(`/items/${req.params.id}`)
-                                            })
-                                            .catch((err)=>{
-                                                console.log(err);
-                                                res.redirect('/404');
-                                            })
-                                    })
-                                    .catch((err)=>{
-                                    console.log(err);
-                                    res.redirect('/404');
-                                    })
+                                        }
+                                    )
+                                        .then(() => {
+                                            models.UserBidsMap.findOneAndUpdate(
+                                                {
+                                                    userID: req.user.id
+                                                },
+                                                {
+                                                    $push: {
+                                                        bidsOn: {
+                                                            ProdID: item._id
+                                                        }
+                                                    }
+                                                }
+                                            )
+                                                .then(() => {
+                                                    res.redirect(`/items/${req.params.id}`)
+                                                })
+                                                .catch((err) => {
+                                                    console.log(err);
+                                                    res.redirect('/404');
+                                                })
+                                        })
+                                        .catch((err) => {
+                                            console.log(err);
+                                            res.redirect('/404');
+                                        })
 
-                            }
-                            else{
-                                alert("Bid Is Closed");
-                                res.redirect(`/items/${req.params.id}`);
-                            }
-                        })
+                                }
+                                else {
+                                    alert("Bid Is Closed");
+                                    res.redirect(`/items/${req.params.id}`);
+                                }
+                            })
                             .catch((err) => {
                                 console.log(err);
                                 alert("error finding item");
@@ -648,10 +666,10 @@ route.get("/:id/delete", HELPERS.checkLoggedIn, (req, res) => {
                             publicID = publicID[0];
                             console.log(publicID);
                             cloudinary.v2.uploader.destroy(publicID, function (error, result) {
-                                console.log(result)
+                                console.log(result);
+                                alert("Successfully Deleted Item");
+                                res.redirect("/items?show=user");
                             });
-
-                            res.redirect("/items?show=user");
                         })
                         .catch((err) => {
                             console.log("Error deleting item:", err);

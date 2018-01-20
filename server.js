@@ -183,6 +183,9 @@ io.on('connection', (socket) => {
                             }
                     });
             })
+            .catch((err)=>{
+              console.log(err);
+            })
     });
 
     socket.on("bid-closed", (data) => {
@@ -231,13 +234,11 @@ io.on('connection', (socket) => {
                         })
                         .catch((err) => {
                             console.log(err);
-                            res.redirect('/404');
                         })
                 }
             })
             .catch((err) => {
                 console.log(err);
-                res.redirect('/404');
             })
     })
 

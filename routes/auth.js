@@ -1,12 +1,12 @@
 const Passport = require("../passport");
-const crypto=require('crypto');
+const crypto = require('crypto');
 const bcrypt = require('bcryptjs');
-const nodemailer=require('nodemailer');
+const nodemailer = require('nodemailer');
 const Users = require("../models/sql/sequelize").Users;
-const Sequelize=require('sequelize');
+const Sequelize = require('sequelize');
 const CONFIG = require("../configs");
 const models = require("../models/mongodb/mongo");
-const alert=require('alert-node');
+const alert = require('alert-node');
 
 
 module.exports = function (app) {
@@ -16,7 +16,7 @@ module.exports = function (app) {
     functions
      */
 
-    async function mailPassword(user,res) {
+    async function mailPassword(user, res) {
 
         // generate the token
         let token = await  function () {
@@ -44,7 +44,8 @@ module.exports = function (app) {
 
         // send the mail to the user's email id
         await  function (token, user) {
-            return new Promise((resolve, reject) => {;
+            return new Promise((resolve, reject) => {
+                ;
                 let smtpTransport = nodemailer.createTransport({
                     service: 'gmail',
                     // TODO: add username and password
@@ -73,7 +74,7 @@ module.exports = function (app) {
         }(token, user);
     }
 
-    async function mailConfirmation(user, newPassword,res) {
+    async function mailConfirmation(user, newPassword, res) {
 
         // update user table with new password and tokens
         await  function () {
@@ -192,23 +193,29 @@ module.exports = function (app) {
                     {email: req.body.email}
                 ]
             }
-        }).then((user) => {
-            if (!user) {
-                alert("username/email not found");
-                res.redirect('/forgot');
-            } else {
-
-                mailPassword(user,res).then(() => {
-
-                    alert('An e-mail has been sent to ' + user.email + ' with further instructions.');
-                    res.redirect('/');
-                }).catch((err) => {
-                    console.log(err);
-                    res.redirect('/404');
-
-                })
-            }
         })
+            .then((user) => {
+                if (!user) {
+                    alert("username/email not found");
+                    res.redirect('/forgot');
+                } else {
+
+                    mailPassword(user, res)
+                        .then(() => {
+
+                            alert('An e-mail has been sent to ' + user.email + ' with further instructions.');
+                            res.redirect('/');
+                        })
+                        .catch((err) => {
+                            console.log(err);
+                            res.redirect('/404');
+                        })
+                }
+            })
+            .catch((err) => {
+                console.log(err);
+                res.redirect('/404');
+            })
 
     });
 
@@ -221,16 +228,21 @@ module.exports = function (app) {
                     [Sequelize.Op.gte]: Date.now()
                 }
             }
-        }).then((user) => {
-            if (!user) {
-                alert('Password reset token is invalid or link has expired.');
-                res.redirect('/');
-            } else {
-                res.render('password-reset', {
-                    user: user
-                });
-            }
         })
+            .then((user) => {
+                if (!user) {
+                    alert('Password reset token is invalid or link has expired.');
+                    res.redirect('/');
+                } else {
+                    res.render('password-reset', {
+                        user: user
+                    });
+                }
+            })
+            .catch((err) => {
+                console.log(err);
+                res.redirect('/404');
+            })
     });
 
 // reset my password is clicked
@@ -243,27 +255,33 @@ module.exports = function (app) {
                     [Sequelize.Op.gte]: Date.now()
                 }
             }
-        }).then((user) => {
-            if (!user) {
-                alert('Password reset token is invalid or link has expired.');
-                res.redirect('/');
-            } else {
-
-                mailConfirmation(user, req.body.password,res).then(() => {
-                    alert('\'success\', \'Success! Your password has been changed.\'');
-                    res.redirect('/login');
-
-                }).catch(() => {
-                    res.redirect('/404');
-                })
-            }
         })
+            .then((user) => {
+                if (!user) {
+                    alert('Password reset token is invalid or link has expired.');
+                    res.redirect('/');
+                } else {
+
+                    mailConfirmation(user, req.body.password, res)
+                        .then(() => {
+                            alert('\'success\', \'Success! Your password has been changed.\'');
+                            res.redirect('/login');
+
+                        }).catch(() => {
+                        res.redirect('/404');
+                    })
+                }
+            })
+            .catch((err) => {
+                console.log(err);
+                res.redirect('/404');
+            })
 
     });
 
 //Render Login Page
     app.get("/login", (req, res) => {
-        if(req.user)
+        if (req.user)
             res.redirect("/users");
         else
             res.render("login");
@@ -277,30 +295,35 @@ module.exports = function (app) {
 
 //Render SignUp page
     app.get("/signup", (req, res) => {
-        if(req.user)
+        if (req.user)
             res.redirect("/users");
         else
             res.render("login");
     });
 
 //verify email
-    app.get("/verify/:token",(req,res)=>{
+    app.get("/verify/:token", (req, res) => {
         Users.find({
             where: {
                 verifyEmailToken: req.params.token,
             }
-        }).then((user) => {
-            if (!user) {
-                alert('verify email token is invalid.');
-                res.redirect('/');
-            } else {
-                user.isVerified=true;
-                user.save();
-                req.login(user, () => {
-                    res.redirect("/users");
-                });
-            }
         })
+            .then((user) => {
+                if (!user) {
+                    alert('verify email token is invalid.');
+                    res.redirect('/');
+                } else {
+                    user.isVerified = true;
+                    user.save();
+                    req.login(user, () => {
+                        res.redirect("/users");
+                    });
+                }
+            })
+            .catch((err) => {
+                console.log(err);
+                res.redirect('/404');
+            })
     });
 
 //New User via SignUp route
@@ -327,7 +350,7 @@ module.exports = function (app) {
                                 email: req.body.email,
                                 phone1: req.body.phone1,
                                 phone2: req.body.phone2,
-                                isVerified:false
+                                isVerified: false
                             })
                                 .then((user) => {
 
@@ -335,17 +358,17 @@ module.exports = function (app) {
                                         userID: user.id,
                                         bidsOn: []
                                     })
-                                        .then((data)=>{
-                                            mailVerifyEmail(user,res).then(()=>{
+                                        .then((data) => {
+                                            mailVerifyEmail(user, res).then(() => {
                                                 alert("email not verified");
                                                 res.redirect('/login');
-                                            }).catch((err)=>{
+                                            }).catch((err) => {
                                                 console.log(err);
                                                 res.redirect('/404');
                                             })
 
                                         })
-                                        .catch((err)=>{
+                                        .catch((err) => {
                                             console.log(err);
                                             res.redirect('/404');
                                         })
