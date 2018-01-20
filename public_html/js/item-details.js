@@ -45,6 +45,11 @@ $(() => {
             timer.start({countdown: true, startValues: {seconds: data.timeRemaining}});
 
             timer.addEventListener("secondsUpdated", function (e) {
+                if(timer.getTimeValues().days== '0' && timer.getTimeValues().hours=='0'&& timer.getTimeValues().minutes == '0' && timer.getTimeValues().seconds<50 )
+                {
+                    $('#timer').css('color','red');
+                    $('#timer').css('font-size','x-large');
+                }
                 $('#timer .days').html(timer.getTimeValues().days);
                 $('#timer .hours').html(timer.getTimeValues().hours.zeroPad());
                 $('#timer .minutes').html(timer.getTimeValues().minutes.zeroPad());
