@@ -2,11 +2,13 @@ const multer = require('multer');
 const route = require("express").Router();
 const fs = require("fs");
 const path = require("path");
+const nodemailer = require("nodemailer");
 const Scheduler = require("mongo-scheduler-more");
 const alert=require('alert-node');
 
 //Import MongoDB models
 const models = require("../models/mongodb/mongo");
+const Users = require("../models/sql/sequelize").Users;
 
 //Import HELPERS
 const HELPERS = require("../helpers");
@@ -40,6 +42,82 @@ scheduler.on("close-bid", (err, event) => {
             biditem.isOpen = false;
             biditem.save()
                 .then(() => {
+                    //Send mail to winner
+                    console.log("Send winner mail");
+                    (async function () {
+                        console.log("Inside mailer function");
+                        //Mail to winner
+                        await function () {
+                            return new Promise((resolve, reject) => {
+                                let winnerId = biditem.allBids[biditem.allBids.length - 1].userID;
+                                console.log("WinenrID:", winnerId);
+                                Users.findById(winnerId)
+                                    .then((winner) => {
+                                        console.log("Winner:", winner);
+                                        let smtpTransport = nodemailer.createTransport({
+                                            service: 'gmail',
+                                            auth: {
+                                                user: CONFIG.SERVER.MAIL,
+                                                pass: CONFIG.SERVER.PASS
+                                            }
+                                        });
+                                        let mailOptions = {
+                                            to: winner.email,
+                                            from: CONFIG.SERVER.MAIL,
+                                            subject: 'Auction Won',
+                                            text: 'You won the auction for ' + biditem.ProdID
+                                        };
+                                        smtpTransport.sendMail(mailOptions, function (err) {
+                                            console.log("sendwinnermail", err);
+                                            if (err) {
+                                                //console.log("rejected");
+                                                reject();
+                                            } else {
+                                                console.log("Mail sent");
+                                                resolve();
+                                            }
+                                        });
+                                    })
+                            })
+                        }();
+                        //Mail to owner
+                        await function () {
+                            return new Promise((resolve, reject) => {
+                                models.Products.findById(biditem.ProdID)
+                                    .then((item) => {
+                                        let ownerId = item.userID;
+                                        console.log("UserID:", ownerId);
+                                        Users.findById(ownerId)
+                                            .then((owner) => {
+                                                console.log("Owner:", owner);
+                                                let smtpTransport = nodemailer.createTransport({
+                                                    service: 'gmail',
+                                                    auth: {
+                                                        user: CONFIG.SERVER.MAIL,
+                                                        pass: CONFIG.SERVER.PASS
+                                                    }
+                                                });
+                                                let mailOptions = {
+                                                    to: owner.email,
+                                                    from: CONFIG.SERVER.MAIL,
+                                                    subject: 'Item Sold',
+                                                    text: 'Your Product ' + biditem.ProdID + ' has been sold.'
+                                                };
+                                                smtpTransport.sendMail(mailOptions, function (err) {
+                                                    console.log("sendownermail", err);
+                                                    if (err) {
+                                                        //console.log("rejected");
+                                                        reject();
+                                                    } else {
+                                                        console.log("Mail sent");
+                                                        resolve();
+                                                    }
+                                                });
+                                            })
+                                    })
+                            })
+                        }();
+                    })();
                 })
                 .catch((err) => {
                     console.log(err);
@@ -50,11 +128,11 @@ scheduler.on("close-bid", (err, event) => {
             console.log(err);
             res.redirect('/404');
         })
-})
+});
 
 scheduler.on("inc-time", (err, event) => {
 
-})
+});
 
 //Items default page
 route.get("/", (req, res) => {
@@ -200,7 +278,7 @@ route.post('/add', HELPERS.checkLoggedIn, upload.single('imgUploader'), function
                         name: "close-bid",
                         data: item._id,
                         after: item.endDate
-                    })
+                    });
 
                     res.redirect(`/items/${item._id}`);
                 })
@@ -235,6 +313,7 @@ route.get("/filterBidPrice/:id", (req, res) => {
 
 //filter for name of product
 route.post("/filterByName", (req, res) => {
+
     if (!req.body.category && !req.body.name) {
         models.Products.find({})
             .then((items) => {
@@ -253,14 +332,11 @@ route.post("/filterByName", (req, res) => {
             }
         })
             .then((items) => {
-
                 res.render("items", {
                     items
-                })
-
+                });
             })
-
-            .catch((err) => {
+     .catch((err) => {
                 console.log(err);
                 res.redirect('/404');
             })
