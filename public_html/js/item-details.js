@@ -13,9 +13,11 @@ $(() => {
         var ul = $("#bids");
         ul.html("");
         var usernames={};
+        var userImages={};
         for(var user of users)
         {
                 usernames[user.id]=user.username;
+                userImages[user.id]=user.img;
         }
         if (bid.allBids.length === 0) {
             ul.append(
@@ -30,7 +32,7 @@ $(() => {
 
                 ul.prepend(`
                                 <div class="item">
-                    <img class="ui avatar image" src="../images/u.jpg">
+                    <img class="ui avatar image" src="${userImages[Bid.userID]}">
                     <div class="content">
                       <div class="header">${usernames[Bid.userID]}</div>
                       <div class="description">Placed a bid for <strong>${Bid.price}</strong></div>

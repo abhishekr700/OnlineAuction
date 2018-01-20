@@ -164,7 +164,7 @@ io.on('connection', (socket) => {
         ProductSocketMap[data.prodId] = arr;
         arr = [];
         Users.findAll({
-            attributes: ['id', 'username']
+            attributes: ['id', 'username','img']
         })
             .then((users) => {
                 models.Bids.findOne({ProdID: data.prodId})

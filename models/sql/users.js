@@ -1,5 +1,6 @@
 module.exports = (database, DataTypes) => {
     return database.define("users", {
+        img:DataTypes.STRING,
         username: DataTypes.STRING,
         password: DataTypes.STRING,
         name: DataTypes.STRING,

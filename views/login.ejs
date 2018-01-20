@@ -120,7 +120,7 @@
         </div>
         <div class="ten wide column">
             <div class="margin-left-right-20">
-                <form class="ui form" action="/signup" method="post" onsubmit="return checkSame()">
+                <form class="ui form" enctype="multipart/form-data" action="/signup" method="post" onsubmit="return checkSame()">
                     <h4 class="ui dividing header text-center" style="color: #0e566c;font-size: 24px;">New to
                         Auctionator? Register
                         with Us</h4>
@@ -128,6 +128,9 @@
                     <div class="field">
                         <label style="font-size: 16px;">Personal Details</label>
                         <div class="clr-sml"></div>
+                        <div class="field">
+                            <input type="file" name="imgUploader">
+                        </div>
                         <div class="two fields">
                             <div class="field">
                                 <input name="name" placeholder="Full Name" type="text" required>
