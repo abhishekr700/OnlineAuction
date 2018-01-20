@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>Login/Signup | Online Auction</title>
     <%- include('components/headers'); %>
+    <script src="/js/login.js"></script>
     <style>
         .margin-top-70 {
             margin-top: 150px;
@@ -66,7 +67,7 @@
     <%- include('components/navbar'); %></div>
 <div class="margin-top-70">
     <div class="ui relaxed container">
-        <form class="ui form" action="/login" method="post">
+        <form class="ui form" action="/login" method="post" >
             <div class="ui stackable four column grid">
                 <div class="five wide column t22 text-center">
                     <div class="clr-sml"></div>
@@ -119,7 +120,7 @@
         </div>
         <div class="ten wide column">
             <div class="margin-left-right-20">
-                <form class="ui form" action="/signup" method="post">
+                <form class="ui form" action="/signup" method="post" onsubmit="return checkSame()">
                     <h4 class="ui dividing header text-center" style="color: #0e566c;font-size: 24px;">New to
                         Auctionator? Register
                         with Us</h4>
@@ -154,11 +155,11 @@
                         <label style="font-size: 16px;">Login Details</label>
                         <div class="clr-sml"></div>
                         <div class="field">
-                            <input name="username" placeholder="Username" type="text" required>
+                            <input name="username" placeholder="Username" id="newpass1" type="text" required>
                         </div>
                         <div class="two fields">
                             <div class="field">
-                                <input name="password" id="password" minlength="6"
+                                <input name="password" id="newpass2" minlength="6"
                                        data-val-required="Please enter valid password"
                                        placeholder="Password" type="password" required>
                             </div>
@@ -173,6 +174,14 @@
                     <div class="clr-sml"></div>
                     <div class="field text-center">
                         <button class="ui button" type="submit">Submit</button>
+                    </div>
+                    <div class="ui negative message hidden">
+                        <i class="close icon"></i>
+                        <div class="header">
+                            The Passwords you entered do not match !
+                        </div>
+                        <p>Please re-check the values and try again.
+                        </p>
                     </div>
                 </form>
             </div>

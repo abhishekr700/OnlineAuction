@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Email Not Verified</title>
+    <%- include('components/headers.ejs') %>
+    <style>
+        body{
+            height: auto;
+        }
+
+    </style>
+</head>
+<body>
+<%- include('components/navbar.ejs') %>
+<div class="ui relaxed container">
+    <div class="ui center aligned">
+        <div style="height: 15em;margin-top: 6em; margin-bottom: 2em;text-align: center">
+            <img src="/images/email-verify.jpg" height="100%">
+        </div>
+        <div class="relaxed container" style="font-size: 2em ;font-weight: bold;text-align: center;margin-top: 7vh;margin-bottom: 10vh;">Please verify your E-Mail to continue :)</div>
+
+    </div>
+</div>
+<%- include('components/footer.ejs') %>
+</body>
+</html>

@@ -359,9 +359,23 @@ module.exports = function (app) {
                                     })
                                         .then((data) => {
                                             mailVerifyEmail(user, res).then(() => {
+
                                                 alert("An E-mail has been sent to your Email-id. Kindly verify it to continue with Auctioneer");
                                                 res.redirect('/login');
                                             }).catch((err) => {
+
+                                                req.login(user, (err)=>{
+                                                    if(err){
+                                                        console.log(err);
+                                                        res.redirect("/404");
+                                                    }
+                                                    alert("email not verified");
+                                                    return res.redirect('/login');
+                                                });
+
+
+                                            })
+                                                .catch((err) => {
                                                 console.log(err);
                                                 res.redirect('/404');
                                             })
