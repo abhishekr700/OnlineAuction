@@ -18,6 +18,12 @@ $(() => {
                 usernames[user.id]=user.username;
         }
         if (bid.allBids.length === 0) {
+            ul.append(
+                `<div class="item">
+                    <div class="content">
+                      <div class="header">No Bids To Show</div>
+                    </div>
+                  </div>`)
         } else {
 
             bid.allBids.forEach((Bid) => {

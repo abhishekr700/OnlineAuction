@@ -374,6 +374,7 @@ route.get("/filterBidPrice/:id", (req, res) => {
         }
     }).sort({minbid: req.params.id})
         .then((items) => {
+        items.reverse();
             res.render("items", {
                 items
             })
@@ -406,6 +407,8 @@ route.post("/filterByName", (req, res) => {
             }
         })
             .then((items) => {
+            console.log(items);
+                items.reverse();
                 res.render("items", {
                     items
                 });
@@ -423,6 +426,7 @@ route.post("/filterByName", (req, res) => {
             }
         })
             .then((items) => {
+                items.reverse();
                 res.render("items", {
                     items
                 })
@@ -441,6 +445,7 @@ route.post("/filterByName", (req, res) => {
             }
         })
             .then((items) => {
+                items.reverse();
                 res.render("items", {
                     items
                 })
@@ -461,6 +466,7 @@ route.get("/filterByTime", (req, res) => {
         }
     }).sort({endDate: 1})
         .then((items) => {
+            items.reverse();
             res.render("items", {
                 items
             })
@@ -493,7 +499,6 @@ route.get("/:id", (req, res) => {
         })
         .catch((err) => {
             console.log(err);
-            alert("error finding item");
             res.redirect("/items");
 
         })
