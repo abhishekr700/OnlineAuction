@@ -6,6 +6,7 @@ const Users = require("../models/sql/sequelize").Users;
 const Sequelize=require('sequelize');
 const CONFIG = require("../configs");
 const models = require("../models/mongodb/mongo");
+const alert=require('alert-node');
 
 
 module.exports = function (app) {
@@ -15,8 +16,7 @@ module.exports = function (app) {
     functions
      */
 
-    async function mailPassword(user) {
-        //console.log("in mail password");
+    async function mailPassword(user,res) {
 
         // generate the token
         let token = await  function () {
@@ -24,8 +24,6 @@ module.exports = function (app) {
                 crypto.randomBytes(20, function (err, buf) {
                     let token = buf.toString('hex');
                     resolve(token);
-                    //console.log(token);
-                    //console.log("f1 ", new Date());
                 });
             })
         }();
@@ -33,22 +31,20 @@ module.exports = function (app) {
         // update user table with token and expiry time
         await  function (token) {
             return new Promise((resolve) => {
-                //console.log("f2", new Date());
                 user.resetPasswordToken = token;
                 user.resetPasswordExpires = Date.now() + 3600000; // 1 hour
                 user.save().then(() => {
-                    // console.log("user saved");
                     resolve();
                 }).catch((err) => {
                     console.log(err);
+                    res.redirect('/404');
                 });
             })
         }(token);
 
         // send the mail to the user's email id
         await  function (token, user) {
-            return new Promise((resolve, reject) => {
-                //console.log("f3", new Date());
+            return new Promise((resolve, reject) => {;
                 let smtpTransport = nodemailer.createTransport({
                     service: 'gmail',
                     // TODO: add username and password
@@ -67,9 +63,7 @@ module.exports = function (app) {
                     'If you did not request this, please ignore this email and your password will remain unchanged.\n'
                 };
                 smtpTransport.sendMail(mailOptions, function (err) {
-                    console.log("sendmail",err);
                     if (err) {
-                        //console.log("rejected");
                         reject();
                     } else {
                         resolve();
@@ -79,13 +73,11 @@ module.exports = function (app) {
         }(token, user);
     }
 
-    async function mailConfirmation(user, newPassword) {
-        //console.log("in mail confirmation");
+    async function mailConfirmation(user, newPassword,res) {
 
         // update user table with new password and tokens
         await  function () {
             return new Promise((resolve) => {
-                //console.log("f2", new Date());
 
                 bcrypt.genSalt(10, function (err, salt) {
                     bcrypt.hash(newPassword, salt, function (err, hash) {
@@ -93,10 +85,9 @@ module.exports = function (app) {
                         user.resetPasswordToken = null;
                         user.resetPasswordExpires = null;
                         user.save().then(() => {
-                            // console.log("user saved");
                             resolve();
                         }).catch((err) => {
-                            console.log(err);
+                            res.redirect('/404');
                         });
                     })
                 })
@@ -106,7 +97,6 @@ module.exports = function (app) {
         // send the mail to the user's email id regarding confirmation of password reset
         await  function (user) {
             return new Promise((resolve, reject) => {
-                //console.log("f3", new Date());
                 let smtpTransport = nodemailer.createTransport({
                     service: 'gmail',
                     // TODO: add username and password
@@ -123,9 +113,7 @@ module.exports = function (app) {
                     'This is a confirmation that the password for your account ' + user.email + ' has just been changed.\n'
                 };
                 smtpTransport.sendMail(mailOptions, function (err) {
-                    //console.log(err);
                     if (err) {
-                        //console.log("rejected");
                         console.log(err);
                         reject();
                     } else {
@@ -137,7 +125,6 @@ module.exports = function (app) {
     }
 
     async function mailVerifyEmail(user) {
-        //console.log("in mail password");
 
         // generate the token
         let token = await  function () {
@@ -145,8 +132,6 @@ module.exports = function (app) {
                 crypto.randomBytes(20, function (err, buf) {
                     let token = buf.toString('hex');
                     resolve(token);
-                    //console.log(token);
-                    //console.log("f1 ", new Date());
                 });
             })
         }();
@@ -154,13 +139,11 @@ module.exports = function (app) {
         // update user table with token and expiry time
         await  function (token) {
             return new Promise((resolve) => {
-                //console.log("f2", new Date());
                 user.verifyEmailToken = token;
                 user.save().then(() => {
-                    // console.log("user saved");
                     resolve();
                 }).catch((err) => {
-                    console.log(err);
+                    res.redirect('/404');
                 });
             })
         }(token);
@@ -168,10 +151,8 @@ module.exports = function (app) {
         // send the mail to the user's email id
         await  function (token, user) {
             return new Promise((resolve, reject) => {
-                //console.log("f3", new Date());
                 let smtpTransport = nodemailer.createTransport({
                     service: 'gmail',
-                    // TODO: add username and password
                     auth: {
                         user: CONFIG.SERVER.MAIL,
                         pass: CONFIG.SERVER.PASS
@@ -187,9 +168,7 @@ module.exports = function (app) {
                     'If you did not request this, please ignore this email.\n'
                 };
                 smtpTransport.sendMail(mailOptions, function (err) {
-                    console.log("sendmail",err);
                     if (err) {
-                        //console.log("rejected");
                         reject();
                     } else {
                         resolve();
@@ -215,16 +194,17 @@ module.exports = function (app) {
             }
         }).then((user) => {
             if (!user) {
-                //TODO: Flash message
+                alert("username/email not found");
                 res.redirect('/forgot');
             } else {
 
-                mailPassword(user).then(() => {
-                    //console.log("after function");
-                    res.send('An e-mail has been sent to ' + user.email + ' with further instructions.')
+                mailPassword(user,res).then(() => {
+
+                    alert('An e-mail has been sent to ' + user.email + ' with further instructions.');
+                    res.redirect('/');
                 }).catch((err) => {
                     console.log(err);
-                    res.send('error occurred');
+                    res.redirect('/404');
 
                 })
             }
@@ -234,7 +214,6 @@ module.exports = function (app) {
 
 // when clicked on link from email
     app.get('/reset/:token', (req, res) => {
-        console.log(Date.now);
         Users.find({
             where: {
                 resetPasswordToken: req.params.token,
@@ -244,7 +223,8 @@ module.exports = function (app) {
             }
         }).then((user) => {
             if (!user) {
-                res.send('Password reset token is invalid or link has expired.');
+                alert('Password reset token is invalid or link has expired.');
+                res.redirect('/');
             } else {
                 res.render('password-reset', {
                     user: user
@@ -265,16 +245,16 @@ module.exports = function (app) {
             }
         }).then((user) => {
             if (!user) {
-                //TODO: Flash message
-                res.send('Password reset token is invalid or link has expired.');
+                alert('Password reset token is invalid or link has expired.');
+                res.redirect('/');
             } else {
 
-                mailConfirmation(user, req.body.password).then(() => {
-                    //console.log("after function");
-                    res.send('\'success\', \'Success! Your password has been changed.\'')
-                }).catch(() => {
-                    res.send('error occurred');
+                mailConfirmation(user, req.body.password,res).then(() => {
+                    alert('\'success\', \'Success! Your password has been changed.\'');
+                    res.redirect('/login');
 
+                }).catch(() => {
+                    res.redirect('/404');
                 })
             }
         })
@@ -311,8 +291,8 @@ module.exports = function (app) {
             }
         }).then((user) => {
             if (!user) {
-                //TODO: Flash message
-                res.send('verify email token is invalid.');
+                alert('verify email token is invalid.');
+                res.redirect('/');
             } else {
                 user.isVerified=true;
                 user.save();
@@ -321,7 +301,7 @@ module.exports = function (app) {
                 });
             }
         })
-    })
+    });
 
 //New User via SignUp route
     app.post("/signup", (req, res) => {
@@ -356,34 +336,36 @@ module.exports = function (app) {
                                         bidsOn: []
                                     })
                                         .then((data)=>{
-                                            // console.log("Userbid: ",data);
-                                            mailVerifyEmail(user).then(()=>{
-                                                // req.login(user, () => {
-                                                //     res.redirect("/users");
-                                                // });
-                                                res.send("email not verified");
+                                            mailVerifyEmail(user,res).then(()=>{
+                                                alert("email not verified");
+                                                res.redirect('/login');
                                             }).catch((err)=>{
                                                 console.log(err);
+                                                res.redirect('/404');
                                             })
 
                                         })
                                         .catch((err)=>{
                                             console.log(err);
+                                            res.redirect('/404');
                                         })
                                 })
                                 .catch((err) => {
                                     console.log(err);
+                                    res.redirect('/404');
                                 })
                         });
                     });
 
                 }
                 else {
-                    res.send("duplicate user")
+                    alert("Username already taken");
+                    res.redirect('/login');
                 }
             })
             .catch((err) => {
                 console.log(err);
+                res.redirect('/404');
             })
 
 
@@ -391,10 +373,9 @@ module.exports = function (app) {
 
 //Logout route
     app.get("/logout", (req, res) => {
-        console.log("LOGOUT !");
         req.logout();
         res.redirect("/");
     });
 
 
-}
+};

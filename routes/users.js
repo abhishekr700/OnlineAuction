@@ -5,19 +5,18 @@ const Users = require("../models/sql/sequelize").Users;
 const models = require("../models/mongodb/mongo");
 
 route.get('/', function (req, res) {
-    // console.log("render /users page");
     res.render("user");
 });
 
 //Show all users TODO: Remove this later
 route.get("/all", (req, res) => {
-    // console.log("Render /users/all");
     Users.findAll()
         .then((users) => {
             res.send(users);
         })
 });
 
+//TODO: remove this route
 route.get("/userbids",(req,res)=>{
     models.UserBidsMap.find()
         .then((userbids)=>{
@@ -40,6 +39,7 @@ route.post("/editProfile",(req,res)=>{
         })
         .catch((err)=>{
             console.log(err);
+            res.redirect('/404');
         })
 
 })
@@ -66,29 +66,34 @@ route.post("/changePass",(req,res)=>{
                                         user.password = hash;
                                         user.save()
                                             .then(() => {
-                                                console.log("Pass changed !");
+                                                alert("Password has been changed")
                                                 res.redirect("/users/profile");
                                             })
                                             .catch((err) => {
                                                 console.log(err);
+                                                res.redirect('/404');
                                             })
                                     })
                                 })
 
                             }
                             else {
-                                res.send("Current Password Incorrect")
+
+                                alert("Current Password Incorrect");
+                                res.redirect('/users/changePass');
                             }
                         })
                 })
         }
         else{
-            res.send("New password & current password cannot be same");
+            alert("New password & current password cannot be same");
+            res.redirect('/users/changePass');
         }
     }
     //if one of variables null/missing
     else{
-        res.send("CurrentPass or NewPass not supplied");
+        alert("CurrentPass or NewPass not supplied");
+        res.redirect('/users/changePass');
     }
 })
 

@@ -110,6 +110,7 @@ app.get("/", (req, res) => {
         })
         .catch((err) => {
             console.log(err);
+            res.redirect('/404');
         })
 
 });
@@ -126,6 +127,10 @@ app.get("/terms-and-conditions", (req, res) => {
     res.render('termsAndConditions');
 });
 //404 Handler
+app.get('/404',function (req, res) {
+    res.render('404');
+});
+
 app.use(function (req, res) {
     res.render('404');
 });
@@ -149,7 +154,6 @@ io.on('connection', (socket) => {
     } else {
         userId = pass.user;
     }
-    // console.log("Your User ID is", userId);
 
     socket.on('prodID', (data) => {
         arr = ProductSocketMap[data.prodId];
@@ -185,7 +189,6 @@ io.on('connection', (socket) => {
 
         models.Products.findById(data.prodID)
             .then((item) => {
-                // console.log(item);
                 let curDate = new Date();
                 let timeRemaining = (item.endDate - curDate) / 1000;
                 if (timeRemaining > 0) {
@@ -209,7 +212,6 @@ io.on('connection', (socket) => {
                                 });
                             }
                             else if (userID === item.userID) {
-                                console.log("Socket msg to owner", item.userID, userID);
                                 if (winner)
                                     socket.emit("msg", {msg: "Your product was purchased by " + winner.userID})
                                 else
@@ -229,11 +231,13 @@ io.on('connection', (socket) => {
                         })
                         .catch((err) => {
                             console.log(err);
+                            res.redirect('/404');
                         })
                 }
             })
             .catch((err) => {
                 console.log(err);
+                res.redirect('/404');
             })
     })
 

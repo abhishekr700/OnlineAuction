@@ -8,16 +8,13 @@ const Users = require("./models/sql/sequelize.js").Users;
 
 //Serialize user
 passport.serializeUser(function (user, done) {
-    // console.log("Serialized !");
     done(null, user.id);
 });
 
 //De-Serialize User
 passport.deserializeUser(function (id, done) {
-    // console.log("Deserialize !");
     Users.findById(id)
         .then((user) => {
-            // console.log(user);
             done(null, user);
         })
 });
@@ -25,7 +22,6 @@ passport.deserializeUser(function (id, done) {
 //Define LocalStrategy
 const localstrategy = new LocalStrategy(
     function (username, password, done) {
-        //console.log("Local-Starategy !");
         Users.findOne({
             where: {
                 username: username
@@ -33,13 +29,11 @@ const localstrategy = new LocalStrategy(
         })
             .then((user) => {
                 if (user == null) {
-                    //console.log("Username not found");
                     return done(null, false, {message: "Username not found !"})
                 } else {
 
                     bcrypt.compare(password, user.password).then((res) => {
                         // res === true
-                        console.log(res);
                         if (res) {
 
                             return done(null, user);
@@ -49,8 +43,6 @@ const localstrategy = new LocalStrategy(
                         }
 
                     });
-                    console.log("abcdef");
-                    //  console.log("Pass incorrect");
                 }
             });
     }
