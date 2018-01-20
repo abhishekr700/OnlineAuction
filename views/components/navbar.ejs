@@ -1,25 +1,24 @@
 <!--Navbar-->
 <style>
+    .ui.sidebar{
+        overflow: visible!important;
+    }
+    #nav-adjust {
+        margin-top: 3.6em;
+    }
     #navbar-main {
         border-radius: 0px;
         margin-top: 0em;
-        margin-bottom: 1em;
     }
-
     #navbar-logo {
         margin-right: 1.5vw;
         margin-left: 2vw;
     }
-
     #site-title {
         font-size: 1.3em;
     }
-
-    #nav-adjust {
-        margin-top: 3.6em;
-    }
 </style>
-<div class="ui fixed stackable container inverted menu" id="navbar-main">
+<div class="ui visible top sidebar fixed stackable container inverted menu" id="navbar-main">
     <a href="/" class="header item">
         <img src="http://via.placeholder.com/70x70" alt="" class="logo" id="navbar-logo">
         <span id="site-title">Auctionator</span>

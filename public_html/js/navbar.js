@@ -1,3 +1,4 @@
+
 $(()=>{
     //Initialize dropdown
     $('.ui.dropdown').dropdown({
@@ -5,5 +6,4 @@ $(()=>{
         on: 'hover',
         duration: 300
     });
-    console.log("Dropdown done");
 });

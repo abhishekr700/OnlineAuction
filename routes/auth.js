@@ -9,8 +9,8 @@ const models = require("../models/mongodb/mongo");
 const alert = require('alert-node');
 const multer = require('multer');
 const cloudinary = require('cloudinary');
-const fs=require('fs');
-const path=require('path');
+const fs = require('fs');
+const path = require('path');
 
 
 module.exports = function (app) {
@@ -343,7 +343,7 @@ module.exports = function (app) {
     });
 
 //New User via SignUp route
-    app.post("/signup",upload.single('imgUploader'),function (req, res) {
+    app.post("/signup", upload.single('imgUploader'), function (req, res) {
 
         Users.find({
             where: {
@@ -377,70 +377,71 @@ module.exports = function (app) {
                                         .then((data) => {
                                             let imgName;
                                             if (req.file) {
-                                            imgName = req.file.filename;
-                                            fs.rename(path.join(__dirname, "../", "public_html/Images/", imgName), path.join(__dirname, "../", "public_html/Images/", user.id + ".jpg"), (err) => {
-                                                if (err) {
-                                                    console.log(err);
-                                                    res.redirect('/404');
-                                                }
-                                                else {
-                                                    //Upload image
-                                                    cloudinary.uploader.upload(path.join(__dirname, "../", "public_html/Images/", user.id + ".jpg"), function (result) {
-                                                        console.log(result);
+                                                imgName = req.file.filename;
+                                                fs.rename(path.join(__dirname, "../", "public_html/Images/", imgName), path.join(__dirname, "../", "public_html/Images/", user.id + ".jpg"), (err) => {
+                                                    if (err) {
+                                                        console.log(err);
+                                                        res.redirect('/404');
+                                                    }
+                                                    else {
+                                                        //Upload image
+                                                        cloudinary.uploader.upload(path.join(__dirname, "../", "public_html/Images/", user.id + ".jpg"), function (result) {
+                                                            console.log(result);
 
-                                                        //Delete image from server
-                                                        fs.stat(path.join(__dirname, "../", "public_html/Images/", user.id + ".jpg"), function (err, stats) {
-                                                            console.log(stats);//here we got all information of file in stats variable
-                                                            if (err) {
-                                                                return console.error(err);
-                                                            }
-                                                            else {
-                                                                fs.unlink(path.join(__dirname, "../", "public_html/Images/", user.id + ".jpg"), function (err) {
-                                                                    if (err) {
-                                                                        console.log(err);
-                                                                        res.redirect('/404');
-                                                                    }
-                                                                    else {
-                                                                        console.log('file deleted successfully');
-                                                                        //Store image url in DB
-                                                                        user.img = result.url;
-                                                                        user.save()
-                                                                            .then(() => {
-                                                                                mailVerifyEmail(user, res)
-                                                                                    .then(() => {
-                                                                                        req.login(user, (err) => {
-                                                                                            if (err) {
-                                                                                                console.log(err);
-                                                                                                res.redirect("/404");
-                                                                                            }
-                                                                                            else {
-                                                                                                alert("A link has been sent to your email id to verify it.");
-                                                                                                res.redirect('/login');
-                                                                                            }
-                                                                                        });
+                                                            //Delete image from server
+                                                            fs.stat(path.join(__dirname, "../", "public_html/Images/", user.id + ".jpg"), function (err, stats) {
+                                                                console.log(stats);//here we got all information of file in stats variable
+                                                                if (err) {
+                                                                    return console.error(err);
+                                                                }
+                                                                else {
+                                                                    fs.unlink(path.join(__dirname, "../", "public_html/Images/", user.id + ".jpg"), function (err) {
+                                                                        if (err) {
+                                                                            console.log(err);
+                                                                            res.redirect('/404');
+                                                                        }
+                                                                        else {
+                                                                            console.log('file deleted successfully');
+                                                                            //Store image url in DB
+                                                                            user.img = result.url;
+                                                                            user.save()
+                                                                                .then(() => {
+                                                                                    mailVerifyEmail(user, res)
+                                                                                        .then(() => {
+                                                                                            req.login(user, (err) => {
+                                                                                                if (err) {
+                                                                                                    console.log(err);
+                                                                                                    res.redirect("/404");
+                                                                                                }
+                                                                                                else {
+                                                                                                    alert("A link has been sent to your email id to verify it.");
+                                                                                                    res.redirect('/login');
+                                                                                                }
+                                                                                            });
 
-                                                                                    })
-                                                                                    .catch((err) => {
-                                                                                        console.log(err);
-                                                                                        res.redirect('/404');
-                                                                                    })
+                                                                                        })
+                                                                                        .catch((err) => {
+                                                                                            console.log(err);
+                                                                                            res.redirect('/404');
+                                                                                        })
 
-                                                                            })
-                                                                            .catch((err) => {
-                                                                                console.log(err);
-                                                                                res.redirect('/404');
-                                                                            })
-                                                                    }
-                                                                })
-                                                            }
+                                                                                })
+                                                                                .catch((err) => {
+                                                                                    console.log(err);
+                                                                                    res.redirect('/404');
+                                                                                })
+                                                                        }
+                                                                    })
+                                                                }
+                                                            })
                                                         })
-                                                    })
-                                                }
+                                                    }
 
 
-                                            })
-                                        }    else{
-                                                user.img="/images/user.png";
+                                                })
+                                            }
+                                            else {
+                                                user.img = "/images/user.png";
                                                 user.save()
                                                     .then(() => {
                                                         mailVerifyEmail(user, res)
@@ -468,27 +469,27 @@ module.exports = function (app) {
                                                         res.redirect('/404');
                                                     })
                                             }
-                                    })
+                                        })
                                         .catch((err) => {
-                                        console.log(err);
-                                        res.redirect('/404');
-                                    })
+                                            console.log(err);
+                                            res.redirect('/404');
+                                        })
                                 })
                                 .catch((err) => {
                                     console.log(err);
                                     res.redirect('/404');
                                 })
-                    })
+                        })
                     })
 
-                        }
-                        else {
+                }
+                else {
                     alert("Username already taken");
                     res.redirect('/login');
                 }
 
 
-                })
+            })
             .catch((err) => {
                 console.log(err);
                 res.redirect('/404');
