@@ -1,0 +1,56 @@
+#container{
+
+    margin-top:15vh;
+}
+::placeholder{
+    opacity: 1;
+}
+.points {
+    font-size: 16px;
+    color: #9e1317;
+}
+.clr-sml {
+    height: 0.5em;
+}
+
+[contenteditable] {
+    padding: 5px;
+    outline: 0px solid transparent;
+    border-radius: 3px;
+}
+
+[contenteditable]:not(:focus) {
+    border: 1px solid #ddd;
+}
+
+[contenteditable]:focus {
+    border: 1px solid #51a7e8;
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.075), 0 0 5px rgba(81, 167, 232, 0.5);
+}
+#container > div{
+    margin-bottom: 80px
+}
+.profile-pic{
+    width: 22vmax;
+}
+.t18{
+    font-size: 18px;
+}
+.t20{
+    font-size: 20px;
+}
+.edit.icon{
+    font-size: 1.3em;color: #bd081c;
+}
+.phone{
+    margin: 0; text-align: left
+}
+.circular.button.button-link{
+    margin: 2vh;
+}
+.xxlargefont{
+    font-size: xx-large;
+}
+.compact.labeled.user-profile{
+    border: none ; box-shadow: none
+}

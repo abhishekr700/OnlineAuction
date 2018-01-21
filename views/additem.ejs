@@ -4,20 +4,7 @@
     <meta charset="UTF-8">
     <title>Auctioneers | Add Item</title>
     <%- include('components/headers'); %>
-    <style>
-        .margin-top-40{
-            margin-top: 5vh;
-        }
-        .text-center{
-            text-align: center;
-        }
-        .clr-sml{
-            height: 2vh;
-        }
-        ::placeholder{
-            opacity:1;
-        }
-    </style>
+    <link rel="stylesheet" href="/css/additem.css">
 </head>
 <body>
 
@@ -28,10 +15,10 @@
         <div class="three wide column"></div>
         <div class="margin-left-right-20 ten wide column">
             <form class="ui form" enctype="multipart/form-data" action="/items/add" method="post">
-                <h4 class="ui dividing header text-center" style="font-size: 24px;">Add an Item to start Auction</h4>
+                <h4 class="ui dividing header text-center t24" >Add an Item to start Auction</h4>
                 <div class="clr-sml"></div>
                 <div class="field">
-                    <label style="font-size: 16px;">Product Details</label>
+                    <label id="t16">Product Details</label>
 
                     <div class="clr-sml"></div>
                         <div class="field">

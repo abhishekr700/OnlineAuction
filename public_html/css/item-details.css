@@ -1,0 +1,64 @@
+@font-face {
+    font-family: 'clockfont';
+    src: url('/lib/DSEG7Classic-Bold.woff') format('woff'), /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */ url('/lib/DSEG7Classic-Bold.ttf') format('truetype'); /* Chrome 4+, Firefox 3.5, Opera 10+, Safari 3—5 */
+}
+::placeholder{
+    opacity: 1;
+}
+#minbid{
+    color: red; text-align: left
+}
+
+#main-container {
+    margin-top: 7em;
+    margin-bottom: 6em;
+}
+#max-price{
+    color: red; text-align: left
+}
+
+#list {
+    height: 22em;
+    overflow-y: scroll;
+    overflow-x: hidden;
+}
+#isOwner{
+    position: relative;
+}
+.statistic .value.basevaluecontent{
+    font-size: 2em!important; color: blue; text-align: left
+}
+#admin-row {
+    margin-top: 1em;
+}
+.stackable .row .success.message{
+    text-align: center; font-size: large ;display: none
+}
+
+#inctime-container {
+    margin-top: 2em;
+}
+.days{
+    font-weight: bolder;font-size: 1.5em
+}
+.days + span {
+    font-weight: bolder;font-size: 1.5em
+}
+#min-bid-cont {
+    margin-top: 1em;
+}
+
+#timer {
+    margin-top: 2em;
+    /*font-family: clockfont;*/
+}
+.statistic .label.basevalue{
+    color: blue; text-align: left; font-size: 0.8em;
+}
+.timerValues {
+    font-family: clockfont;
+    font-size: 2em;
+}
+.heading1.header{
+    font-size: 1.3em;
+}

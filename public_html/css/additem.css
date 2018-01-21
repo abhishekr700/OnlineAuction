@@ -1,0 +1,18 @@
+.margin-top-40{
+    margin-top: 5vh;
+}
+.text-center{
+    text-align: center;
+}
+.clr-sml{
+    height: 2vh;
+}
+::placeholder{
+    opacity:1;
+}
+.header.text-center.t24{
+    font-size: 24px;
+}
+#t16{
+    font-size: 16px;
+}

@@ -1,0 +1,93 @@
+@font-face {
+    font-family: 'clockfont';
+    src: url('/lib/DSEG7Classic-Bold.woff') format('woff'), /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
+    url('/lib/DSEG7Classic-Bold.ttf') format('truetype'); /* Chrome 4+, Firefox 3.5, Opera 10+, Safari 3—5 */
+}
+.timerValues {
+    font-family: clockfont;
+    font-size: 1em;
+}
+#main{
+    margin-top: 3.6em;
+    height: 45em;
+    background-image: url("/images/e6.png");
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    border: 0;
+}
+#main-container{
+    padding-top: 9em;
+}
+#main-container .ui.header{
+    color: white;
+    font-size: 4.3em;
+}
+#main-container .ui.huge.teal.button{
+    opacity: 0.9;
+}
+.home-inputs{
+    opacity: 0.9;
+}
+#feature-container{
+    margin-top: 4em;
+}
+.t5{
+    font-size: 2.3em;
+}
+#items-container{
+    margin-top: 4em;
+}
+#productlist{
+    margin-top: 2em;
+    margin-bottom: 5em;
+}
+.highlights{
+    border: 1px solid #dddddd;
+    border-radius: 2px;
+    margin: 10px;
+}
+.heading-container{
+    color: white; font-weight: bolder; font-size: 4.5vmax
+}
+
+.h1em{
+    height: 1em;
+}
+.dimgrey{
+    color: dimgrey;
+}
+
+.darkorange{
+    color: darkorange;
+}
+
+.limegreen{
+    color:limegreen;
+}
+
+.blue{
+    color: #309ef2;
+}
+
+#productlist .card.margin-left-5{
+    margin-left: 5vw ;
+}
+
+.height30{
+    height: 30vh;
+}
+
+.statistic .value.minbid{
+    font-size: 2em!important; color: red; text-align: left
+}
+
+.statistic .label.currentvalue{
+    font-size: 1em!important; color: red; text-align: left
+}
+
+.font1embold{
+    font-weight: bolder;font-size: 1em;
+}
+.margintop2em{
+    margin-top: 2em;
+}

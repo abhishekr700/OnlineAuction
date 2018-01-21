@@ -7,50 +7,9 @@
     <script src="/socket.io/socket.io.js"></script>
     <script src="/js/lib/easytimer.js" type="text/javascript"></script>
     <script src="/js/item-details.js" type="text/javascript"></script>
+    <link href="/css/item-details.css" rel="stylesheet">
 </head>
-<style>
-    @font-face {
-        font-family: 'clockfont';
-        src: url('/lib/DSEG7Classic-Bold.woff') format('woff'), /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */ url('/lib/DSEG7Classic-Bold.ttf') format('truetype'); /* Chrome 4+, Firefox 3.5, Opera 10+, Safari 3—5 */
-    }
-    ::placeholder{
-        opacity: 1;
-    }
 
-    #main-container {
-        margin-top: 7em;
-        margin-bottom: 6em;
-    }
-
-    #list {
-        height: 22em;
-        overflow-y: scroll;
-        overflow-x: hidden;
-    }
-
-    #admin-row {
-        margin-top: 1em;
-
-    }
-
-    #inctime-container {
-        margin-top: 2em;
-    }
-
-    #min-bid-cont {
-        margin-top: 1em;
-    }
-
-    #timer {
-        margin-top: 2em;
-        /*font-family: clockfont;*/
-    }
-
-    .timerValues {
-        font-family: clockfont;
-        font-size: 2em;
-    }
-</style>
 <body>
 <%- include('components/navbar'); %>
 <div id="item-detail" data-itemid=<%= item._id %>>
@@ -63,14 +22,14 @@
                         <div class="ui label"><i class="globe icon"></i> <%= item.category %></div>
                     </div>
                 </div>
-                <div class="ui success message eight wide column " id="msg" style=" text-align: center; font-size: x-large ;display: none"></div>
+                <div class="ui success message eight wide column " id="msg" style="text-align: center; font-size: large ;display: none"></div>
             </div>
         </div>
 
 
         <div class="ui stackable  four column grid">
 
-            <div class="row owner" id="isOwner" style="position: relative">
+            <div class="row owner" id="isOwner">
                 <div class="six wide column">
 
                     <img src=<%= item.img%> ><br>
@@ -81,10 +40,10 @@
                     <!--Current Value-->
                     <div class="row">
                         <div class="ui statistic">
-                            <div  id="minbid" class="value" style="color: red; text-align: left">
+                            <div  id="minbid" class="value">
                                 <%= item.minbid %>
                             </div>
-                            <div class="label" id="max-price" style="color: red; text-align: left">
+                            <div class="label" id="max-price" >
                                 Current Value
                             </div>
                         </div>
@@ -93,10 +52,10 @@
                     <div class="row" id="min-bid-cont">
                         <div class="ui statistic">
 
-                            <div class="value" style="font-size: 2em!important; color: blue; text-align: left">
+                            <div class="value basevaluecontent">
                                 <%= item.basevalue %>
                             </div>
-                            <div class="label" style="color: blue; text-align: left; font-size: 0.8em;">
+                            <div class="label basevalue">
                                 Minimum Bid
                             </div>
                         </div>
@@ -104,8 +63,8 @@
 
                     <div class="row">
                         <div id="timer">
-                            <span class="days" style="font-weight: bolder;font-size: 1.5em "></span>
-                            <span style="font-weight: bolder;font-size: 1.5em ">&nbsp;Days</span>
+                            <span class="days"></span>
+                            <span >&nbsp;Days</span>
                             <br>
                             <br>
                             <span class="hours timerValues"></span><span class="timerValues">:</span>
@@ -163,8 +122,8 @@
                 </div>
 
 
-                <div class="four wide column" id="list">
-                    <div class="header" style="font-size: 1.3em;">Ongoing Bids on this item</div>
+                <div class="four wide column" id="list ">
+                    <div class="header heading1">Ongoing Bids on this item</div>
                     <ul id="bids" class="ui middle aligned animated divided list"></ul>
                 </div>
             </div>

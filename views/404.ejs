@@ -4,44 +4,16 @@
     <meta charset="UTF-8">
     <title>Auctioneers | 404</title>
     <%- include('components/headers.ejs') %>
-    <style>
-        .ui.relaxed.container{
-            margin-top: 12em;
-        }
-        img{
-            height: 70%;
-        }
-        .error {
-            font-size:1.5em;
-            margin-top: 0vh;
-        }
-        @media (min-width: 770px) {
-            .ui.relaxed.container{
-                margin-top: 6em;
-            }
-            img {
-                height: 100%;
-            }
-            .error{
-                font-size:3em ;
-                margin-top: 7vh;
-            }
-        }
-        body{
-            height: auto;
-        }
-
-
-    </style>
+    <link rel="stylesheet" href="/css/404.css">
 </head>
 <body>
 <%- include('components/navbar.ejs') %>
 <div class="ui relaxed container">
     <div class="ui center aligned">
-        <div style="height: 15em; text-align: center">
+        <div class="img-container">
             <img src="/images/404.png">
         </div>
-        <div class="relaxed container error" style="font-weight: bold;text-align: center;margin-bottom: 10vh;">Oops... Someone took an Unexpected Turn!!</div>
+        <div class="relaxed container error">Oops... Someone took an Unexpected Turn!!</div>
 
     </div>
 </div>

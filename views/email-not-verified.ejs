@@ -4,25 +4,18 @@
     <meta charset="UTF-8">
     <title>Auctioneers | Email Not Verified</title>
     <%- include('components/headers.ejs') %>
-    <style>
-        #container{
-            margin-top: 6em;
-        }
-        body{
-            height: auto;
-        }
-    </style>
+ <link rel="stylesheet" href="/css/email-not-verified.css">
 </head>
 <body>
 <%- include('components/navbar.ejs') %>
 <div class="ui relaxed center aligned container">
 
-        <div id="container" style="height: 15em; margin-bottom: 2em;text-align: center">
+        <div id="container">
             <img src="/images/email-verify.jpg" height="100%">
         </div>
-        <div  style="font-size: 3vmax ;font-weight: bold;text-align: center;margin-top: 7vh;margin-bottom: 8vh;">Please verify your E-Mail to continue :)
+        <div class="msg">Please verify your E-Mail to continue :)
 
-            <div style="margin-top: 1em">
+            <div>
                 <a href="/resendEmail"><button class="ui primary button">Resend Verification Email</button>
                 </a>
             </div></div>

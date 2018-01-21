@@ -1,0 +1,13 @@
+#container{
+    margin-top: 6em;
+    height: 15em; margin-bottom: 2em;text-align: center
+}
+body{
+    height: auto;
+}
+.msg{
+    font-size: 3vmax ;font-weight: bold;text-align: center;margin-top: 7vh;margin-bottom: 8vh
+}
+.msg div {
+    margin-top: 1em
+}

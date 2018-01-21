@@ -1,0 +1,55 @@
+.margin-top-70 {
+    margin-top: 15vh;
+}
+.margin-top-40 {
+    margin-top: 40px;
+}
+
+.text-right {
+    text-align: right;
+}
+
+.t16 {
+    font-size: 16px;
+}
+
+.t22 {
+    font-size: 22px;
+}
+
+.clr-sml {
+    height: 10px;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.blue-font {
+    color: blue;
+}
+
+.blue-font:hover {
+    text-decoration: underline;
+}
+
+.margin-left-right-20 {
+    margin-left: 20px;
+    margin-right: 20px;
+}
+
+.brown{
+    color: #9e1317
+}
+::placeholder {
+    opacity: 1;
+}
+.darkblue{
+    color: darkblue;
+}
+.orangered{
+    color: orangered;
+}
+.heading1{
+    color: #0e566c;font-size: 24px;
+}

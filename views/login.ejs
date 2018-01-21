@@ -5,55 +5,7 @@
     <title>Auctioneers | Login/Signup</title>
     <%- include('components/headers'); %>
     <script src="/js/login.js"></script>
-    <style>
-        .margin-top-70 {
-            margin-top: 15vh;
-        }
-        .margin-top-40 {
-            margin-top: 40px;
-        }
-
-        .text-right {
-            text-align: right;
-        }
-
-        .t16 {
-            font-size: 16px;
-        }
-
-        .t22 {
-            font-size: 22px;
-        }
-
-        .clr-sml {
-            height: 10px;
-        }
-
-        .text-center {
-            text-align: center;
-        }
-
-        .blue-font {
-            color: blue;
-        }
-
-        .blue-font:hover {
-            text-decoration: underline;
-        }
-
-        .margin-left-right-20 {
-            margin-left: 20px;
-            margin-right: 20px;
-        }
-
-        .font {
-            font-family: sans-serif;
-        }
-
-        ::placeholder {
-            opacity: 1;
-        }
-    </style>
+    <link rel="stylesheet" href="/css/login.css">
 </head>
 <body>
 <div>
@@ -74,7 +26,7 @@
             <div class="ui stackable four column grid">
                 <div class="five wide column t22 text-center">
                     <div class="clr-sml"></div>
-                    <div style="color: #9e1317">Welcome to Auctioneers!</div>
+                    <div class="brown">Welcome to Auctioneers!</div>
                 </div>
 
                 <div class="four wide column">
@@ -107,7 +59,7 @@
             <div class="clr-sml"></div>
             <div class="text-center"><img src="/images/buy.png" height="80"></div>
             <div class="clr-sml"></div>
-            <div class="text-center t16" style="color: darkblue"><b>BUY</b></div>
+            <div class="text-center t16 darkblue"><b>BUY</b></div>
             <div class="t16 margin-left-right-20 text-center">Buy the most popular products from around the world at
                 your own rate.
             </div>
@@ -115,7 +67,7 @@
             <div class="clr-sml"></div>
             <div class="text-center"><img src="/images/sell.png" height="80"></div>
             <div class="clr-sml"></div>
-            <div class="text-center t16" style="color: orangered"><b>SELL</b></div>
+            <div class="text-center t16 orangered"><b>SELL</b></div>
             <div class="t16 margin-left-right-20 text-center">Sell your products to worlds top enthusiast sitting at
                 your place.
             </div>
@@ -124,12 +76,12 @@
         <div class="ten wide column">
             <div class="margin-left-right-20">
                 <form class="ui form" enctype="multipart/form-data" action="/signup" method="post" onsubmit="return checkSame()">
-                    <h4 class="ui dividing header text-center" style="color: #0e566c;font-size: 24px;">New to
+                    <h4 class="ui dividing header text-center heading1" >New to
                         Auctioneers? Register
                         with Us</h4>
                     <div class="clr-sml"></div>
                     <div class="field">
-                        <label style="font-size: 16px;">Personal Details</label>
+                        <label class="t16">Personal Details</label>
                         <div class="clr-sml"></div>
                         <div class="field">
                             <input type="file" name="imgUploader">
@@ -158,14 +110,14 @@
                     <div class="clr-sml"></div>
 
                     <div class="field">
-                        <label style="font-size: 16px;">Login Details</label>
+                        <label class="t16">Login Details</label>
                         <div class="clr-sml"></div>
                         <div class="field">
                             <input name="username" placeholder="Username"  type="text" required>
                         </div>
                         <div class="two fields">
                             <div class="field">
-                                <input name="password" id="newpass1"" minlength="6"
+                                <input name="password" id="newpass1" minlength="6"
                                        data-val-required="Please enter valid password"
                                        placeholder="Password" type="password" required>
                             </div>

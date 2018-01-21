@@ -1,0 +1,31 @@
+.ui.relaxed.container{
+    margin-top: 12em;
+}
+img{
+    height: 70%;
+}
+.error {
+    font-size:1.5em;
+    margin-top: 0vh;
+}
+@media (min-width: 770px) {
+    .ui.relaxed.container{
+        margin-top: 6em;
+    }
+    img {
+        height: 100%;
+    }
+    .error{
+        font-size:3em ;
+        margin-top: 7vh;
+    }
+}
+body{
+    height: auto;
+}
+.center .img-container{
+    height: 15em; text-align: center
+}
+.error{
+    font-weight: bold;text-align: center;margin-bottom: 10vh;
+}

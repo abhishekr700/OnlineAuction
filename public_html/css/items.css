@@ -1,0 +1,150 @@
+.value {
+    font-size: 1.5em;
+}
+
+@media (min-width: 400px) {
+    .value {
+        font-size: 2em;
+    }
+}
+
+.text2 {
+    font-size: 1em;
+}
+
+@media (min-width: 400px) {
+    .text2 {
+        font-size: 1.5em;
+    }
+}
+
+#Details {
+    margin-top: 20vh;
+    margin-left: -40vw;
+}
+
+@media (min-width: 400px) {
+    #Details {
+        margin-top: 5vh;
+        margin-left: 0;
+    }
+}
+
+#container {
+    margin-top: 5vh;
+}
+
+@media (min-width: 770px) {
+    #container {
+        margin-top: 10vh;
+    }
+}
+
+#timer {
+    margin-left: 12vw;
+    font-size: 0.62em;
+}
+
+@media (min-width: 400px ) {
+    #timer {
+        margin-left: 0;
+        font-size: 0.8em;
+    }
+}
+
+@media (min-width: 600px ) {
+    #timer {
+        font-size: 1em;
+    }
+}
+
+@media (min-width: 790px ) {
+    #timer {
+        font-size: 1.2em;
+    }
+}
+
+#all-item-container {
+    margin-top: 1em;
+    margin-bottom: 3em;
+}
+
+@font-face {
+    font-family: 'clockfont';
+    src: url('/lib/DSEG7Classic-Bold.woff') format('woff'), /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */ url('/lib/DSEG7Classic-Bold.ttf') format('truetype'); /* Chrome 4+, Firefox 3.5, Opera 10+, Safari 3—5 */
+}
+
+.timerValues {
+    font-family: clockfont;
+    font-size: 2em;
+}
+
+body {
+    height: auto;
+}
+
+::placeholder {
+    opacity: 1;
+}
+
+.alink {
+    padding: 0.5em;
+    color: black;
+}
+
+.alink:hover {
+    padding-left: 0.8em;
+    color: deeppink;
+}
+
+.clr-sml {
+    height: 0.5em;
+}
+.refine{
+    border-right: 1px solid gainsboro
+}
+.refine > div{
+    margin-left: 1.7em;
+    margin-right: 1.7em
+}
+.refine-heading{
+    font-size: 1.7em;
+    text-align: center
+}
+.divided.list{
+    font-size: 1.2em;
+    padding-left: 1em;
+}
+#productlist > h1{
+    text-align: center;
+}
+.items-container{
+    height: 300px; border: 1px solid #dddddd ;text-align: center;
+}
+#NoItems{
+    margin-top: 10vmax; font-size: 3vmax
+}
+.items .ui.item{
+    width: 95% ;margin-left:1vw ;border: 1px solid #dddddd; border-radius: 2px; padding: 1em;
+}
+.item-heading{
+    font-weight: bolder; font-size: x-large
+}
+.item-heading + div{
+    font-size: large
+}
+.days{
+    font-weight: bolder; font-size: 1.5em
+}
+.days + span{
+    font-weight: bolder; font-size: 1.5em
+}
+.minbid{
+    color: red; text-align: left;  height: 1em
+}
+.clr-md{
+    height: 2vmax;
+}
+.minbid + div{
+    color: red; text-align: left;
+}

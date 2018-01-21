@@ -6,37 +6,7 @@
 
     <%- include('components/headers'); %>
     <script src="/js/user.js"></script>
-    <style>
-        #container{
-
-            margin-top:15vh;
-        }
-        ::placeholder{
-            opacity: 1;
-        }
-        .points {
-            font-size: 16px;
-            color: #9e1317;
-        }
-        .clr-sml {
-            height: 0.5em;
-        }
-
-        [contenteditable] {
-            padding: 5px;
-            outline: 0px solid transparent;
-            border-radius: 3px;
-        }
-
-        [contenteditable]:not(:focus) {
-            border: 1px solid #ddd;
-        }
-
-        [contenteditable]:focus {
-            border: 1px solid #51a7e8;
-            box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.075), 0 0 5px rgba(81, 167, 232, 0.5);
-        }
-    </style>
+    <link rel="stylesheet" href="/css/user.css">
 </head>
 <body>
 <%- include('components/navbar'); %>
@@ -44,30 +14,28 @@
 
 <div class="ui relaxed container">
     <div id="container" class=" ui stackable two column grid">
-        <div class="ui five wide column segment center aligned" style="margin-bottom: 80px">
+        <div class="ui five wide column segment center aligned">
             <div class="row">
-            <img src="<%=user.dataValues.img%>" style="width: 22vmax">
+                <img src="<%= user.dataValues.img %>" class="profile-pic">
             </div>
             <div class="ui horizontal divider">Your Details</div>
-            <div style="font-size: 18px;" class="ui left aligned">
+            <div class="ui left aligned t18">
                 <div class="clr-sml"></div>
-                <div style="font-size: 20px;"><strong><%= user.dataValues.username %></strong></div>
+                <div class="t20"><strong><%= user.dataValues.username %></strong></div>
                 <div class="clr-sml"></div>
                 <div class="clr-sml"></div>
                 <div class="stackable one column grid">
-                    <div class="row">Username: <strong><%= user.dataValues.username %></strong></div>
-                    <div class="clr-sml"></div>
                     <div class="row">Email-Id: <strong><%= user.dataValues.email %></strong></div>
                     <div class="clr-sml"></div>
                     <div class="row">
                         <div class="ui two column grid">
-                            <div class="eight wide column" style="text-align:right">
-                                Phone1:<span id="ChangePhone1Button"
-                                                                data-phone="<%= user.dataValues.phone1 %>">
-                                <i class="edit icon" style="font-size: 1.3em;color: #bd081c;"></i>
+                            <div class="eight wide column right aligned">
+                                Phone1:&nbsp;&nbsp;&nbsp;&nbsp;<span id="ChangePhone1Button"
+                                                                     data-phone="<%= user.dataValues.phone1 %>">
+                                <i class="edit icon"></i>
                             </span>
                             </div>
-                            <div class="eight wide column" style="margin: 0; text-align: left">
+                            <div class="eight wide column phone">
                                 <div id="contentedit">
                                     <%= user.dataValues.phone1 %>
                                 </div>
@@ -78,15 +46,15 @@
                     <div class="clr-sml"></div>
                     <div class="row">
                         <div class="ui two column grid">
-                            <div class="eight wide column" style="text-align: right">
+                            <div class="eight wide column right aligned">
                                 Phone2:&nbsp;&nbsp;&nbsp;&nbsp;<span id="ChangePhone2Button"
                                                                      data-phone="<%= user.dataValues.phone2 %>"
-                                                                     style="width: 0.5em;">
-                                <i class="edit icon" style="font-size: 1.3em; color: #bd081c;"></i>
+                                >
+                                <i class="edit icon"></i>
                             </span>
 
                             </div>
-                            <div class="eight wide column" style="text-align: left;margin: 0">
+                            <div class="eight wide column phone">
                                 <div id="contentedit2">
                                     <%= user.dataValues.phone2 %>
                                 </div>
@@ -106,20 +74,19 @@
             <a href="/users/changePass">
                 <button class="ui right labeled icon button red">
                     <i class="right arrow icon"></i>
-                    <span style="">Edit Password</span>
+                    <span>Edit Password</span>
                 </button>
             </a>
         </div>
         <div class="eleven wide column center aligned">
-            <h1 style="font-size:xx-large">
+            <h1 class="xxlargefont">
                 Welcome <%= user.dataValues.username %> !!!
             </h1>
-            <div class="ui compact vertical labeled icon menu stackable five column grid"
-                 style="border: none ; box-shadow: none">
+            <div class="ui compact vertical labeled icon menu stackable five column grid user-profile">
                 <div class="five wide column center aligned">
                     <a href="/users/profile">
-                        <button class="circular ui icon yellow button massive"
-                                style="margin: 2vh">
+                        <button class="circular ui icon yellow button massive button-link"
+                        >
                             <img src="../images/profile.png" height="100vmax">
                         </button>
                     </a>
@@ -127,8 +94,8 @@
                 </div>
                 <div class="five wide column">
                     <a href="/items?show=user">
-                        <button class="circular ui icon orange button massive"
-                                style="margin: 2vh">
+                        <button class="circular ui icon orange button massive button-link"
+                        >
                             <img src="../images/itemplaced.png" height="100vmax">
                         </button>
                     </a>
@@ -136,8 +103,8 @@
                 </div>
                 <div class="five wide column">
                     <a href="/items?show=userbids">
-                        <button class="circular ui icon teal button massive"
-                                style="margin: 2vh">
+                        <button class="circular ui icon teal button massive button-link"
+                        >
                             <img src="../images/userbids.png" height="100vmax">
                         </button>
                     </a>
@@ -145,7 +112,7 @@
                 </div>
                 <div class="five wide column">
                     <a href="/items?show=others">
-                        <button class="circular ui icon olive button massive" style="margin: 2vh">
+                        <button class="circular ui icon olive button massive button-link">
                             <img src="../images/placed_item-dashboard.png" height="100vmax">
                         </button>
                     </a>
@@ -153,7 +120,7 @@
                 </div>
                 <div class="five wide column">
                     <a href="/items/add">
-                        <button class="circular ui icon positive button massive" style="margin: 2vh">
+                        <button class="circular ui icon positive button massive button-link">
                             <img src="../images/sell-dashboard.png" height="100vmax">
                         </button>
                     </a>

@@ -6,111 +6,7 @@
     <%- include('components/headers'); %>
     <script src="/js/lib/easytimer.js" type="text/javascript"></script>
     <script type="text/javascript" src="/js/items.js"></script>
-    <style>
-
-        .value {
-            font-size: 1.5em;
-        }
-
-        @media (min-width: 400px) {
-            .value {
-                font-size: 2em;
-            }
-        }
-
-        .text2 {
-            font-size: 1em;
-        }
-
-        @media (min-width: 400px) {
-            .text2 {
-                font-size: 1.5em;
-            }
-        }
-
-        #Details {
-            margin-top: 20vh;
-            margin-left: -40vw;
-        }
-
-        @media (min-width: 400px) {
-            #Details {
-                margin-top: 5vh;
-                margin-left: 0;
-            }
-        }
-
-        #container {
-            margin-top: 5vh;
-        }
-
-        @media (min-width: 770px) {
-            #container {
-                margin-top: 10vh;
-            }
-        }
-
-        #timer {
-            margin-left: 12vw;
-            font-size: 0.62em;
-        }
-
-        @media (min-width: 400px ) {
-            #timer {
-                margin-left: 0;
-                font-size: 0.8em;
-            }
-        }
-
-        @media (min-width: 600px ) {
-            #timer {
-                font-size: 1em;
-            }
-        }
-
-        @media (min-width: 790px ) {
-            #timer {
-                font-size: 1.2em;
-            }
-        }
-
-        #all-item-container {
-            margin-top: 1em;
-            margin-bottom: 3em;
-        }
-
-        @font-face {
-            font-family: 'clockfont';
-            src: url('/lib/DSEG7Classic-Bold.woff') format('woff'), /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */ url('/lib/DSEG7Classic-Bold.ttf') format('truetype'); /* Chrome 4+, Firefox 3.5, Opera 10+, Safari 3—5 */
-        }
-
-        .timerValues {
-            font-family: clockfont;
-            font-size: 2em;
-        }
-
-        body {
-            height: auto;
-        }
-
-        ::placeholder {
-            opacity: 1;
-        }
-
-        .alink {
-            padding: 0.5em;
-            color: black;
-        }
-
-        .alink:hover {
-            padding-left: 0.8em;
-            color: deeppink;
-        }
-
-        .clr-sml {
-            height: 0.5em;
-        }
-    </style>
+    <link rel="stylesheet" href="/css/items.css">
 </head>
 <body>
 
@@ -118,11 +14,11 @@
 
 
 <div class="ui stackable two column grid" id="container">
-    <div class="ui four wide column" style="border-right: 1px solid gainsboro">
-        <div class="ui" style="margin-left: 1.7em;margin-right: 1.7em ">
+    <div class="ui four wide column refine">
+        <div class="ui">
             <div class="clr-sml"></div>
-            <div style="font-size: 1.7em;text-align: center"><strong>Refine your Choice</strong></div>
-            <div class="ui middle aligned divided list" style="font-size: 1.2em; padding-left: 1em;">
+            <div class="refine-heading"><strong>Refine your Choice</strong></div>
+            <div class="ui middle aligned divided list">
 
                 <div class="item">
                     <div class="content">
@@ -160,7 +56,7 @@
                 </div>
                 <div class="item">
                     <div class="clr-sml"></div>
-                    <div class="content" style="text-align: center">
+                    <div class="cencontent">
                         <form class="ui form" action="/items/filterByName" method="post">
                             <input type="text" name="name" placeholder="Search by Name of item">
                             <div class="ui horizontal divider">or</div>
@@ -178,38 +74,35 @@
         <div class="ui basic segment">
 
             <div class="ui relaxed container" id="productlist">
-                <h1 style="text-align: center">Items in Stock</h1>
+                <h1>Items in Stock</h1>
                 <div class="ui relaxed items">
                     <% if(items.length == 0){ %>
-                    <div style="height: 300px; border: 1px solid #dddddd ;text-align: center">
-                        <div id="NoItems" style="margin-top: 10vmax; font-size: 3vmax">
+                    <div class="items-container">
+                        <div id="NoItems" >
                             No Items To Show
                             <div>
                             </div>
 
                             <% } else { items.forEach((item)=>{ %>
 
-                            <div class="ui item" id="<%= item._id %>"
-                                 style="width: 95% ;margin-left:1vw ;border: 1px solid #dddddd; border-radius: 2px; padding: 1em;">
+                            <div class="ui item" id="<%= item._id %>">
                                 <div class="image">
                                     <img src=<%= item.img %>>
                                 </div>
                                 <div class="ui grid content">
                                     <div class="row">
                                         <div class="eleven wide column">
-                                            <div class="header"
-                                                 style="font-weight: bolder; font-size: x-large"><%= item.name %></div>
+                                            <div class="header item-heading"><%= item.name %></div>
                                             <br>
-                                            <div class="meta" style="font-size: large">
+                                            <div class="meta">
                                                 <div><%= item.category %></div>
                                             </div>
                                             <br>
                                             <div class="extra" id="timer">
                                                 <div data-timer=<%= item._id %>>
-                                                    <span class="days"
-                                                          style="font-weight: bolder; font-size: 1.5em "></span>
-                                                    <span style="font-weight: bolder; font-size: 1.5em ">&nbsp;Days</span>
-                                                    <div style="height:2vmax"></div>
+                                                    <span class="days"></span>
+                                                    <span>&nbsp;Days</span>
+                                                    <div class="clr-md"></div>
                                                     <span class="hours timerValues"></span><span
                                                             class="timerValues">:</span>
                                                     <span class="minutes timerValues"></span><span
@@ -221,11 +114,10 @@
                                         </div>
                                         <div class=" five wide column">
                                             <div class="ui">
-                                                <div class="value" style="color: red; text-align: left;  height: 1em">
+                                                <div class="value minbid">
                                                     <%= item.minbid %>
                                                 </div>
-                                                <div class="text2" data-max-price="<%= item._id %>"
-                                                     style="color: red; text-align: left;">
+                                                <div class="text2" data-max-price="<%= item._id %>">
                                                     Current Value
                                                 </div>
                                             </div>
@@ -251,8 +143,7 @@
     </div>
 </div>
 
-<div style="bottom: 0;width: 100%">
     <%- include('components/footer'); %>
-</div>
+
 </body>
 </html>

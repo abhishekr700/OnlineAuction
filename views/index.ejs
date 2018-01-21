@@ -7,69 +7,20 @@
     <script src="/js/lib/easytimer.js"></script>
     <script type="text/javascript" src="js/main.js"></script>
     <script src="/js/index.js"></script>
+    <link rel="stylesheet" href="/css/index.css">
 </head>
-<style>
-    @font-face {
-        font-family: 'clockfont';
-        src: url('/lib/DSEG7Classic-Bold.woff') format('woff'), /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
-        url('/lib/DSEG7Classic-Bold.ttf') format('truetype'); /* Chrome 4+, Firefox 3.5, Opera 10+, Safari 3—5 */
-    }
-    .timerValues {
-        font-family: clockfont;
-        font-size: 1em;
-    }
-    #main{
-        margin-top: 3.6em;
-        height: 45em;
-        background-image: url("/images/e6.png");
-        background-size: 100% 100%;
-        background-repeat: no-repeat;
-        border: 0;
-    }
-    #main-container{
-        padding-top: 9em;
-    }
-    #main-container .ui.header{
-        color: white;
-        font-size: 4.3em;
-    }
-    #main-container .ui.huge.teal.button{
-        opacity: 0.9;
-    }
-    .home-inputs{
-        opacity: 0.9;
-    }
-    #feature-container{
-        margin-top: 4em;
-    }
-    .t5{
-       font-size: 2.3em;
-    }
-    #items-container{
-        margin-top: 4em;
-    }
-    #productlist{
-        margin-top: 2em;
-        margin-bottom: 5em;
-    }
-    .highlights{
-        border: 1px solid #dddddd;
-        border-radius: 2px;
-        margin: 10px;
-    }
-</style>
 <body>
 <%- include('components/navbar'); %>
 <!--Jumbotron-->
 <div id="main" class="ui center aligned segment">
     <div class="ui text relaxed container" id="main-container">
-        <div class="ui" style="color: white; font-weight: bolder; font-size: 4.5vmax">
+        <div class="ui heading-container">
             Find A Auction for You
         </div>
         <div class="ui stackable four column grid center aligned">
         <form class="ui form" action="/items/filterByName" method="post">
             <div class="row">
-                <div style="height: 1em"></div>
+                <div class="h1em"></div>
                 <div class="three wide column"></div>
                 <div class="five wide column ui input">
                     <input type="text" name="name" placeholder="Search by Name of item" class="home-inputs">
@@ -90,16 +41,16 @@
 <!--Features-->
 <div class="ui relaxed container" id="feature-container">
     <div class="ui header center aligned">
-        <h1 class="t5"  style="color: dimgrey">Auctioneers Highlights</h1>
+        <h1 class="t5 dimgrey" >Auctioneers Highlights</h1>
     </div>
     <br>
     <div class="ui stackable three column grid">
     <!--<div class="ui horizontal segments">-->
         <div class="ui five wide column highlights" >
             <h2 class="ui icon header">
-                <i class="wait icon" style="color: darkorange"></i>
+                <i class="wait icon darkorange"></i>
                 <div class="content">
-                    <span style="color: darkorange">Round The Clock Bidding</span>
+                    <span class="darkorange">Round The Clock Bidding</span>
                     <div class="ui inverted section divider"></div>
                     <div class="sub header">
                         Your auction runs 24x7 to cater to various users around the world.
@@ -110,9 +61,9 @@
         </div>
         <div class="ui five wide column highlights" >
             <h2 class="ui icon header">
-                <i class="alarm outline icon" style="color: limegreen;"></i>
+                <i class="alarm outline icon limegreen"></i>
                 <div class="content">
-                    <span style="color: limegreen;">Live Notifications</span>
+                    <span class="limegreen">Live Notifications</span>
                     <div class="ui inverted section divider"></div>
                     <div class="sub header">
                         Get live notification to your items and your own auctions.
@@ -123,9 +74,9 @@
         </div>
         <div class="ui five wide column highlights">
             <h2 class="ui icon header">
-                <i class="privacy icon" style="color: #309ef2;"></i>
+                <i class="privacy icon blue"></i>
                 <div class="content">
-                    <span style="color: #309ef2;">Privacy</span>
+                    <span class="blue">Privacy</span>
                     <div class="ui inverted section divider"></div>
                     <div class="sub header">
                         Only the product owner gets your contact and no one else !
@@ -140,12 +91,12 @@
 <div class="ui relaxed container" id="items-container">
     <!--Items Heading-->
     <div class="ui header center aligned">
-        <h1 class="t5"  style="color: dimgrey">Popular Live Auctions</h1>
+        <h1 class="t5 dimgrey">Popular Live Auctions</h1>
     </div>
     <!--Item Cards-->
     <div class="ui special cards container"  id="productlist">
         <% items.forEach((item)=>{%>
-        <div class="card"  id="<%= item._id%>" style="margin-left: 5vw ;">
+        <div class="card margin-left-5"  id="<%= item._id%>">
             <div class="blurring dimmable image">
                 <div class="ui inverted dimmer">
                     <div class="content" >
@@ -154,7 +105,7 @@
                         </div>
                     </div>
                 </div>
-                <img  src="<%= item.img%>" style="height: 30vh">
+                <img  src="<%= item.img%>" class="height30">
             </div>
             <div class="content">
                 <div class="header"><%= item.name %></div>
@@ -162,18 +113,18 @@
                     <span class="date"><%= item.category%></span>
                 </div>
                 <div class="ui statistic">
-                    <div class="value" style="font-size: 2em!important; color: red; text-align: left">
+                    <div class="value minbid">
                         <%= item.minbid %>
                     </div>
-                    <div class="label" data-max-price="<%= item._id %>" style="font-size:1em; color: red; text-align: left">
+                    <div class="label currentvalue" data-max-price="<%= item._id %>">
                         Current Value
                     </div>
                 </div>
             </div>
             <div class="extra content" id="timer">
                 <div data-timer=<%= item._id %>>
-                    <span class="days" style="font-weight: bolder;font-size: 1em "></span>
-                    <span style="font-weight: bolder;font-size: 1em ">&nbsp;Days</span>
+                    <span class="days font1embold"></span>
+                    <span class="font1embold">&nbsp;Days</span>
                     <br>
                     <span class="hours timerValues"></span><span class="timerValues">:</span>
                     <span class="minutes timerValues"></span><span class="timerValues">:</span>
@@ -182,11 +133,11 @@
             </div>
         </div>
         <%})%>
-        <div class="ui container center aligned" style="margin-top: 2em">
+        <div class="ui container center aligned margintop2em">
             <a href="/items?show=all">
             <button class="ui right labeled icon button blue big">
                 <i class="right arrow icon"></i>
-                <span style="">View All</span>
+                <span>View All</span>
             </button>
         </a>
         </div>
