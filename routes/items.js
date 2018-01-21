@@ -80,7 +80,7 @@ scheduler.on("close-bid", (err, event) => {
                                                         to: owner.email,
                                                         from: CONFIG.SERVER.MAIL,
                                                         subject: 'Item Sold',
-                                                        text: 'Your Product ' + biditem.ProdID + ' has been sold and bought by '+winner.username+".\nKindly contact him/her for further process.\n" + "Username: "+winner.username+"\nName: "+winner.name+"\nEmail-Id: "+owner.email
+                                                        text: 'Your Product ' + biditem.ProdID + ' has been sold and bought by '+winner.username+".\nKindly contact him/her for further process.\n" + "Username: "+winner.username+"\nName: "+winner.name+"\nEmail-Id: "+winner.email
                                                     };
                                                     smtpTransport.sendMail(mailOptionsWinner, function (err) {
                                                         console.log("sendwinnermail", err);

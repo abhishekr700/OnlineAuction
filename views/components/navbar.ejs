@@ -3,12 +3,22 @@
     .ui.sidebar{
         overflow: visible!important;
     }
-    #nav-adjust {
-        margin-top: 3.6em;
+    /*#nav-adjust {*/
+        /*margin-top: 3.6em;*/
+    /*}*/
+    #navbar-small{
+        display: inline-flex;
     }
     #navbar-main {
-        border-radius: 0px;
-        margin-top: 0em;
+        display: none;
+    }
+    @media (min-width: 770px) {
+        #navbar-main{
+            display: inline-flex;
+        }
+        #navbar-small{
+            display: none;
+        }
     }
     #navbar-logo {
         margin-right: 1.5vw;
@@ -18,7 +28,8 @@
         font-size: 1.3em;
     }
 </style>
-<div class="ui visible top sidebar fixed stackable container inverted menu" id="navbar-main">
+
+<div class="ui fixed container inverted menu" id="navbar-main">
     <a href="/" class="header item">
         <img src="http://via.placeholder.com/70x70" alt="" class="logo" id="navbar-logo">
         <span id="site-title">Auctionator</span>
@@ -57,6 +68,51 @@
         <% } %>
     </div>
 </div>
-<div id="nav-adjust">
+<div class="ui visible top sidebar fixed container inverted menu" id="navbar-small">
+    <a href="/" class="header item">
+        <img src="http://via.placeholder.com/70x70" alt="" class="logo" id="">
+    </a>
+    <a href="/" class="header item">
+        <span id="site-title">Auctionator</span>
+    </a>
+    <div class="right menu">
 
+        <% if(user) { %>
+        <% if(user.dataValues.isVerified){ %>
+        <div class="ui dropdown link item">
+            <i class="inverted sidebar icon"></i>
+            <div class="menu">
+                <a href="/items?show=all" class="item">All Auctions</a>
+                <a class="item" href="/items/add">Create Auction</a>
+                <a class="item" href="/items?show=others">Bid On Items</a>
+                <a class="item" href="/items?show=user">Your Items</a>
+                <a class="item" href="/items?show=userbids">Your Bids</a>
+                <a class="item" href="/users/">View Profile</a>
+                <a class="item" href="/logout">Logout</a>
+            </div>
+        </div>
+        <% } else { %>
+        <div class="ui dropdown link item">
+            <i class="inverted sidebar icon"></i>
+            <div class="menu">
+                <a href="/items?show=all" class="item">All Auctions</a>
+                <a class="item" href="/users/">View Profile</a>
+                <a class="item" href="/logout">Logout</a>
+            </div>
+        </div>
+        <%}%>
+        <% } else { %>
+        <div class="ui dropdown link item">
+            <i class="inverted sidebar icon"></i>
+            <div class="menu">
+                <a href="/items?show=all" class="item">All Auctions</a>
+                <a class="item" href="/login">Log In/Sign Up</a>
+            </div>
+        </div>
+        <% } %>
+    </div>
 </div>
+
+<!--<div id="nav-adjust">-->
+
+<!--</div>-->
