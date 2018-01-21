@@ -10,6 +10,7 @@ $(() => {
     socket.on('bid', (data) => {
         var users=data.users;
         var bid = data.bids;
+        $('#minbid').html(bid.allBids[bid.allBids.length-1].price);
         var ul = $("#bids");
         ul.html("");
         var usernames={};
