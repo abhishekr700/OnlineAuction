@@ -9,6 +9,7 @@ const Sequelize = require("sequelize");
 const session = require("express-session");
 const mongoose = require("mongoose");
 const MongoStore = require('connect-mongo')(session);
+const flash = require("connect-flash");
 
 /*
     Import User Files
@@ -37,6 +38,7 @@ app.use(express.urlencoded({
     extended: true
 }));
 
+
 const connection = mongoose.createConnection(`mongodb://${CONFIG.MONGO.HOST}:${CONFIG.MONGO.PORT}/${CONFIG.MONGO.DB_NAME}`, {
     useMongoClient: true
 });
@@ -61,6 +63,7 @@ let sessionMiddleware = session({
 })
 app.use(sessionMiddleware);
 
+app.use(flash());
 
 //Initialise passport
 app.use(Passport.initialize());

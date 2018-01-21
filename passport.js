@@ -24,7 +24,10 @@ passport.deserializeUser(function (id, done) {
 
 //Define LocalStrategy
 const localstrategy = new LocalStrategy(
-    function (username, password, done) {
+    {
+        passReqToCallback : true
+    },
+    function (req, username, password, done) {
         Users.findOne({
             where: {
                 username: username
@@ -32,7 +35,7 @@ const localstrategy = new LocalStrategy(
         })
             .then((user) => {
                 if (user == null) {
-                    return done(null, false, {message: "Username not found !"})
+                    return done(null, false, req.flash("loginMsg","Username not found !"));
                 } else {
 
                     bcrypt.compare(password, user.password).then((res) => {
@@ -42,7 +45,7 @@ const localstrategy = new LocalStrategy(
                             return done(null, user);
                         }
                         else {
-                            return done(null, false, {message: "Pass incorrect !"});
+                            return done(null, false, req.flash("loginMsg","Password incorrect !"));
                         }
 
                     });
