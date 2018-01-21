@@ -51,94 +51,78 @@ scheduler.on("close-bid", (err, event) => {
                         //Mail to winner and Owner
                         await function () {
                             return new Promise((resolve, reject) => {
+                                if(biditem.allBids.length>1)
+                                {
                                 let winnerId = biditem.allBids[biditem.allBids.length - 1].userID;
-                                if(winnerId){
-                                console.log("WinnerID:", winnerId);
-                                Users.findById(winnerId)
-                                    .then((winner) => {
-                                        console.log("Winner:", winner);
-                                        models.Products.findOne({
-                                            _id:event.data
-                                        })
-                                            .then((item)=>{
-                                            Users.findById(item.userID)
-                                                .then((owner)=>{
-                                                    let smtpTransport = nodemailer.createTransport({
-                                                        service: 'gmail',
-                                                        auth: {
-                                                            user: CONFIG.SERVER.MAIL,
-                                                            pass: CONFIG.SERVER.PASS
-                                                        }
-                                                    });
-                                                    let mailOptionsWinner = {
-                                                        to: winner.email,
-                                                        from: CONFIG.SERVER.MAIL,
-                                                        subject: 'Auction Won',
-                                                        text: 'You won the auction for ' + biditem.ProdID +".\n Following are The details of the owner of the product.\nKindly contact him/her for further process.\n" + "Username: "+owner.username+"\nName: "+owner.name+"\nEmail-Id: "+owner.email
-                                                    };
-                                                    let mailOptionsOwner = {
-                                                        to: owner.email,
-                                                        from: CONFIG.SERVER.MAIL,
-                                                        subject: 'Item Sold',
-                                                        text: 'Your Product ' + biditem.ProdID + ' has been sold and bought by '+winner.username+".\nKindly contact him/her for further process.\n" + "Username: "+winner.username+"\nName: "+winner.name+"\nEmail-Id: "+winner.email
-                                                    };
-                                                    smtpTransport.sendMail(mailOptionsWinner, function (err) {
-                                                        console.log("sendwinnermail", err);
-                                                        if (err) {
-                                                            //console.log("rejected");
-                                                            reject();
-                                                        } else {
-                                                            console.log("Mail sent to winner");
-                                                            smtpTransport.sendMail(mailOptionsOwner, function (err) {
-                                                                console.log("sendownermail", err);
+                                if(winnerId) {
+                                    console.log("WinnerID:", winnerId);
+                                    Users.findById(winnerId)
+                                        .then((winner) => {
+                                            console.log("Winner:", winner);
+                                            models.Products.findOne({
+                                                _id: event.data
+                                            })
+                                                .then((item) => {
+                                                    Users.findById(item.userID)
+                                                        .then((owner) => {
+                                                            let smtpTransport = nodemailer.createTransport({
+                                                                service: 'gmail',
+                                                                auth: {
+                                                                    user: CONFIG.SERVER.MAIL,
+                                                                    pass: CONFIG.SERVER.PASS
+                                                                }
+                                                            });
+                                                            let mailOptionsWinner = {
+                                                                to: winner.email,
+                                                                from: CONFIG.SERVER.MAIL,
+                                                                subject: 'Auction Won',
+                                                                text: 'You won the auction for ' + biditem.ProdID + '.\nFollowing are The details of the owner of the product.\nKindly contact him/her for further process.\nUsername: ' + owner.username + '\nName: ' + owner.name + '\nEmail-Id: ' + owner.email
+                                                            };
+                                                            let mailOptionsOwner = {
+                                                                to: owner.email,
+                                                                from: CONFIG.SERVER.MAIL,
+                                                                subject: 'Item Sold',
+                                                                text: 'Your Product ' + biditem.ProdID + ' has been sold and bought by ' + winner.username + '.\nKindly contact him/her for further process.\n' + 'Username: ' + winner.username + '\nName: ' + winner.name + '\nEmail-Id: ' + winner.email
+                                                            };
+                                                            smtpTransport.sendMail(mailOptionsWinner, function (err) {
+                                                                console.log("sendwinnermail", err);
                                                                 if (err) {
                                                                     //console.log("rejected");
                                                                     reject();
                                                                 } else {
-                                                                    console.log("Mail sent to owner");
-                                                                    resolve();
+                                                                    console.log("Mail sent to winner");
+                                                                    smtpTransport.sendMail(mailOptionsOwner, function (err) {
+                                                                        console.log("sendownermail", err);
+                                                                        if (err) {
+                                                                            //console.log("rejected");
+                                                                            reject();
+                                                                        } else {
+                                                                            console.log("Mail sent to owner");
+                                                                            resolve();
+                                                                        }
+                                                                    });
                                                                 }
-                                                            });
-                                                        }
 
-                                                    });
+                                                            });
+                                                        })
+                                                        .catch((err) => {
+                                                            console.log(err);
+                                                        })
                                                 })
-                                                .catch((err)=>{
+                                                .catch((err) => {
                                                     console.log(err);
                                                 })
                                         })
-                                            .catch((err)=>{
-                                                console.log(err);
-                                            })
-                                    })
-                                    .catch((err)=>{
-                                    console.log(err);
-                                    })
-                            }
+                                        .catch((err) => {
+                                            console.log(err);
+                                        })
+                                }
+                            }else{
+                                    resolve();
+                                }
                             })
                         }();
-                        //Mail to owner
-                        // await function () {
-                        //     return new Promise((resolve, reject) => {
-                        //         models.Products.findById(biditem.ProdID)
-                        //             .then((item) => {
-                        //                 let ownerId = item.userID;
-                        //                 console.log("UserID:", ownerId);
-                        //                 Users.findById(ownerId)
-                        //                     .then((owner) => {
-                        //                         console.log("Owner:", owner);
-                        //                         let smtpTransport = nodemailer.createTransport({
-                        //                             service: 'gmail',
-                        //                             auth: {
-                        //                                 user: CONFIG.SERVER.MAIL,
-                        //                                 pass: CONFIG.SERVER.PASS
-                        //                             }
-                        //                         });
-                        //
-                        //                     })
-                        //             })
-                        //     })
-                        // }();
+
 
                     })()
                         .then(()=>{
@@ -285,7 +269,7 @@ route.get("/add", HELPERS.checkLoggedIn, (req, res) => {
 //Post route to add products to DB
 route.post('/add', HELPERS.checkLoggedIn, upload.single('imgUploader'), function (req, res) {
     let curDate = new Date();
-    let finalDate = curDate.getTime() + req.body.duration * 3600 * 1000;
+    let finalDate = curDate.getTime() + req.body.duration * 1000;
     let endDate = new Date(finalDate);
     models.Products.create({
         userID: req.user.id,
@@ -513,6 +497,7 @@ route.get("/:id", (req, res) => {
         // _id: 0
     })
         .then((item) => {
+        if(item) {
             if (!req.user || item.userID !== req.user.id) {
                 res.render("item-details", {
                     item: item,
@@ -525,6 +510,10 @@ route.get("/:id", (req, res) => {
                     isOwner: true
                 });
             }
+        }else{
+            console.log("item not found");
+            res.redirect('/items');
+        }
         })
         .catch((err) => {
             console.log(err);
@@ -547,7 +536,6 @@ route.post("/:id/incTime", HELPERS.checkLoggedIn, (req, res) => {
                             if (eve.data.toString() === item._id.toString()) {
                                 scheduler.remove("close-bid", eve._id, null, (err, event) => {
                                 });
-
                                 break;
                             }
                         }
@@ -726,9 +714,26 @@ route.get("/:id/delete", HELPERS.checkLoggedIn, (req, res) => {
                             console.log(publicID);
                             cloudinary.v2.uploader.destroy(publicID, function (error, result) {
                                 console.log(result);
-                                alert("Successfully Deleted Item");
-                                res.redirect("/items?show=user");
-                            });
+                                scheduler.list((err, events) => {
+                                    for (let eve of events) {
+                                        if (eve.data.toString() === req.params.id.toString()) {
+                                            scheduler.remove("close-bid", eve._id, null, (err, event) => {
+                                            });
+                                            break;
+                                        }
+                                    }
+                                    console.log("schedular removed");
+                                    if(err)
+                                    {
+                                        console.log(err);
+                                        res.redirect('/404');
+                                    }else {
+                                        alert("Successfully Deleted Item");
+                                        res.redirect("/items?show=user");
+                                    }
+
+                                });
+                            })
                         })
                         .catch((err) => {
                             console.log("Error deleting item:", err);
