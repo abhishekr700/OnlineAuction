@@ -748,7 +748,7 @@ route.get("/:id/delete", HELPERS.checkLoggedIn, (req, res) => {
             }
             else {
                 alert("Item not found");
-                res.redirect(`/items/`)
+                res.redirect(`/items`)
             }
         })
         .catch((err) => {

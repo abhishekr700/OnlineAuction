@@ -18,12 +18,15 @@ $(function () {
 
     //Update timers for each item displayed
     let list = $("#productlist").children();
-    for (let item of list.children()) {
-        updateTimer(item.getAttribute("id"));
-    }
+    var noitem=$('#NoItems');
+    if(noitem.length===0) {
+        for (let item of list.children()) {
+            updateTimer(item.getAttribute("id"));
+        }
 
-    //Add event handler for "View Details" button
-    $("button[data-btn='details']").click(RedirectToItemDetails);
+        //Add event handler for "View Details" button
+        $("button[data-btn='details']").click(RedirectToItemDetails);
+    }
 
 });
 Number.prototype.zeroPad = function(length) {

@@ -5,12 +5,10 @@ queryString = queryString[queryString.length - 1];
 $(() => {
 
     let isOwner = $(".owner")[0].id;
-
     socket.emit('prodID', {prodId: queryString});
     socket.on('bid', (data) => {
         var users=data.users;
         var bid = data.bids;
-        $('#minbid').html(bid.allBids[bid.allBids.length-1].price);
         var ul = $("#bids");
         ul.html("");
         var usernames={};
@@ -42,6 +40,7 @@ $(() => {
                 `)
 
             });
+            $('#minbid').html(bid.allBids[bid.allBids.length-1].price);
         }
     });
     Number.prototype.zeroPad = function (length) {
