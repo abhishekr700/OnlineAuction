@@ -1,7 +1,4 @@
 $(function () {
-    // $('.special.cards .image').dimmer({
-    //     on: 'hover'
-    // });
 
     $('#filter').click(()=> {
 

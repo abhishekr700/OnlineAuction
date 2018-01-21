@@ -8,57 +8,74 @@
     <script type="text/javascript" src="/js/items.js"></script>
     <style>
 
-        .value{
+        .value {
             font-size: 1.5em;
         }
+
         @media (min-width: 400px) {
-            .value{
+            .value {
                 font-size: 2em;
             }
         }
-        .text2{
+
+        .text2 {
             font-size: 1em;
         }
+
         @media (min-width: 400px) {
-            .text2{
+            .text2 {
                 font-size: 1.5em;
             }
         }
-        #Details{
+
+        #Details {
             margin-top: 20vh;
             margin-left: -40vw;
         }
+
         @media (min-width: 400px) {
-            #Details{
+            #Details {
                 margin-top: 5vh;
                 margin-left: 0;
             }
         }
-        #container{
-            margin-top: 10vh;
+
+        #container {
+            margin-top: 5vh;
         }
-        #timer{
+
+        @media (min-width: 770px) {
+            #container {
+                margin-top: 10vh;
+            }
+        }
+
+        #timer {
             margin-left: 12vw;
             font-size: 0.62em;
         }
+
         @media (min-width: 400px ) {
             #timer {
                 margin-left: 0;
                 font-size: 0.8em;
             }
         }
+
         @media (min-width: 600px ) {
             #timer {
                 font-size: 1em;
             }
         }
+
         @media (min-width: 790px ) {
             #timer {
                 font-size: 1.2em;
             }
         }
+
         #all-item-container {
-            margin-top: 3em;
+            margin-top: 1em;
             margin-bottom: 3em;
         }
 
@@ -72,14 +89,22 @@
             font-size: 2em;
         }
 
-body {
-    height: auto;
-}
-::placeholder{
-    opacity: 1;
-}
-        a {
+        body {
+            height: auto;
+        }
+
+        ::placeholder {
+            opacity: 1;
+        }
+
+        .alink {
+            padding: 0.5em;
             color: black;
+        }
+
+        .alink:hover {
+            padding-left: 0.8em;
+            color: deeppink;
         }
 
         .clr-sml {
@@ -97,18 +122,20 @@ body {
         <div class="ui" style="margin-left: 1.7em;margin-right: 1.7em ">
             <div class="clr-sml"></div>
             <div style="font-size: 1.7em;text-align: center"><strong>Refine your Choice</strong></div>
-            <div class="ui middle aligned list" style="font-size: 1.2em;">
+            <div class="ui middle aligned divided list" style="font-size: 1.2em; padding-left: 1em;">
 
                 <div class="item">
                     <div class="content">
-                        <a class="item" href="/items">
+                        <a class="item alink" href="/items">
+                            <i class="right chevron icon"></i>
                             All items
                         </a>
                     </div>
                 </div>
                 <div class="item">
                     <div class="content">
-                        <a class="item" href="/items/filterBidPrice/-1">
+                        <a class="item alink" href="/items/filterBidPrice/-1">
+                            <i class="right chevron icon"></i>
                             Highest to Lowest Price
                         </a>
                     </div>
@@ -116,7 +143,8 @@ body {
                 <div class="item">
                     <div class="content">
 
-                        <a class="item" href="/items/filterBidPrice/1">
+                        <a class="item alink" href="/items/filterBidPrice/1">
+                            <i class="right chevron icon"></i>
                             Lowest to Highest Price
                         </a>
                     </div>
@@ -124,13 +152,14 @@ body {
                 <div class="item">
                     <div class="content">
 
-                        <a class="item" href="/items/filterByTime">
+                        <a class="item alink" href="/items/filterByTime">
+                            <i class="right chevron icon"></i>
                             According to Time left
                         </a>
                     </div>
                 </div>
-                <div class="clr-sml"></div>
                 <div class="item">
+                    <div class="clr-sml"></div>
                     <div class="content" style="text-align: center">
                         <form class="ui form" action="/items/filterByName" method="post">
                             <input type="text" name="name" placeholder="Search by Name of item">
@@ -149,71 +178,75 @@ body {
         <div class="ui basic segment">
 
             <div class="ui relaxed container" id="productlist">
-
+                <h1 style="text-align: center">Items in Stock</h1>
                 <div class="ui relaxed items">
-                    <% if(items.length == 0){%>
+                    <% if(items.length == 0){ %>
                     <div style="height: 300px; border: 1px solid #dddddd ;text-align: center">
-                        <div id="NoItems" style="margin-top: 10vmax; font-size: 4vmax">
+                        <div id="NoItems" style="margin-top: 10vmax; font-size: 3vmax">
                             No Items To Show
-                         <div>
-                    </div>
+                            <div>
+                            </div>
 
-                    <% } else { items.forEach((item)=>{ %>
+                            <% } else { items.forEach((item)=>{ %>
 
-                    <div class="ui item" id="<%= item._id %>"
-                         style="width: 95% ;margin-left:1vw ;border: 1px solid #dddddd; border-radius: 2px; padding: 1em;">
-                        <div class="image">
-                            <img src=<%= item.img%> >
-                        </div>
-                        <div class="ui grid content">
-                            <div class="row">
-                                <div class="eleven wide column">
-                                    <div class="header"
-                                         style="font-weight: bolder; font-size: x-large"><%= item.name %></div>
-                                    <br>
-                                    <div class="meta" style="font-size: large">
-                                        <div><%= item.category %></div>
-                                    </div>
-                                    <br>
-                                    <div class="extra" id="timer">
-                                        <div data-timer=<%= item._id %>>
-                                            <span class="days" style="font-weight: bolder; font-size: 1.5em "></span>
-                                            <span style="font-weight: bolder; font-size: 1.5em ">&nbsp;Days</span>
-                                            <div style="height:2vmax"></div>
-                                            <span class="hours timerValues"></span><span class="timerValues">:</span>
-                                            <span class="minutes timerValues"></span><span class="timerValues">:</span>
-                                            <span class="seconds timerValues"></span><span class="timerValues"></span>
-                                        </div>
-                                    </div>
+                            <div class="ui item" id="<%= item._id %>"
+                                 style="width: 95% ;margin-left:1vw ;border: 1px solid #dddddd; border-radius: 2px; padding: 1em;">
+                                <div class="image">
+                                    <img src=<%= item.img %>>
                                 </div>
-                                <div class=" five wide column">
-                                    <div class="ui">
-                                        <div class="value" style="color: red; text-align: left;  height: 1em">
-                                            <%= item.minbid %>
+                                <div class="ui grid content">
+                                    <div class="row">
+                                        <div class="eleven wide column">
+                                            <div class="header"
+                                                 style="font-weight: bolder; font-size: x-large"><%= item.name %></div>
+                                            <br>
+                                            <div class="meta" style="font-size: large">
+                                                <div><%= item.category %></div>
+                                            </div>
+                                            <br>
+                                            <div class="extra" id="timer">
+                                                <div data-timer=<%= item._id %>>
+                                                    <span class="days"
+                                                          style="font-weight: bolder; font-size: 1.5em "></span>
+                                                    <span style="font-weight: bolder; font-size: 1.5em ">&nbsp;Days</span>
+                                                    <div style="height:2vmax"></div>
+                                                    <span class="hours timerValues"></span><span
+                                                            class="timerValues">:</span>
+                                                    <span class="minutes timerValues"></span><span
+                                                            class="timerValues">:</span>
+                                                    <span class="seconds timerValues"></span><span
+                                                            class="timerValues"></span>
+                                                </div>
+                                            </div>
                                         </div>
-                                        <div class="text2" data-max-price="<%= item._id %>"
-                                             style="color: red; text-align: left;">
-                                            Current Value
-                                        </div>
-                                    </div>
-                                    <div id="<%= item._id %>">
+                                        <div class=" five wide column">
+                                            <div class="ui">
+                                                <div class="value" style="color: red; text-align: left;  height: 1em">
+                                                    <%= item.minbid %>
+                                                </div>
+                                                <div class="text2" data-max-price="<%= item._id %>"
+                                                     style="color: red; text-align: left;">
+                                                    Current Value
+                                                </div>
+                                            </div>
+                                            <div id="<%= item._id %>">
 
-                                        <button class="ui primary button" id="Details" data-btn="details">
-                                            View Details
-                                            <i class="right chevron icon"></i>
-                                        </button>
+                                                <button class="ui primary button" id="Details" data-btn="details">
+                                                    View Details
+                                                    <i class="right chevron icon"></i>
+                                                </button>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
+                            <% })} %>
                         </div>
                     </div>
-                    <% })} %>
+
                 </div>
             </div>
-
         </div>
-    </div>
-</div>
 
     </div>
 </div>
