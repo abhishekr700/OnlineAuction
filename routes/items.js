@@ -297,6 +297,8 @@ route.post('/add', HELPERS.checkLoggedIn, upload.single('imgUploader'), function
         endDate: endDate
     })
         .then((item) => {
+
+        if(req.file) {
             fs.rename(path.join(__dirname, "../", "public_html/Images/", req.file.filename), path.join(__dirname, "../", "public_html/Images/", item._id + ".jpg"), (err) => {
                 if (err) {
                     console.log(err);
@@ -315,50 +317,82 @@ route.post('/add', HELPERS.checkLoggedIn, upload.single('imgUploader'), function
                             }
                             else {
                                 fs.unlink(path.join(__dirname, "../", "public_html/Images/", item._id + ".jpg"), function (err) {
-                                    if (err)
-                                    {
+                                    if (err) {
                                         console.log(err);
                                         res.redirect('/404');
                                     }
-                                    else{
-                                    console.log('file deleted successfully');
-                                    //Store image url in DB
-                                    item.img = result.url;
-                                    item.save()
-                                        .then(() => {
+                                    else {
+                                        console.log('file deleted successfully');
+                                        //Store image url in DB
+                                        item.img = result.url;
+                                        item.save()
+                                            .then(() => {
 
-                                            //Create entry in bids table
-                                            models.Bids.create({
-                                                ProdID: item._id,
-                                                isOpen: true,
-                                                allBids: []
+                                                //Create entry in bids table
+                                                models.Bids.create({
+                                                    ProdID: item._id,
+                                                    isOpen: true,
+                                                    allBids: []
+                                                })
+                                                    .then(() => {
+
+                                                        scheduler.schedule({
+                                                            name: "close-bid",
+                                                            data: item._id,
+                                                            after: item.endDate
+                                                        });
+
+                                                        res.redirect(`/items/${item._id}`);
+                                                    })
+                                                    .catch((err) => {
+                                                        console.log(err);
+                                                        res.redirect('/404');
+                                                    })
                                             })
-                                                .then(() => {
-
-                                                    scheduler.schedule({
-                                                        name: "close-bid",
-                                                        data: item._id,
-                                                        after: item.endDate
-                                                    });
-
-                                                    res.redirect(`/items/${item._id}`);
-                                                })
-                                                .catch((err) => {
-                                                    console.log(err);
-                                                    res.redirect('/404');
-                                                })
-                                        })
-                                        .catch((err) => {
-                                            console.error(err);
-                                            res.redirect('/404');
-                                        })
-                                }
+                                            .catch((err) => {
+                                                console.error(err);
+                                                res.redirect('/404');
+                                            })
+                                    }
                                 });
                             }
                         });
                     });
                 }
             });
+        }
+        else {
+            //Store image url in DB
+            item.img = "/images/e6.png";
+            item.save()
+                .then(() => {
+
+                    //Create entry in bids table
+                    models.Bids.create({
+                        ProdID: item._id,
+                        isOpen: true,
+                        allBids: []
+                    })
+                        .then(() => {
+
+                            scheduler.schedule({
+                                name: "close-bid",
+                                data: item._id,
+                                after: item.endDate
+                            });
+
+                            res.redirect(`/items/${item._id}`);
+                        })
+                        .catch((err) => {
+                            console.log(err);
+                            res.redirect('/404');
+                        })
+                })
+                .catch((err) => {
+                    console.error(err);
+                    res.redirect('/404');
+                })
+        }
         })
         .catch((err) => {
             console.log(err);
