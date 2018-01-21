@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Auctioneer | MeetTheCreators</title>
+    <%- include('components/headers'); %>
+    <style>
+        #main-container {
+            margin-top: 13vh;
+            margin-bottom: 3em;
+        }
+        .clr-sml{
+            height: 0.5em;
+        }
+        @media (min-width: 770px) {
+            .cards .card.margin2em{
+                margin: 2em;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<%- include('components/navbar'); %>
+<div class="ui container" id="main-container">
+    <h1 style="text-align: center; font-size: 3.5vmax; color: purple">Meet the Creators</h1>
+    <div class="clr-sml"></div>
+    <div class="ui stackable grid">
+        <div class="one wide column"></div>
+        <div>
+            <div class="ui link cards">
+                <div class="card margin2em">
+                    <div class="image">
+                        <img src="/images/user.png">
+                    </div>
+                    <div class="content">
+                        <div class="header center aligned">Bhavya Bansal</div>
+                        <div class="meta">
+                            <a>Node Developer</a>
+                        </div>
+                        <div class="description">
+                            Bhavya Bansal is a backend and frontend developer.
+                        </div>
+                    </div>
+                    <div class="extra content">
+                        <span class="right floated">
+                            Studies in NSIT
+                        </span>
+                        <span>
+                            <i class="github icon"></i>
+                            28 Repositories
+                        </span>
+                    </div>
+                </div>
+
+                <div class="card margin2em">
+                    <div class="image">
+                        <img src="/images/user1.jpg">
+                    </div>
+                    <div class="content">
+                        <div class="header center aligned">Abhishek Ranjan</div>
+                        <div class="meta">
+                            <a>Node Developer</a>
+                        </div>
+                        <div class="description">
+                            Abhishek Ranjan is a backend and frontend developer.
+                        </div>
+                    </div>
+                    <div class="extra content">
+                        <span class="right floated">
+                            Studies in NSIT
+                        </span>
+                        <span>
+                            <i class="github icon"></i>
+                            30 Repositories
+                        </span>
+                    </div>
+                </div>
+
+                <div class="card margin2em">
+                    <div class="image">
+                        <img src="/images/user2.jpg">
+                    </div>
+                    <div class="content">
+                        <div class="header center aligned">Aastha Agrawal</div>
+                        <div class="meta">
+                            <a>Node Developer</a>
+                        </div>
+                        <div class="description">
+                            Aastha Agrawal is a backend and frontend developer.
+                        </div>
+                    </div>
+                    <div class="extra content">
+                        <span class="right floated">
+                            Studies in NSIT
+                        </span>
+                        <span>
+                            <i class="github icon"></i>
+                            25 Repositories
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<%- include('components/footer'); %>
+</body>
+</html>

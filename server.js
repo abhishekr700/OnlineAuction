@@ -126,6 +126,12 @@ app.get("/privacy-policy", (req, res) => {
 app.get("/terms-and-conditions", (req, res) => {
     res.render('termsAndConditions');
 });
+
+//render meet the creator page
+
+app.get("/meetTheCreators",(req,res)=>{
+    res.render("meetTheCreators");
+})
 //404 Handler
 app.get('/404',function (req, res) {
     res.render('404');
