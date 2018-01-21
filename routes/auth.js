@@ -317,7 +317,9 @@ module.exports = function (app) {
         if (req.user)
             res.redirect("/users");
         else
-            res.render("login");
+            res.render("login",{
+                message: req.flash("loginMsg")
+            });
     });
 
 //verify email
