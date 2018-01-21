@@ -300,13 +300,16 @@ module.exports = function (app) {
         if (req.user)
             res.redirect("/users");
         else
-            res.render("login");
+            res.render("login",{
+                message: req.flash("loginMsg")
+            });
     });
 
 //Login Route
     app.post("/login", Passport.authenticate('local', {
         successRedirect: "/users",
-        failureRedirect: "/login"
+        failureRedirect: "/login",
+        failureFlash: true
     }));
 
 //Render SignUp page

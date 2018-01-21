@@ -61,6 +61,16 @@
 <div class="margin-top-70">
     <div class="ui relaxed container">
         <form class="ui form" action="/login" method="post" >
+            <%if(message.length > 0){%>
+            <div class="ui negative message">
+                <i class="close icon"></i>
+                <div class="header">
+                    <%= message %>
+                </div>
+                <p>Please try again.
+                </p>
+            </div>
+            <%}%>
             <div class="ui stackable four column grid">
                 <div class="five wide column t22 text-center">
                     <div class="clr-sml"></div>
