@@ -1,5 +1,11 @@
 ## Online Auction System
 
+A NodeJS Web application developed to provide facility to auction any item online.
+    1) SECURITY: authentication and verification is done
+    2) REAL TIME UPDATES: On bids , and on completing of an auction
+    3) ROUND THE CLOCK BIDDING: Bids are open 24x7 to facilitate users from various countries. 
+    
+    
 ### Steps
 1. Clone the repo.
 2. Run `npm install`.
