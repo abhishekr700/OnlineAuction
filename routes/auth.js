@@ -39,6 +39,7 @@ module.exports = function (app) {
             return new Promise((resolve) => {
                 crypto.randomBytes(20, function (err, buf) {
                     let token = buf.toString('hex');
+                    console.log("Token gen done");
                     resolve(token);
                 });
             })
@@ -50,6 +51,7 @@ module.exports = function (app) {
                 user.resetPasswordToken = token;
                 user.resetPasswordExpires = Date.now() + 3600000; // 1 hour
                 user.save().then(() => {
+                    console.log("saved in user db")
                     resolve();
                 }).catch((err) => {
                     console.log(err);
@@ -83,6 +85,7 @@ module.exports = function (app) {
                     if (err) {
                         reject();
                     } else {
+                        console.log("Send mail");
                         resolve();
                     }
                 });
@@ -157,9 +160,11 @@ module.exports = function (app) {
             return new Promise((resolve) => {
                 user.verifyEmailToken = token;
                 user.save().then(() => {
+                    console.log("Toeken saved to db");
                     resolve();
                 }).catch((err) => {
                     console.log(err);
+                    console.log("error in saving");
                     res.redirect('/404');
                 });
             })
@@ -186,8 +191,11 @@ module.exports = function (app) {
                 };
                 smtpTransport.sendMail(mailOptions, function (err) {
                     if (err) {
+                        console.log("error in sending");
+                        console.log(err);
                         reject();
                     } else {
+                        console.log("mail sent");
                         resolve();
                     }
                 });
@@ -411,6 +419,7 @@ module.exports = function (app) {
                                                                             user.img = result.url;
                                                                             user.save()
                                                                                 .then(() => {
+                                                                                    console.log("Going to mail");
                                                                                     mailVerifyEmail(user, res)
                                                                                         .then(() => {
                                                                                             req.login(user, (err) => {
