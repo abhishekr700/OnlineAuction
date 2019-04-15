@@ -15,7 +15,7 @@ database.authenticate()
     })
     .catch((err) => {
         console.log("Connection Error: " + err);
-        process.exit();
+        process.exit(3);
     });
 
 var Users = database.import("./users.js");
