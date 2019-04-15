@@ -3,13 +3,13 @@ const PRODUCTION_CONFIGS = {
         HOST: process.env.HOST,
         PORT: process.env.PORT,
         MAIL: process.env.MAIL,
-        PASS: process.env.MAIL
+        PASS: process.env.PASS
     },
     SQL: {
         DATABASE: process.env.SQLDB,
         HOST: process.env.SQLHOST,
         USER: process.env.SQLUSER,
-        PASSWORD: process.env.PASSWORD
+        PASSWORD: process.env.SQLPASS
     },
     MONGO: {
         URI: process.env.MONGOURI,
