@@ -11,14 +11,13 @@ const UserBidsMap = require("./user-bids");
 mongoose.Promise = global.Promise;
 
 //Connect to DB
-mongoose.connect(`mongodb://${CONFIG.MONGO.HOST}:${CONFIG.MONGO.PORT}/${CONFIG.MONGO.DB_NAME}`, {
-    useMongoClient: true
-})
+mongoose.connect(`${CONFIG.MONGO.URI}`)
     .then(() => {
         console.log("Successful connection to MongoDB");
     })
     .catch((err) => {
-        console.log("Mongoose connection error due to: ", err);
+        console.log("Mongoose connection error due to: ");
+        console.err(err)
         process.exit();
     });
 
