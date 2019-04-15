@@ -18,7 +18,7 @@ mongoose.connect(MONGOOSE_URI, {
 })
     .then((client) => {
         console.log("Successful connection to MongoDB");
-        console.log("CLIENT:",client);
+        // console.log("CLIENT:",client);
         
     })
     .catch((err) => {

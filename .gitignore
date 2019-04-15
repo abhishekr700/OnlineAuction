@@ -3,3 +3,4 @@ node_modules/
 configs-local.js 
 data/ 
 public_html/Images
+.env

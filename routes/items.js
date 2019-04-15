@@ -34,121 +34,127 @@ const mongoose = require("mongoose");
 const connection = mongoose.createConnection(MONGOOSE_URI, {
     useNewUrlParser: true
 });
-const scheduler = new Scheduler(connection, {
-    pollInterval: 1000  
-    // authMechanism: "SCRAM-SHA-1",
-    // dbname: "onlineauction"
+// console.log(connection);
+const scheduler = new Scheduler(MONGOOSE_URI, {
+    pollInterval: 1000,  
+    useNewUrlParser: true,
+    auth: {
+        user: 'root123',
+        password: 'root123'
+    },
+    authMechanism: "SCRAM-SHA-1",
+    dbname: "onlineauction"
 });
 
-// scheduler.on("error", (err, event) => {
-//     console.error("SCHEDULER ERROR:",err, event);
-//     process.exit(10);
-// });
+scheduler.on("error", (err, event) => {
+    console.error("SCHEDULER ERROR:",err, event);
+    process.exit(10);
+});
 
-// scheduler.on("close-bid", (err, event) => {
-//     models.Bids.findOne({
-//         ProdID: event.data
-//     })
-//         .then((biditem) => {
-//             biditem.isOpen = false;
-//             biditem.save()
-//                 .then(() => {
-//                     //Send mail to winner
-//                     console.log("Send winner and Owner mail");
-//                     (async function () {
-//                         console.log("Inside mailer function");
-//                         //Mail to winner and Owner
-//                         await function () {
-//                             return new Promise((resolve, reject) => {
-//                                 if(biditem.allBids.length>1)
-//                                 {
-//                                 let winnerId = biditem.allBids[biditem.allBids.length - 1].userID;
-//                                 if(winnerId) {
-//                                     console.log("WinnerID:", winnerId);
-//                                     Users.findById(winnerId)
-//                                         .then((winner) => {
-//                                             console.log("Winner:", winner);
-//                                             models.Products.findOne({
-//                                                 _id: event.data
-//                                             })
-//                                                 .then((item) => {
-//                                                     Users.findById(item.userID)
-//                                                         .then((owner) => {
-//                                                             let smtpTransport = nodemailer.createTransport({
-//                                                                 service: 'gmail',
-//                                                                 auth: {
-//                                                                     user: CONFIG.SERVER.MAIL,
-//                                                                     pass: CONFIG.SERVER.PASS
-//                                                                 }
-//                                                             });
-//                                                             let mailOptionsWinner = {
-//                                                                 to: winner.email,
-//                                                                 from: CONFIG.SERVER.MAIL,
-//                                                                 subject: 'Auction Won',
-//                                                                 text: 'You won the auction for ' + biditem.ProdID + '.\nFollowing are The details of the owner of the product.\nKindly contact him/her for further process.\nUsername: ' + owner.username + '\nName: ' + owner.name + '\nEmail-Id: ' + owner.email
-//                                                             };
-//                                                             let mailOptionsOwner = {
-//                                                                 to: owner.email,
-//                                                                 from: CONFIG.SERVER.MAIL,
-//                                                                 subject: 'Item Sold',
-//                                                                 text: 'Your Product ' + biditem.ProdID + ' has been sold and bought by ' + winner.username + '.\nKindly contact him/her for further process.\n' + 'Username: ' + winner.username + '\nName: ' + winner.name + '\nEmail-Id: ' + winner.email
-//                                                             };
-//                                                             smtpTransport.sendMail(mailOptionsWinner, function (err) {
-//                                                                 console.log("sendwinnermail", err);
-//                                                                 if (err) {
-//                                                                     //console.log("rejected");
-//                                                                     reject();
-//                                                                 } else {
-//                                                                     console.log("Mail sent to winner");
-//                                                                     smtpTransport.sendMail(mailOptionsOwner, function (err) {
-//                                                                         console.log("sendownermail", err);
-//                                                                         if (err) {
-//                                                                             //console.log("rejected");
-//                                                                             reject();
-//                                                                         } else {
-//                                                                             console.log("Mail sent to owner");
-//                                                                             resolve();
-//                                                                         }
-//                                                                     });
-//                                                                 }
+scheduler.on("close-bid", (err, event) => {
+    models.Bids.findOne({
+        ProdID: event.data
+    })
+        .then((biditem) => {
+            biditem.isOpen = false;
+            biditem.save()
+                .then(() => {
+                    //Send mail to winner
+                    console.log("Send winner and Owner mail");
+                    (async function () {
+                        console.log("Inside mailer function");
+                        //Mail to winner and Owner
+                        await function () {
+                            return new Promise((resolve, reject) => {
+                                if(biditem.allBids.length>1)
+                                {
+                                let winnerId = biditem.allBids[biditem.allBids.length - 1].userID;
+                                if(winnerId) {
+                                    console.log("WinnerID:", winnerId);
+                                    Users.findById(winnerId)
+                                        .then((winner) => {
+                                            console.log("Winner:", winner);
+                                            models.Products.findOne({
+                                                _id: event.data
+                                            })
+                                                .then((item) => {
+                                                    Users.findById(item.userID)
+                                                        .then((owner) => {
+                                                            let smtpTransport = nodemailer.createTransport({
+                                                                service: 'gmail',
+                                                                auth: {
+                                                                    user: CONFIG.SERVER.MAIL,
+                                                                    pass: CONFIG.SERVER.PASS
+                                                                }
+                                                            });
+                                                            let mailOptionsWinner = {
+                                                                to: winner.email,
+                                                                from: CONFIG.SERVER.MAIL,
+                                                                subject: 'Auction Won',
+                                                                text: 'You won the auction for ' + biditem.ProdID + '.\nFollowing are The details of the owner of the product.\nKindly contact him/her for further process.\nUsername: ' + owner.username + '\nName: ' + owner.name + '\nEmail-Id: ' + owner.email
+                                                            };
+                                                            let mailOptionsOwner = {
+                                                                to: owner.email,
+                                                                from: CONFIG.SERVER.MAIL,
+                                                                subject: 'Item Sold',
+                                                                text: 'Your Product ' + biditem.ProdID + ' has been sold and bought by ' + winner.username + '.\nKindly contact him/her for further process.\n' + 'Username: ' + winner.username + '\nName: ' + winner.name + '\nEmail-Id: ' + winner.email
+                                                            };
+                                                            smtpTransport.sendMail(mailOptionsWinner, function (err) {
+                                                                console.log("sendwinnermail", err);
+                                                                if (err) {
+                                                                    //console.log("rejected");
+                                                                    reject();
+                                                                } else {
+                                                                    console.log("Mail sent to winner");
+                                                                    smtpTransport.sendMail(mailOptionsOwner, function (err) {
+                                                                        console.log("sendownermail", err);
+                                                                        if (err) {
+                                                                            //console.log("rejected");
+                                                                            reject();
+                                                                        } else {
+                                                                            console.log("Mail sent to owner");
+                                                                            resolve();
+                                                                        }
+                                                                    });
+                                                                }
 
-//                                                             });
-//                                                         })
-//                                                         .catch((err) => {
-//                                                             console.log(err);
-//                                                         })
-//                                                 })
-//                                                 .catch((err) => {
-//                                                     console.log(err);
-//                                                 })
-//                                         })
-//                                         .catch((err) => {
-//                                             console.log(err);
-//                                         })
-//                                 }
-//                             }else{
-//                                     resolve();
-//                                 }
-//                             })
-//                         }();
+                                                            });
+                                                        })
+                                                        .catch((err) => {
+                                                            console.log(err);
+                                                        })
+                                                })
+                                                .catch((err) => {
+                                                    console.log(err);
+                                                })
+                                        })
+                                        .catch((err) => {
+                                            console.log(err);
+                                        })
+                                }
+                            }else{
+                                    resolve();
+                                }
+                            })
+                        }();
 
 
-//                     })()
-//                         .then(()=>{
-//                         console.log("bid has been closed");
-//                         })
-//                         .catch((err)=>{
-//                         console.log(err);
-//                         });
-//                 })
-//                 .catch((err) => {
-//                     console.log(err);
-//                 })
-//         })
-//         .catch((err) => {
-//             console.log(err);
-//         })
-// });
+                    })()
+                        .then(()=>{
+                        console.log("bid has been closed");
+                        })
+                        .catch((err)=>{
+                        console.log(err);
+                        });
+                })
+                .catch((err) => {
+                    console.log(err);
+                })
+        })
+        .catch((err) => {
+            console.log(err);
+        })
+});
 
 //Cloudiniary Configs
 cloudinary.config({
