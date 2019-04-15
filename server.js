@@ -163,8 +163,9 @@ io.on('connection', (socket) => {
     } else {
         userId = pass.user;
     }
-
+// event fired when user opens product page
     socket.on('prodID', (data) => {
+        // add new user to product socket map
         arr = ProductSocketMap[data.prodId];
         if (!arr) {
             arr = [];
