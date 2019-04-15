@@ -39,16 +39,16 @@ app.use(express.urlencoded({
 }));
 
 
-const connection = mongoose.createConnection(CONFIG.MONGO.URI, {useNewUrlParser: true})
-.then(() => {
-    console.log("Successful connection to MongoDB");
-})
-.catch((err) => {
-    console.log("Mongoose connection error due to: ");
-    console.log(err)
-    process.exit(4);
-});
-const store = new MongoStore({mongooseConnection: connection});
+// const connection = mongoose.createConnection(CONFIG.MONGO.URI, {useNewUrlParser: true})
+// .then(() => {
+//     console.log("Successful connection to MongoDB");
+// })
+// .catch((err) => {
+//     console.log("Mongoose connection error due to: ");
+//     console.log(err)
+//     process.exit(4);
+// });
+const store = new MongoStore({mongooseConnection: mongoose.connection});
 // let sessionModel = mongoose.model('sessions', new mongoose.Schema({session: Object, expires: Date}));
 // let Sessions = sessionModel.base.models.sessions;
 
