@@ -10,6 +10,9 @@ const UserBidsMap = require("./user-bids");
 //Use global promise instead of Mongoose's
 mongoose.Promise = global.Promise;
 
+console.log(CONFIG.MONGO.URI);
+
+
 //Connect to DB
 mongoose.connect(CONFIG.MONGO.URI,{useNewUrlParser: true})
     .then(() => {

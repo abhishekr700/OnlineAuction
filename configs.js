@@ -13,9 +13,9 @@ const PRODUCTION_CONFIGS = {
     },
     MONGO: {
         URI: process.env.MONGOURI,
-        HOST: process.env.MONGOHOST,
-        PORT: 27017,
-        DB_NAME: process.env.MONGODB,
+        // HOST: process.env.MONGOHOST,
+        // PORT: 27017,
+        // DB_NAME: process.env.MONGODB,
        // SESSION: "sessions"
     }
 };
