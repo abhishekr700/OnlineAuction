@@ -17,8 +17,8 @@ mongoose.connect(`${CONFIG.MONGO.URI}`)
     })
     .catch((err) => {
         console.log("Mongoose connection error due to: ");
-        console.err(err)
-        process.exit();
+        console.log(err)
+        process.exit(2);
     });
 
 //Expose models for use elsewhere
