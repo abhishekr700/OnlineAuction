@@ -7,14 +7,16 @@ const Products = require("./products");
 const Bids = require("./bids");
 const UserBidsMap = require("./user-bids");
 
+const {MONGOOSE_URI} = require("../../helpers");
+
 //Use global promise instead of Mongoose's
 mongoose.Promise = global.Promise;
 
-console.log(CONFIG.MONGO.URI);
+console.log(MONGOOSE_URI);
 
 
 //Connect to DB
-mongoose.connect(CONFIG.MONGO.URI,{useNewUrlParser: true})
+mongoose.connect(MONGOOSE_URI,{useNewUrlParser: true})
     .then(() => {
         console.log("Successful connection to MongoDB");
     })

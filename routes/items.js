@@ -16,6 +16,8 @@ const Users = require("../models/sql/sequelize").Users;
 //Import HELPERS
 const HELPERS = require("../helpers");
 const CONFIG = require("../configs");
+const {MONGOOSE_URI} = require("../helpers");
+
 
 let Storage = multer.diskStorage({
     destination: './public_html/Images',
@@ -28,7 +30,7 @@ let upload = multer({storage: Storage});
 /*
  Scheduler
  */
-const scheduler = new Scheduler(`mongodb://${CONFIG.MONGO.HOST}:${CONFIG.MONGO.PORT}/${CONFIG.MONGO.DB_NAME}`, {
+const scheduler = new Scheduler(MONGOOSE_URI, {
     pollInterval: 1000
 });
 

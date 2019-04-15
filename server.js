@@ -25,6 +25,9 @@ const app = express();
 const Server = http.Server(app);
 const io = socketIo(Server);
 
+const {MONGOOSE_URI} = require("./helpers");
+
+
 /*
     MiddleWares
  */
@@ -39,7 +42,7 @@ app.use(express.urlencoded({
 }));
 
 
-// const connection = mongoose.createConnection(CONFIG.MONGO.URI, {useNewUrlParser: true})
+// const connection = mongoose.createConnection(MONGOOSE_URI, {useNewUrlParser: true})
 // .then(() => {
 //     console.log("Successful connection to MongoDB");
 // })

@@ -12,10 +12,12 @@ const PRODUCTION_CONFIGS = {
         PASSWORD: process.env.SQLPASS
     },
     MONGO: {
-        URI: process.env.MONGOURI,
-        // HOST: process.env.MONGOHOST,
-        // PORT: 27017,
-        // DB_NAME: process.env.MONGODB,
+        // URI: process.env.MONGOURI,
+        USER: process.env.MONGOUSER,
+        PASS: process.env.MONGOPASS,
+        HOST: process.env.MONGOHOST,
+        PORT: 27017,
+        DB_NAME: process.env.MONGODB,
        // SESSION: "sessions"
     }
 };
