@@ -57,99 +57,93 @@ scheduler.on("close-bid", (err, event) => {
     })
         .then((biditem) => {
             biditem.isOpen = false;
-            biditem.save()
-                .then(() => {
-                    //Send mail to winner
-                    console.log("Send winner and Owner mail");
-                    (async function () {
-                        console.log("Inside mailer function");
-                        //Mail to winner and Owner
-                        await function () {
-                            return new Promise((resolve, reject) => {
-                                if(biditem.allBids.length>1)
-                                {
-                                let winnerId = biditem.allBids[biditem.allBids.length - 1].userID;
-                                if(winnerId) {
-                                    console.log("WinnerID:", winnerId);
-                                    Users.findById(winnerId)
-                                        .then((winner) => {
-                                            console.log("Winner:", winner);
-                                            models.Products.findOne({
-                                                _id: event.data
-                                            })
-                                                .then((item) => {
-                                                    Users.findById(item.userID)
-                                                        .then((owner) => {
-                                                            let smtpTransport = nodemailer.createTransport({
-                                                                service: 'gmail',
-                                                                auth: {
-                                                                    user: CONFIG.SERVER.MAIL,
-                                                                    pass: CONFIG.SERVER.PASS
-                                                                }
-                                                            });
-                                                            let mailOptionsWinner = {
-                                                                to: winner.email,
-                                                                from: CONFIG.SERVER.MAIL,
-                                                                subject: 'Auction Won',
-                                                                text: 'You won the auction for ' + biditem.ProdID + '.\nFollowing are The details of the owner of the product.\nKindly contact him/her for further process.\nUsername: ' + owner.username + '\nName: ' + owner.name + '\nEmail-Id: ' + owner.email
-                                                            };
-                                                            let mailOptionsOwner = {
-                                                                to: owner.email,
-                                                                from: CONFIG.SERVER.MAIL,
-                                                                subject: 'Item Sold',
-                                                                text: 'Your Product ' + biditem.ProdID + ' has been sold and bought by ' + winner.username + '.\nKindly contact him/her for further process.\n' + 'Username: ' + winner.username + '\nName: ' + winner.name + '\nEmail-Id: ' + winner.email
-                                                            };
-                                                            smtpTransport.sendMail(mailOptionsWinner, function (err) {
-                                                                console.log("sendwinnermail", err);
+            return biditem.save();
+        })
+        .then(() => {
+            //Send mail to winner
+            console.log("Send winner and Owner mail");
+            
+            (async function () {
+                console.log("Inside mailer function");
+                //Mail to winner and Owner
+                await function () {
+                    return new Promise((resolve, reject) => {
+                        if(biditem.allBids.length>1)
+                        {
+                        let winnerId = biditem.allBids[biditem.allBids.length - 1].userID;
+                        if(winnerId) {
+                            console.log("WinnerID:", winnerId);
+                            Users.findById(winnerId)
+                                .then((winner) => {
+                                    console.log("Winner:", winner);
+                                    models.Products.findOne({
+                                        _id: event.data
+                                    })
+                                        .then((item) => {
+                                            Users.findById(item.userID)
+                                                .then((owner) => {
+                                                    let smtpTransport = nodemailer.createTransport({
+                                                        service: 'gmail',
+                                                        auth: {
+                                                            user: CONFIG.SERVER.MAIL,
+                                                            pass: CONFIG.SERVER.PASS
+                                                        }
+                                                    });
+                                                    let mailOptionsWinner = {
+                                                        to: winner.email,
+                                                        from: CONFIG.SERVER.MAIL,
+                                                        subject: 'Auction Won',
+                                                        text: 'You won the auction for ' + biditem.ProdID + '.\nFollowing are The details of the owner of the product.\nKindly contact him/her for further process.\nUsername: ' + owner.username + '\nName: ' + owner.name + '\nEmail-Id: ' + owner.email
+                                                    };
+                                                    let mailOptionsOwner = {
+                                                        to: owner.email,
+                                                        from: CONFIG.SERVER.MAIL,
+                                                        subject: 'Item Sold',
+                                                        text: 'Your Product ' + biditem.ProdID + ' has been sold and bought by ' + winner.username + '.\nKindly contact him/her for further process.\n' + 'Username: ' + winner.username + '\nName: ' + winner.name + '\nEmail-Id: ' + winner.email
+                                                    };
+                                                    smtpTransport.sendMail(mailOptionsWinner, function (err) {
+                                                        console.log("sendwinnermail", err);
+                                                        if (err) {
+                                                            //console.log("rejected");
+                                                            reject();
+                                                        } else {
+                                                            console.log("Mail sent to winner");
+                                                            smtpTransport.sendMail(mailOptionsOwner, function (err) {
+                                                                console.log("sendownermail", err);
                                                                 if (err) {
                                                                     //console.log("rejected");
                                                                     reject();
                                                                 } else {
-                                                                    console.log("Mail sent to winner");
-                                                                    smtpTransport.sendMail(mailOptionsOwner, function (err) {
-                                                                        console.log("sendownermail", err);
-                                                                        if (err) {
-                                                                            //console.log("rejected");
-                                                                            reject();
-                                                                        } else {
-                                                                            console.log("Mail sent to owner");
-                                                                            resolve();
-                                                                        }
-                                                                    });
+                                                                    console.log("Mail sent to owner");
+                                                                    resolve();
                                                                 }
-
                                                             });
-                                                        })
-                                                        .catch((err) => {
-                                                            console.log(err);
-                                                        })
+                                                        }
+
+                                                    });
                                                 })
-                                                .catch((err) => {
-                                                    console.log(err);
-                                                })
+                                                
                                         })
-                                        .catch((err) => {
-                                            console.log(err);
-                                        })
-                                }
-                            }else{
-                                    resolve();
-                                }
-                            })
-                        }();
+                                       
+                                })
+                        }
+                    }else{
+                            resolve();
+                        }
+                    })
+                }();
 
 
-                    })()
-                        .then(()=>{
-                        console.log("bid has been closed");
-                        })
-                        .catch((err)=>{
-                        console.log(err);
-                        });
+            })()
+                .then(()=>{
+                console.log("bid has been closed");
                 })
-                .catch((err) => {
-                    console.log(err);
-                })
+                .catch((err)=>{
+                console.log(err);
+                });
+        })
+        .catch((err) => {
+            console.log(err);
         })
         .catch((err) => {
             console.log(err);
@@ -714,57 +708,58 @@ route.get("/:id/delete", HELPERS.checkLoggedIn, (req, res) => {
     models.Bids.findOne({
         ProdID: req.params.id
     })
-        .then((bidentry) => {
-            if (bidentry) {
-                if (bidentry.allBids === undefined || bidentry.allBids.length === 0) {
-                    models.Products.findById(req.params.id)
-                        .then((item) => {
-                            item.remove();
-                            bidentry.remove();
-                            let publicID = item.img;
-                            publicID = publicID.split('/');
-                            publicID = publicID[publicID.length - 1];
-                            publicID = publicID.split('.');
-                            publicID = publicID[0];
-                            console.log(publicID);
-                            cloudinary.v2.uploader.destroy(publicID, function (error, result) {
-                                console.log(result);
-                                scheduler.list((err, events) => {
-                                    for (let eve of events) {
-                                        if (eve.data.toString() === req.params.id.toString()) {
-                                            scheduler.remove("close-bid", eve._id, null, (err, event) => {
-                                            });
-                                            break;
-                                        }
-                                    }
-                                    console.log("schedular removed");
-                                    if(err)
-                                    {
-                                        console.log(err);
-                                        res.redirect('/404');
-                                    }else {
-                                        alert("Successfully Deleted Item");
-                                        res.redirect("/items?show=user");
-                                    }
+    .then((bidentry) => {
+            if (bidentry == null) {
+                res.sendStatus(404);
+                //TODO: redirect to /items
+            }
 
-                                });
-                            })
+            if (bidentry.allBids === undefined || bidentry.allBids.length === 0) {
+                models.Products.findById(req.params.id)
+                    .then((item) => {
+                        item.remove();
+                        bidentry.remove();
+                        
+                        let publicID = item.img;
+                        publicID = publicID.split('/');
+                        publicID = publicID[publicID.length - 1];
+                        publicID = publicID.split('.');
+                        publicID = publicID[0];
+                        console.log(publicID);
+                        cloudinary.v2.uploader.destroy(publicID, function (error, result) {
+                            console.log(result);
+                            scheduler.list((err, events) => {
+                                for (let eve of events) {
+                                    if (eve.data.toString() === req.params.id.toString()) {
+                                        scheduler.remove("close-bid", eve._id, null, (err, event) => {
+                                        });
+                                        break;
+                                    }
+                                }
+                                console.log("schedular removed");
+                                if(err)
+                                {
+                                    console.log(err);
+                                    res.redirect('/404');
+                                }else {
+                                    alert("Successfully Deleted Item");
+                                    res.redirect("/items?show=user");
+                                }
+
+                            });
                         })
-                        .catch((err) => {
-                            console.log("Error deleting item:", err);
-                            alert("Error in Deleting The Item ");
-                            res.redirect(`/items/${req.params.id}`)
-                        })
-                }
-                else {
-                    alert("Cannot delete item: Bid placed on item");
-                    res.redirect(`/items/${req.params.id}`)
-                }
+                    })
+                    .catch((err) => {
+                        console.log("Error deleting item:", err);
+                        alert("Error in Deleting The Item ");
+                        res.redirect(`/items/${req.params.id}`)
+                    })
             }
             else {
-                alert("Item not found");
-                res.redirect(`/items`)
+                alert("Cannot delete item: Bid placed on item");
+                res.redirect(`/items/${req.params.id}`)
             }
+            
         })
         .catch((err) => {
             console.log(err);

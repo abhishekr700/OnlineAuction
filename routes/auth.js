@@ -21,7 +21,10 @@ module.exports = function (app) {
             callback(null, file.originalname);
         }
     });
+
     let upload = multer({storage: Storage});
+
+
     cloudinary.config({
         cloud_name: 'auctioneeer',
         api_key: '553296924422138',
@@ -195,12 +198,12 @@ module.exports = function (app) {
         }(token, user);
     }
 
-// when user clicks on forgot password
+    // when user clicks on forgot password
     app.get('/forgot', (req, res) => {
         res.render('forgot-password');
     });
 
-// on submission of email/uname
+    // on submission of email/uname
     app.post('/forgot', (req, res) => {
         Users.find({
             where: {
@@ -214,19 +217,14 @@ module.exports = function (app) {
                 if (!user) {
                     alert("username/email not found");
                     res.redirect('/forgot');
-                } else {
+                    return;
+                } 
+                return mailPassword(user, res)  
+            })
+            .then(() => {
 
-                    mailPassword(user, res)
-                        .then(() => {
-
-                            alert('An e-mail has been sent to ' + user.email + ' with further instructions.');
-                            res.redirect('/');
-                        })
-                        .catch((err) => {
-                            console.log(err);
-                            res.redirect('/404');
-                        })
-                }
+                alert('An e-mail has been sent to ' + user.email + ' with further instructions.');
+                res.redirect('/');
             })
             .catch((err) => {
                 console.log(err);
@@ -235,7 +233,7 @@ module.exports = function (app) {
 
     });
 
-// when clicked on link from email
+    // when clicked on link from email
     app.get('/reset/:token', (req, res) => {
         Users.find({
             where: {
@@ -261,9 +259,8 @@ module.exports = function (app) {
             })
     });
 
-// reset my password is clicked
+    // reset my password is clicked
     app.post('/reset/:token', (req, res) => {
-
         Users.find({
             where: {
                 resetPasswordToken: req.params.token,
@@ -276,17 +273,13 @@ module.exports = function (app) {
                 if (!user) {
                     alert('Password reset token is invalid or link has expired.');
                     res.redirect('/');
-                } else {
-
-                    mailConfirmation(user, req.body.password, res)
-                        .then(() => {
-                            alert('\'success\', \'Success! Your password has been changed.\'');
-                            res.redirect('/login');
-
-                        }).catch(() => {
-                        res.redirect('/404');
-                    })
+                    return;
                 }
+                return mailConfirmation(user, req.body.password, res)
+            })
+            .then(() => {
+                alert('\'success\', \'Success! Your password has been changed.\'');
+                res.redirect('/login');
             })
             .catch((err) => {
                 console.log(err);
@@ -295,7 +288,7 @@ module.exports = function (app) {
 
     });
 
-//Render Login Page
+    //Render Login Page
     app.get("/login", (req, res) => {
         if (req.user)
             res.redirect("/users");
@@ -305,14 +298,14 @@ module.exports = function (app) {
             });
     });
 
-//Login Route
+    //Login Route
     app.post("/login", Passport.authenticate('local', {
         successRedirect: "/users",
         failureRedirect: "/login",
         failureFlash: true
     }));
 
-//Render SignUp page
+    //Render SignUp page
     app.get("/signup", (req, res) => {
         if (req.user)
             res.redirect("/users");
@@ -322,7 +315,7 @@ module.exports = function (app) {
             });
     });
 
-//verify email
+    //verify email
     app.get("/verify/:token", (req, res) => {
         Users.find({
             where: {
@@ -333,13 +326,15 @@ module.exports = function (app) {
                 if (!user) {
                     alert('verify email token is invalid.');
                     res.redirect('/');
-                } else {
+                    return;
+                } 
                     user.isVerified = true;
-                    user.save();
-                    req.login(user, () => {
-                        res.redirect("/users");
-                    });
-                }
+                    return user.save();
+            })
+            .then(()=>{
+                req.login(user, () => {
+                    res.redirect("/users");
+                });
             })
             .catch((err) => {
                 console.log(err);
@@ -359,6 +354,7 @@ app.post("/signup", upload.single('imgUploader'), function (req, res) {
         }
     })
         .then((user) => {
+
             if (!user) {
                 bcrypt.genSalt(10, function (err, salt) {
                     bcrypt.hash(req.body.password, salt, function (err, hash) {
@@ -411,29 +407,20 @@ app.post("/signup", upload.single('imgUploader'), function (req, res) {
                                                                         user.img = result.url;
                                                                         user.save()
                                                                             .then(() => {
-                                                                                mailVerifyEmail(user, res)
-                                                                                    .then(() => {
-                                                                                        req.login(user, (err) => {
-                                                                                            if (err) {
-                                                                                                console.log(err);
-                                                                                                res.redirect("/404");
-                                                                                            }
-                                                                                            else {
-                                                                                                alert("A link has been sent to your email id to verify it.");
-                                                                                                res.redirect('/login');
-                                                                                            }
-                                                                                        });
-
-                                                                                    })
-                                                                                    .catch((err) => {
-                                                                                        console.log(err);
-                                                                                        res.redirect('/404');
-                                                                                    })
-
+                                                                                return mailVerifyEmail(user, res)      
                                                                             })
-                                                                            .catch((err) => {
-                                                                                console.log(err);
-                                                                                res.redirect('/404');
+                                                                            .then(() => {
+                                                                                req.login(user, (err) => {
+                                                                                    if (err) {
+                                                                                        console.log(err);
+                                                                                        res.redirect("/404");
+                                                                                    }
+                                                                                    else {
+                                                                                        alert("A link has been sent to your email id to verify it.");
+                                                                                        res.redirect('/login');
+                                                                                    }
+                                                                                });
+
                                                                             })
                                                                     }
                                                                 })
@@ -448,41 +435,26 @@ app.post("/signup", upload.single('imgUploader'), function (req, res) {
                                         else {
                                             user.img = "/images/user.png";
                                             user.save()
-                                                .then(() => {
-                                                    mailVerifyEmail(user, res)
-                                                        .then(() => {
-                                                            req.login(user, (err) => {
-                                                                if (err) {
-                                                                    console.log(err);
-                                                                    res.redirect("/404");
-                                                                }
-                                                                else {
-                                                                    alert("A link has been sent to your email id to verify it.");
-                                                                    res.redirect('/login');
-                                                                }
-                                                            });
+                                            .then(() => {
+                                                return mailVerifyEmail(user, res)
+                                            })
+                                            .then(() => {
+                                                req.login(user, (err) => {
+                                                    if (err) {
+                                                        console.log(err);
+                                                        res.redirect("/404");
+                                                    }
+                                                    else {
+                                                        alert("A link has been sent to your email id to verify it.");
+                                                        res.redirect('/login');
+                                                    }
+                                                });
 
-                                                        })
-                                                        .catch((err) => {
-                                                            console.log(err);
-                                                            res.redirect('/404');
-                                                        })
-
-                                                })
-                                                .catch((err) => {
-                                                    console.log(err);
-                                                    res.redirect('/404');
-                                                })
+                                            })
+                                                
                                         }
                                     })
-                                    .catch((err) => {
-                                        console.log(err);
-                                        res.redirect('/404');
-                                    })
-                            })
-                            .catch((err) => {
-                                console.log(err);
-                                res.redirect('/404');
+                                    
                             })
                     })
                 })
@@ -508,16 +480,17 @@ app.post("/signup", upload.single('imgUploader'), function (req, res) {
             where: {
                 id: req.user.dataValues.id
             }
-        }).then((user) => {
-            mailVerifyEmail(user, res)
-                .then(() => {
-                    alert("An Email has been sent again with the verification link");
-                    res.render('email-not-verified');
-                })
-                .catch((err) => {
-                    console.log(err);
-                    res.redirect('/404');
-                })
+        })
+        .then((user) => {
+            return mailVerifyEmail(user, res)
+        })
+        .then(() => {
+            alert("An Email has been sent again with the verification link");
+            res.render('email-not-verified');
+        })
+        .catch((err) => {
+            console.log(err);
+            res.redirect('/404');
         })
     });
 //Logout route
