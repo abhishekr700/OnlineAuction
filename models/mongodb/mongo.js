@@ -16,8 +16,10 @@ const {MONGOOSE_URI} = require("../../helpers");
 mongoose.connect(MONGOOSE_URI, {
     useNewUrlParser: true
 })
-    .then(() => {
+    .then((client) => {
         console.log("Successful connection to MongoDB");
+        console.log("CLIENT:",client);
+        
     })
     .catch((err) => {
         console.log("Mongoose connection error due to: ", err);
