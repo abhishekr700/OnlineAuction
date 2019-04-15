@@ -10,6 +10,10 @@ function checkLoggedIn(req, res, next) {
     }
 }
 
+const CONFIG = require("./configs");
+const MONGOOSE_URI = `mongodb+srv://${CONFIG.MONGO.USER}:${CONFIG.MONGO.PASS}@${CONFIG.MONGO.HOST}/${CONFIG.MONGO.DB_NAME}`
+
+
 module.exports = {
-    checkLoggedIn
+    checkLoggedIn,MONGOOSE_URI
 };

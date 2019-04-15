@@ -25,15 +25,19 @@ let Storage = multer.diskStorage({
 });
 let upload = multer({storage: Storage});
 
+const {MONGOOSE_URI} = require("../helpers");
+
+const mongoose = require("mongoose");
 /*
  Scheduler
  */
-const scheduler = new Scheduler(`mongodb://${CONFIG.MONGO.HOST}:${CONFIG.MONGO.PORT}/${CONFIG.MONGO.DB_NAME}`, {
+const scheduler = new Scheduler(mongoose.connection, {
     pollInterval: 1000
 });
 
 scheduler.on("error", (err, event) => {
-    console.log(err, event);
+    console.error("SCHEDULER ERROR:",err, event);
+    process.exit(10);
 });
 
 scheduler.on("close-bid", (err, event) => {
