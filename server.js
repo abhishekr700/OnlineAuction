@@ -39,12 +39,12 @@ app.use(express.urlencoded({
 }));
 
 
-const connection = mongoose.createConnection(`mongodb://${CONFIG.MONGO.HOST}:${CONFIG.MONGO.PORT}/${CONFIG.MONGO.DB_NAME}`, {
-    useMongoClient: true
-});
-const store = new MongoStore({mongooseConnection: connection});
-let sessionModel = mongoose.model('sessions', new mongoose.Schema({session: Object, expires: Date}));
-let Sessions = sessionModel.base.models.sessions;
+// `const connection = mongoose.createConnection(`mongodb://${CONFIG.MONGO.HOST}:${CONFIG.MONGO.PORT}/${CONFIG.MONGO.DB_NAME}`, {
+//     useMongoClient: true
+// });
+// const store = new MongoStore({mongooseConnection: connection});
+// let sessionModel = mongoose.model('sessions', new mongoose.Schema({session: Object, expires: Date}));
+// let Sessions = sessionModel.base.models.sessions;
 
 //Set View Engine
 app.set("view engine", "ejs");
