@@ -11,7 +11,7 @@ const UserBidsMap = require("./user-bids");
 mongoose.Promise = global.Promise;
 
 //Connect to DB
-mongoose.connect(`${CONFIG.MONGO.URI}`,{useNewUrlParser: true})
+mongoose.connect(CONFIG.MONGO.URI,{useNewUrlParser: true})
     .then(() => {
         console.log("Successful connection to MongoDB");
     })
