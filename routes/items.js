@@ -405,8 +405,9 @@ route.get("/filterBidPrice/:id", (req, res) => {
         endDate: {
             $gt: Date.now()
         }
-    }).sort({minbid: req.params.id})
-        .then((items) => {
+    })
+    .sort({minbid: req.params.id})
+    .then((items) => {
             res.render("items", {
                 items
             })

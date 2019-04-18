@@ -1,5 +1,5 @@
 const PRODUCTION_CONFIGS = {
-    SERVER : {
+    SERVER: {
         HOST: process.env.HOST,
         PORT: process.env.PORT,
         MAIL: process.env.MAIL,
@@ -17,12 +17,12 @@ const PRODUCTION_CONFIGS = {
         PASS: process.env.MONGOPASS,
         HOST: process.env.MONGOHOST,
         PORT: 27017,
-        DB_NAME: process.env.MONGODB,
-       // SESSION: "sessions"
+        DB_NAME: process.env.MONGODB
+        // SESSION: "sessions"
     }
 };
-if(process.env.NODE_ENV === "production"){
+if (process.env.NODE_ENV === "production") {
     module.exports = PRODUCTION_CONFIGS;
-}else {
+} else {
     module.exports = require("./configs-local");
 }
