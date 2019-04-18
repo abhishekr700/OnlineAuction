@@ -4,7 +4,9 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "eslint **/*.js",
+    "lint:fix": "eslint **/*.js --fix"
   },
   "engines": {
     "node": "10.15.3"
@@ -43,5 +45,10 @@
     "sequelize": "^4.28.6",
     "socket.io": "^2.0.4",
     "timer.js": "^1.0.4"
+  },
+  "devDependencies": {
+    "eslint": "^5.16.0",
+    "eslint-config-airbnb-base": "^13.1.0",
+    "eslint-plugin-import": "^2.17.1"
   }
 }

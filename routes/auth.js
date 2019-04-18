@@ -1,34 +1,30 @@
-const Passport = require("../passport");
 const crypto = require('crypto');
 const bcrypt = require('bcryptjs');
 const nodemailer = require('nodemailer');
-const Users = require("../models/sql/sequelize").Users;
 const Sequelize = require('sequelize');
-const CONFIG = require("../configs");
-const models = require("../models/mongodb/mongo");
 const alert = require('alert-node');
 const multer = require('multer');
 const cloudinary = require('cloudinary');
 const fs = require('fs');
 const path = require('path');
+const models = require('../models/mongodb/mongo');
+const CONFIG = require('../configs');
+const { Users } = require('../models/sql/sequelize');
+const Passport = require('../passport');
 
 
 module.exports = function (app) {
-
-    let Storage = multer.diskStorage({
+    const Storage = multer.diskStorage({
         destination: './public_html/Images',
-        filename: function (req, file, callback) {
+        filename(req, file, callback) {
             callback(null, file.originalname);
-        }
+        },
     });
-
-    let upload = multer({storage: Storage});
-
-
+    const upload = multer({ storage: Storage });
     cloudinary.config({
         cloud_name: 'auctioneeer',
         api_key: '553296924422138',
-        api_secret: 'YNGylxUU6jLGb9Ioc2P44b07gfQ'
+        api_secret: 'YNGylxUU6jLGb9Ioc2P44b07gfQ',
     });
 
     /*
@@ -36,19 +32,18 @@ module.exports = function (app) {
      */
 
     async function mailPassword(user, res) {
-
         // generate the token
-        let token = await  function () {
+        const token = await (function () {
             return new Promise((resolve) => {
-                crypto.randomBytes(20, function (err, buf) {
-                    let token = buf.toString('hex');
+                crypto.randomBytes(20, (err, buf) => {
+                    const token = buf.toString('hex');
                     resolve(token);
                 });
-            })
-        }();
+            });
+        }());
 
         // update user table with token and expiry time
-        await  function (token) {
+        await (function (token) {
             return new Promise((resolve) => {
                 user.resetPasswordToken = token;
                 user.resetPasswordExpires = Date.now() + 3600000; // 1 hour
@@ -58,49 +53,46 @@ module.exports = function (app) {
                     console.log(err);
                     res.redirect('/404');
                 });
-            })
-        }(token);
+            });
+        }(token));
 
         // send the mail to the user's email id
-        await  function (token, user) {
+        await (function (token, user) {
             return new Promise((resolve, reject) => {
-                ;
-                let smtpTransport = nodemailer.createTransport({
+                const smtpTransport = nodemailer.createTransport({
                     service: 'gmail',
                     // TODO: add username and password
                     auth: {
                         user: CONFIG.SERVER.MAIL,
-                        pass: CONFIG.SERVER.PASS
-                    }
+                        pass: CONFIG.SERVER.PASS,
+                    },
                 });
-                let mailOptions = {
+                const mailOptions = {
                     to: user.email,
                     from: CONFIG.SERVER.MAIL,
                     subject: 'Node.js Password Reset',
-                    text: 'You are receiving this because you (or someone else) have requested the reset of the password for your account.\n\n' +
-                    'Please click on the following link, or paste this into your browser to complete the process:\n\n' +
-                    'http://' + CONFIG.SERVER.HOST + ":" + CONFIG.SERVER.PORT + '/reset/' + token + '\n\n' +
-                    'If you did not request this, please ignore this email and your password will remain unchanged.\n'
+                    text: `${'You are receiving this because you (or someone else) have requested the reset of the password for your account.\n\n'
+                    + 'Please click on the following link, or paste this into your browser to complete the process:\n\n'
+                    + 'http://'}${CONFIG.SERVER.HOST}:${CONFIG.SERVER.PORT}/reset/${token}\n\n`
+                    + 'If you did not request this, please ignore this email and your password will remain unchanged.\n',
                 };
-                smtpTransport.sendMail(mailOptions, function (err) {
+                smtpTransport.sendMail(mailOptions, (err) => {
                     if (err) {
                         reject();
                     } else {
                         resolve();
                     }
                 });
-            })
-        }(token, user);
+            });
+        }(token, user));
     }
 
     async function mailConfirmation(user, newPassword, res) {
-
         // update user table with new password and tokens
-        await  function () {
+        await (function () {
             return new Promise((resolve) => {
-
-                bcrypt.genSalt(10, function (err, salt) {
-                    bcrypt.hash(newPassword, salt, function (err, hash) {
+                bcrypt.genSalt(10, (err, salt) => {
+                    bcrypt.hash(newPassword, salt, (err, hash) => {
                         user.password = hash;
                         user.resetPasswordToken = null;
                         user.resetPasswordExpires = null;
@@ -109,29 +101,29 @@ module.exports = function (app) {
                         }).catch((err) => {
                             res.redirect('/404');
                         });
-                    })
-                })
-            })
-        }();
+                    });
+                });
+            });
+        }());
 
         // send the mail to the user's email id regarding confirmation of password reset
-        await  function (user) {
+        await (function (user) {
             return new Promise((resolve, reject) => {
-                let smtpTransport = nodemailer.createTransport({
+                const smtpTransport = nodemailer.createTransport({
                     service: 'gmail',
                     auth: {
                         user: CONFIG.SERVER.MAIL,
-                        pass: CONFIG.SERVER.PASS
-                    }
+                        pass: CONFIG.SERVER.PASS,
+                    },
                 });
-                let mailOptions = {
+                const mailOptions = {
                     to: user.email,
                     from: CONFIG.SERVER.MAIL,
                     subject: 'Your password has been changed',
-                    text: 'Hello,\n\n' +
-                    'This is a confirmation that the password for your account ' + user.email + ' has just been changed.\n'
+                    text: `${'Hello,\n\n'
+                    + 'This is a confirmation that the password for your account '}${user.email} has just been changed.\n`,
                 };
-                smtpTransport.sendMail(mailOptions, function (err) {
+                smtpTransport.sendMail(mailOptions, (err) => {
                     if (err) {
                         console.log(err);
                         reject();
@@ -139,24 +131,23 @@ module.exports = function (app) {
                         resolve();
                     }
                 });
-            })
-        }(user);
+            });
+        }(user));
     }
 
     async function mailVerifyEmail(user, res) {
-
         // generate the token
-        let token = await  function () {
+        const token = await (function () {
             return new Promise((resolve) => {
-                crypto.randomBytes(20, function (err, buf) {
-                    let token = buf.toString('hex');
+                crypto.randomBytes(20, (err, buf) => {
+                    const token = buf.toString('hex');
                     resolve(token);
                 });
-            })
-        }();
+            });
+        }());
 
         // update user table with token and expiry time
-        await  function (token) {
+        await (function (token) {
             return new Promise((resolve) => {
                 user.verifyEmailToken = token;
                 user.save().then(() => {
@@ -165,37 +156,37 @@ module.exports = function (app) {
                     console.log(err);
                     res.redirect('/404');
                 });
-            })
-        }(token);
+            });
+        }(token));
 
         // send the mail to the user's email id
-        await  function (token, user) {
+        await (function (token, user) {
             return new Promise((resolve, reject) => {
-                let smtpTransport = nodemailer.createTransport({
+                const smtpTransport = nodemailer.createTransport({
                     service: 'gmail',
                     auth: {
                         user: CONFIG.SERVER.MAIL,
-                        pass: CONFIG.SERVER.PASS
-                    }
+                        pass: CONFIG.SERVER.PASS,
+                    },
                 });
-                let mailOptions = {
+                const mailOptions = {
                     to: user.email,
                     from: CONFIG.SERVER.MAIL,
                     subject: 'verify email',
-                    text: 'You are receiving this because you (or someone else) have requested for verification of email for your account.\n\n' +
-                    'Please click on the following link, or paste this into your browser to complete the process:\n\n' +
-                    'http://' + CONFIG.SERVER.HOST + ":" + CONFIG.SERVER.PORT + '/verify/' + token + '\n\n' +
-                    'If you did not request this, please ignore this email.\n'
+                    text: `${'You are receiving this because you (or someone else) have requested for verification of email for your account.\n\n'
+                    + 'Please click on the following link, or paste this into your browser to complete the process:\n\n'
+                    + 'http://'}${CONFIG.SERVER.HOST}:${CONFIG.SERVER.PORT}/verify/${token}\n\n`
+                    + 'If you did not request this, please ignore this email.\n',
                 };
-                smtpTransport.sendMail(mailOptions, function (err) {
+                smtpTransport.sendMail(mailOptions, (err) => {
                     if (err) {
                         reject();
                     } else {
                         resolve();
                     }
                 });
-            })
-        }(token, user);
+            });
+        }(token, user));
     }
 
     // when user clicks on forgot password
@@ -208,14 +199,14 @@ module.exports = function (app) {
         Users.find({
             where: {
                 [Sequelize.Op.or]: [
-                    {username: req.body.username},
-                    {email: req.body.email}
-                ]
-            }
+                    { username: req.body.username },
+                    { email: req.body.email },
+                ],
+            },
         })
             .then((user) => {
                 if (!user) {
-                    alert("username/email not found");
+                    alert('username/email not found');
                     res.redirect('/forgot');
                     return;
                 } 
@@ -229,8 +220,7 @@ module.exports = function (app) {
             .catch((err) => {
                 console.log(err);
                 res.redirect('/404');
-            })
-
+            });
     });
 
     // when clicked on link from email
@@ -239,9 +229,9 @@ module.exports = function (app) {
             where: {
                 resetPasswordToken: req.params.token,
                 resetPasswordExpires: {
-                    [Sequelize.Op.gte]: Date.now()
-                }
-            }
+                    [Sequelize.Op.gte]: Date.now(),
+                },
+            },
         })
             .then((user) => {
                 if (!user) {
@@ -249,14 +239,14 @@ module.exports = function (app) {
                     res.redirect('/');
                 } else {
                     res.render('password-reset', {
-                        user: user
+                        user,
                     });
                 }
             })
             .catch((err) => {
                 console.log(err);
                 res.redirect('/404');
-            })
+            });
     });
 
     // reset my password is clicked
@@ -265,9 +255,9 @@ module.exports = function (app) {
             where: {
                 resetPasswordToken: req.params.token,
                 resetPasswordExpires: {
-                    [Sequelize.Op.gte]: Date.now()
-                }
-            }
+                    [Sequelize.Op.gte]: Date.now(),
+                },
+            },
         })
             .then((user) => {
                 if (!user) {
@@ -284,8 +274,7 @@ module.exports = function (app) {
             .catch((err) => {
                 console.log(err);
                 res.redirect('/404');
-            })
-
+            });
     });
 
     //Render Login Page
@@ -296,6 +285,7 @@ module.exports = function (app) {
             res.render("login",{
                 message: req.flash("loginMsg")
             });
+        }
     });
 
     //Login Route
@@ -313,6 +303,7 @@ module.exports = function (app) {
             res.render("login",{
                 message: req.flash("loginMsg")
             });
+        }
     });
 
     //verify email
@@ -320,7 +311,7 @@ module.exports = function (app) {
         Users.find({
             where: {
                 verifyEmailToken: req.params.token,
-            }
+            },
         })
             .then((user) => {
                 if (!user) {
@@ -339,71 +330,66 @@ module.exports = function (app) {
             .catch((err) => {
                 console.log(err);
                 res.redirect('/404');
-            })
+            });
     });
 
-//New User via SignUp route
-app.post("/signup", upload.single('imgUploader'), function (req, res) {
-
-    Users.find({
-        where: {
-            [Sequelize.Op.or]: [
-                {username: req.body.username},
-                {email: req.body.email}
-            ]
-        }
-    })
-        .then((user) => {
-
-            if (!user) {
-                bcrypt.genSalt(10, function (err, salt) {
-                    bcrypt.hash(req.body.password, salt, function (err, hash) {
+    // New User via SignUp route
+    app.post('/signup', upload.single('imgUploader'), (req, res) => {
+        Users.find({
+            where: {
+                [Sequelize.Op.or]: [
+                    { username: req.body.username },
+                    { email: req.body.email },
+                ],
+            },
+        })
+            .then((user) => {
+                if (!user) {
+                    bcrypt.genSalt(10, (err, salt) => {
+                        bcrypt.hash(req.body.password, salt, (err, hash) => {
                         // Store hash in your password DB.
 
-                        Users.create({
-                            username: req.body.username,
-                            password: hash,
-                            name: req.body.name,
-                            email: req.body.email,
-                            phone1: req.body.phone1,
-                            phone2: req.body.phone2,
-                            isVerified: false
-                        })
-                            .then((user) => {
+                            Users.create({
+                                username: req.body.username,
+                                password: hash,
+                                name: req.body.name,
+                                email: req.body.email,
+                                phone1: req.body.phone1,
+                                phone2: req.body.phone2,
+                                isVerified: false,
+                            })
+                                .then((user) => {
+                                    models.UserBidsMap.create({
+                                        userID: user.id,
+                                        bidsOn: [],
+                                    })
+                                        .then((data) => {
+                                            let imgName;
+                                            if (req.file) {
+                                                imgName = req.file.filename;
+                                                fs.rename(path.join(__dirname, '../', 'public_html/Images/', imgName), path.join(__dirname, '../', 'public_html/Images/', `${user.id}.jpg`), (err) => {
+                                                    if (err) {
+                                                        console.log(err);
+                                                        res.redirect('/404');
+                                                    } else {
+                                                    // Upload image
+                                                        cloudinary.uploader.upload(path.join(__dirname, '../', 'public_html/Images/', `${user.id}.jpg`), (result) => {
+                                                            console.log(result);
 
-                                models.UserBidsMap.create({
-                                    userID: user.id,
-                                    bidsOn: []
-                                })
-                                    .then((data) => {
-                                        let imgName;
-                                        if (req.file) {
-                                            imgName = req.file.filename;
-                                            fs.rename(path.join(__dirname, "../", "public_html/Images/", imgName), path.join(__dirname, "../", "public_html/Images/", user.id + ".jpg"), (err) => {
-                                                if (err) {
-                                                    console.log(err);
-                                                    res.redirect('/404');
-                                                }
-                                                else {
-                                                    //Upload image
-                                                    cloudinary.uploader.upload(path.join(__dirname, "../", "public_html/Images/", user.id + ".jpg"), function (result) {
-                                                        console.log(result);
+                                                            // Delete image from server
+                                                            fs.stat(path.join(__dirname, '../', 'public_html/Images/', `${user.id}.jpg`), (err, stats) => {
+                                                                console.log(stats);// here we got all information of file in stats variable
+                                                                if (err) {
+                                                                    return console.error(err);
+                                                                }
 
-                                                        //Delete image from server
-                                                        fs.stat(path.join(__dirname, "../", "public_html/Images/", user.id + ".jpg"), function (err, stats) {
-                                                            console.log(stats);//here we got all information of file in stats variable
-                                                            if (err) {
-                                                                return console.error(err);
-                                                            }
-                                                            else {
-                                                                fs.unlink(path.join(__dirname, "../", "public_html/Images/", user.id + ".jpg"), function (err) {
+                                                                fs.unlink(path.join(__dirname, '../', 'public_html/Images/', `${user.id}.jpg`), (err) => {
                                                                     if (err) {
                                                                         console.log(err);
                                                                         res.redirect('/404');
-                                                                    }
-                                                                    else {
+                                                                    } else {
                                                                         console.log('file deleted successfully');
-                                                                        //Store image url in DB
+                                                                        // Store image url in DB
                                                                         user.img = result.url;
                                                                         user.save()
                                                                             .then(() => {
@@ -493,11 +479,9 @@ app.post("/signup", upload.single('imgUploader'), function (req, res) {
             res.redirect('/404');
         })
     });
-//Logout route
-    app.get("/logout", (req, res) => {
+    // Logout route
+    app.get('/logout', (req, res) => {
         req.logout();
-        res.redirect("/");
+        res.redirect('/');
     });
-
-
 };
