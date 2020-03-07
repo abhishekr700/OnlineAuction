@@ -278,9 +278,13 @@ route.get("/add", HELPERS.checkLoggedIn, (req, res) => {
 
 //Post route to add products to DB
 route.post('/add', HELPERS.checkLoggedIn, upload.single('imgUploader'), function (req, res) {
+    console.log("=>Add Item:", req.body);
+    
     let curDate = new Date();
-    let finalDate = curDate.getTime() + req.body.duration * 1000;
+    let finalDate = curDate.getTime() + req.body.duration * 1000 * 3600;
     let endDate = new Date(finalDate);
+    console.log("=> Add Item: Creating DB Entry");
+    
     models.Products.create({
         userID: req.user.id,
         name: req.body.productname,
@@ -293,6 +297,8 @@ route.post('/add', HELPERS.checkLoggedIn, upload.single('imgUploader'), function
         .then((item) => {
 
         if(req.file) {
+            console.log("=> Add Item: Renaming file");
+
             fs.rename(path.join(__dirname, "../", "public_html/Images/", req.file.filename), path.join(__dirname, "../", "public_html/Images/", item._id + ".jpg"), (err) => {
                 if (err) {
                     console.log(err);
@@ -301,9 +307,11 @@ route.post('/add', HELPERS.checkLoggedIn, upload.single('imgUploader'), function
                 else {
                     //Upload image
                     cloudinary.uploader.upload(path.join(__dirname, "../", "public_html/Images/", item._id + ".jpg"), function (result) {
-                        console.log(result);
+                        console.log(result.url);
 
                         //Delete image from server
+                        console.log("=> Add Item: Deleting image from server local");
+
                         fs.stat(path.join(__dirname, "../", "public_html/Images/", item._id + ".jpg"), function (err, stats) {
                             console.log(stats);//here we got all information of file in stats variable
                             if (err) {
@@ -316,11 +324,12 @@ route.post('/add', HELPERS.checkLoggedIn, upload.single('imgUploader'), function
                                         res.redirect('/404');
                                     }
                                     else {
-                                        console.log('file deleted successfully');
+                                        console.log('=> Add Item: file deleted successfully');
                                         //Store image url in DB
                                         item.img = result.url;
                                         item.save()
                                             .then(() => {
+                                                console.log("=> Add Item: Creating entry in Bids table");
 
                                                 //Create entry in bids table
                                                 models.Bids.create({
@@ -329,23 +338,18 @@ route.post('/add', HELPERS.checkLoggedIn, upload.single('imgUploader'), function
                                                     allBids: []
                                                 })
                                                     .then(() => {
+                                                        console.log("=> Add Item: Scheduling Bid Close");
 
                                                         scheduler.schedule({
                                                             name: "close-bid",
                                                             data: item._id,
                                                             after: item.endDate
                                                         });
+                                                        console.log("=> Add Item: Redirecting to item page");
 
                                                         res.redirect(`/items/${item._id}`);
                                                     })
-                                                    .catch((err) => {
-                                                        console.log(err);
-                                                        res.redirect('/404');
-                                                    })
-                                            })
-                                            .catch((err) => {
-                                                console.error(err);
-                                                res.redirect('/404');
+                                                    
                                             })
                                     }
                                 });
@@ -377,15 +381,9 @@ route.post('/add', HELPERS.checkLoggedIn, upload.single('imgUploader'), function
 
                             res.redirect(`/items/${item._id}`);
                         })
-                        .catch((err) => {
-                            console.log(err);
-                            res.redirect('/404');
-                        })
+                        
                 })
-                .catch((err) => {
-                    console.error(err);
-                    res.redirect('/404');
-                })
+                
         }
         })
         .catch((err) => {
@@ -707,61 +705,69 @@ route.post("/:id/bid", HELPERS.checkLoggedIn, (req, res) => {
 
 //Delete an item
 route.get("/:id/delete", HELPERS.checkLoggedIn, (req, res) => {
+    console.log("=> Delete Item: ", req.params);
+    console.log("=> Delete Item: Checking Bid Entries");
+
     models.Bids.findOne({
         ProdID: req.params.id
     })
     .then((bidentry) => {
-            if (bidentry == null) {
-                res.sendStatus(404);
-                //TODO: redirect to /items
-            }
+        if (!bidentry) {
+            return res.sendStatus(404);
+            //TODO: redirect to /items
+        }
+        console.log("=> Delete Item: BidEntry: ", bidentry);
 
-            if (bidentry.allBids === undefined || bidentry.allBids.length === 0) {
-                models.Products.findById(req.params.id)
-                    .then((item) => {
-                        item.remove();
-                        bidentry.remove();
-                        
-                        let publicID = item.img;
-                        publicID = publicID.split('/');
-                        publicID = publicID[publicID.length - 1];
-                        publicID = publicID.split('.');
-                        publicID = publicID[0];
-                        console.log(publicID);
-                        cloudinary.v2.uploader.destroy(publicID, function (error, result) {
-                            console.log(result);
-                            scheduler.list((err, events) => {
-                                for (let eve of events) {
-                                    if (eve.data.toString() === req.params.id.toString()) {
-                                        scheduler.remove("close-bid", eve._id, null, (err, event) => {
-                                        });
-                                        break;
-                                    }
+        if (bidentry.allBids === undefined || bidentry.allBids.length === 0) {
+            console.log("=> Delete Item: Can be Deleted, Finding Product");
+            models.Products.findById(req.params.id)
+                .then((item) => {
+                    let publicID = item.img;
+                    publicID = publicID.split('/');
+                    publicID = publicID[publicID.length - 1];
+                    publicID = publicID.split('.');
+                    publicID = publicID[0];
+                    console.log(publicID);
+                    cloudinary.v2.uploader.destroy(publicID, function (error, result) {
+                        console.log(result);
+                        scheduler.list((err, events) => {
+                            for (let eve of events) {
+                                if (eve.data.toString() === req.params.id.toString()) {
+                                    scheduler.remove("close-bid", eve._id, null, (err, event) => {
+                                    });
+                                    break;
                                 }
-                                console.log("schedular removed");
-                                if(err)
-                                {
-                                    console.log(err);
-                                    res.redirect('/404');
-                                }else {
-                                    alert("Successfully Deleted Item");
-                                    res.redirect("/items?show=user");
-                                }
+                            }
+                            console.log("schedular removed");
+                            if (err) {
+                                console.log(err);
+                                res.redirect('/404');
+                            } else {
+                                alert("Successfully Deleted Item");
+                                res.redirect("/items?show=user");
+                            }
 
-                            });
-                        })
+                        });
                     })
-                    .catch((err) => {
-                        console.log("Error deleting item:", err);
-                        alert("Error in Deleting The Item ");
-                        res.redirect(`/items/${req.params.id}`)
-                    })
-            }
-            else {
-                alert("Cannot delete item: Bid placed on item");
-                res.redirect(`/items/${req.params.id}`)
-            }
-            
+                    return item.remove();  
+                })
+                .then(()=>{
+                    return bidentry.remove();
+                })
+                .then(()=>{
+                    console.log("=> Delete Item: Successful");
+                    res.redirect("/items")
+                })
+                .catch((err) => {
+                    console.log("Error deleting item:", err);
+                    alert("Error in Deleting The Item ");
+                    res.redirect(`/items/${req.params.id}`)
+                })
+        }
+        else {
+            console.log("=> Delete Item: Cannot delete item: Bid placed on item");
+            res.redirect(`/items/${req.params.id}`)
+        }
         })
         .catch((err) => {
             console.log(err);
