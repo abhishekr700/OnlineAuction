@@ -281,7 +281,7 @@ module.exports = function (app) {
     app.get("/login", (req, res) => {
         if (req.user)
             res.redirect("/users");
-        else
+        else {
             res.render("login",{
                 message: req.flash("loginMsg")
             });
@@ -299,7 +299,7 @@ module.exports = function (app) {
     app.get("/signup", (req, res) => {
         if (req.user)
             res.redirect("/users");
-        else
+        else {
             res.render("login",{
                 message: req.flash("loginMsg")
             });
@@ -410,14 +410,16 @@ module.exports = function (app) {
                                                                             })
                                                                     }
                                                                 })
-                                                            }
+                                                            })
                                                         })
-                                                    })
-                                                }
+                                                    } // fs-rename first else block end
+                                                        // })
+                                                    // })
+                                                }) // fs.rename close
 
-
-                                            })
-                                        }
+                                            } //if(req.file) close
+                                            // })
+                                        // }
                                         else {
                                             user.img = "/images/user.png";
                                             user.save()
@@ -439,9 +441,9 @@ module.exports = function (app) {
                                             })
                                                 
                                         }
-                                    })
+                                        })
                                     
-                            })
+                                })
                     })
                 })
 
