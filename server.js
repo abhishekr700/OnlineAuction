@@ -10,6 +10,8 @@ const session = require("express-session");
 const mongoose = require("mongoose");
 const MongoStore = require('connect-mongo')(session);
 const flash = require("connect-flash");
+require('dotenv').config()
+
 
 /*
     Import User Files
@@ -38,8 +40,7 @@ app.use(express.urlencoded({
     extended: true
 }));
 
-const {MONGOOSE_URI} = require("./helpers");
-const connection = mongoose.createConnection(MONGOOSE_URI, {
+const connection = mongoose.createConnection(CONFIG.MONGO.URI, {
     useNewUrlParser: true
 });
 const store = new MongoStore({mongooseConnection: connection});

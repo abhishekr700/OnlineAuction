@@ -31,11 +31,12 @@ const mongoose = require("mongoose");
 /*
  Scheduler
 //  */
-const connection = mongoose.createConnection(MONGOOSE_URI, {
+const connection = mongoose.connect(CONFIG.MONGO.URI, {
     useNewUrlParser: true
 });
 // console.log(connection);
-const scheduler = new Scheduler(MONGOOSE_URI, {
+// const scheduler = new Scheduler(CONFIG.MONGO.URI)
+const scheduler = new Scheduler(CONFIG.MONGO.URI, {
     pollInterval: 1000,  
     useNewUrlParser: true,
     auth: {
@@ -43,7 +44,7 @@ const scheduler = new Scheduler(MONGOOSE_URI, {
         password: 'root123'
     },
     authMechanism: "SCRAM-SHA-1",
-    dbname: "onlineauction"
+    // dbname: "onlineauction"
 });
 
 scheduler.on("error", (err, event) => {

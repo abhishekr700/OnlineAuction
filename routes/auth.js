@@ -88,6 +88,8 @@ module.exports = function (app) {
     }
 
     async function mailConfirmation(user, newPassword, res) {
+        console.log("=> Confirmation email link click");
+        
         // update user table with new password and tokens
         await (function () {
             return new Promise((resolve) => {
@@ -137,6 +139,7 @@ module.exports = function (app) {
 
     async function mailVerifyEmail(user, res) {
         // generate the token
+        console.log("=> Email: Generating token"); 
         const token = await (function () {
             return new Promise((resolve) => {
                 crypto.randomBytes(20, (err, buf) => {
@@ -147,6 +150,7 @@ module.exports = function (app) {
         }());
 
         // update user table with token and expiry time
+        console.log("=> Email: Adding token to DB");
         await (function (token) {
             return new Promise((resolve) => {
                 user.verifyEmailToken = token;
@@ -160,10 +164,11 @@ module.exports = function (app) {
         }(token));
 
         // send the mail to the user's email id
+        console.log("=> Email: Sending Email");
         await (function (token, user) {
             return new Promise((resolve, reject) => {
                 const smtpTransport = nodemailer.createTransport({
-                    service: 'gmail',
+                    service: 'SendGrid',
                     auth: {
                         user: CONFIG.SERVER.MAIL,
                         pass: CONFIG.SERVER.PASS,
@@ -281,7 +286,7 @@ module.exports = function (app) {
     app.get("/login", (req, res) => {
         if (req.user)
             res.redirect("/users");
-        else
+        else {
             res.render("login",{
                 message: req.flash("loginMsg")
             });
@@ -299,7 +304,7 @@ module.exports = function (app) {
     app.get("/signup", (req, res) => {
         if (req.user)
             res.redirect("/users");
-        else
+        else {
             res.render("login",{
                 message: req.flash("loginMsg")
             });
@@ -308,21 +313,27 @@ module.exports = function (app) {
 
     //verify email
     app.get("/verify/:token", (req, res) => {
+        console.log("=> Verify Link", req.params);
+        
         Users.find({
             where: {
                 verifyEmailToken: req.params.token,
             },
         })
             .then((user) => {
+                console.log("User:", user);
+                
                 if (!user) {
                     alert('verify email token is invalid.');
                     res.redirect('/');
                     return;
                 } 
-                    user.isVerified = true;
-                    return user.save();
+                user.isVerified = true;
+                return user.save();
             })
-            .then(()=>{
+            .then((user)=>{
+                console.log("=> Redirecting to /users");
+                
                 req.login(user, () => {
                     res.redirect("/users");
                 });
@@ -335,6 +346,8 @@ module.exports = function (app) {
 
     // New User via SignUp route
     app.post('/signup', upload.single('imgUploader'), (req, res) => {
+        console.log("Signup:",req.body);
+        console.log("Finding User");
         Users.find({
             where: {
                 [Sequelize.Op.or]: [
@@ -344,6 +357,8 @@ module.exports = function (app) {
             },
         })
             .then((user) => {
+                console.log("FindUser Result:",user);
+                
                 if (!user) {
                     bcrypt.genSalt(10, (err, salt) => {
                         bcrypt.hash(req.body.password, salt, (err, hash) => {
@@ -374,7 +389,7 @@ module.exports = function (app) {
                                                     } else {
                                                     // Upload image
                                                         cloudinary.uploader.upload(path.join(__dirname, '../', 'public_html/Images/', `${user.id}.jpg`), (result) => {
-                                                            console.log(result);
+                                                            console.log("Clodiniary Result:",result.url);
 
                                                             // Delete image from server
                                                             fs.stat(path.join(__dirname, '../', 'public_html/Images/', `${user.id}.jpg`), (err, stats) => {
@@ -388,14 +403,17 @@ module.exports = function (app) {
                                                                         console.log(err);
                                                                         res.redirect('/404');
                                                                     } else {
-                                                                        console.log('file deleted successfully');
+                                                                        console.log('=> File deleted successfully');
                                                                         // Store image url in DB
                                                                         user.img = result.url;
                                                                         user.save()
                                                                             .then(() => {
+                                                                                console.log("=> Sending Email");
                                                                                 return mailVerifyEmail(user, res)      
                                                                             })
                                                                             .then(() => {
+                                                                                console.log("=> Logging new user in");
+                                                                                
                                                                                 req.login(user, (err) => {
                                                                                     if (err) {
                                                                                         console.log(err);
@@ -410,14 +428,16 @@ module.exports = function (app) {
                                                                             })
                                                                     }
                                                                 })
-                                                            }
+                                                            })
                                                         })
-                                                    })
-                                                }
+                                                    } // fs-rename first else block end
+                                                        // })
+                                                    // })
+                                                }) // fs.rename close
 
-
-                                            })
-                                        }
+                                            } //if(req.file) close
+                                            // })
+                                        // }
                                         else {
                                             user.img = "/images/user.png";
                                             user.save()
@@ -439,9 +459,9 @@ module.exports = function (app) {
                                             })
                                                 
                                         }
-                                    })
+                                        })
                                     
-                            })
+                                })
                     })
                 })
 
