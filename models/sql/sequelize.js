@@ -12,7 +12,9 @@ console.log("sqlurl:", CONFIG.SQL.URL );
 //     logging: false
 // });
 
-const database = new Sequelize(CONFIG.SQL.URL);
+const database = new Sequelize(CONFIG.SQL.URL,{
+    dialect: "mysql"
+});
 
 //Test DB Connection
 database.authenticate()
