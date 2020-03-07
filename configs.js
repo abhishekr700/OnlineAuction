@@ -6,6 +6,7 @@ const PRODUCTION_CONFIGS = {
         PASS: process.env.PASS
     },
     SQL: {
+        URL: process.env.SQL_URL,
         DATABASE: process.env.SQLDB,
         HOST: process.env.SQLHOST,
         USER: process.env.SQLUSER,
