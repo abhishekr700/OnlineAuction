@@ -1,5 +1,6 @@
 .idea/
 node_modules/
-configs.js 
+configs-local.js 
 data/ 
 public_html/Images
+.env

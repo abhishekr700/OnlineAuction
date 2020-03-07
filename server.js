@@ -38,9 +38,9 @@ app.use(express.urlencoded({
     extended: true
 }));
 
-
-const connection = mongoose.createConnection(`mongodb://${CONFIG.MONGO.HOST}:${CONFIG.MONGO.PORT}/${CONFIG.MONGO.DB_NAME}`, {
-    useMongoClient: true
+const {MONGOOSE_URI} = require("./helpers");
+const connection = mongoose.createConnection(MONGOOSE_URI, {
+    useNewUrlParser: true
 });
 const store = new MongoStore({mongooseConnection: connection});
 let sessionModel = mongoose.model('sessions', new mongoose.Schema({session: Object, expires: Date}));
