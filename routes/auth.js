@@ -73,7 +73,7 @@ module.exports = function (app) {
                     subject: 'Node.js Password Reset',
                     text: `${'You are receiving this because you (or someone else) have requested the reset of the password for your account.\n\n'
                     + 'Please click on the following link, or paste this into your browser to complete the process:\n\n'
-                    + 'http://'}${CONFIG.SERVER.HOST}:${CONFIG.SERVER.PORT}/reset/${token}\n\n`
+                    + 'http://'}${CONFIG.SERVER.HOST}:${CONFIG.SERVER.MAILPORT}/reset/${token}\n\n`
                     + 'If you did not request this, please ignore this email and your password will remain unchanged.\n',
                 };
                 smtpTransport.sendMail(mailOptions, (err) => {
@@ -180,7 +180,7 @@ module.exports = function (app) {
                     subject: 'verify email',
                     text: `${'You are receiving this because you (or someone else) have requested for verification of email for your account.\n\n'
                     + 'Please click on the following link, or paste this into your browser to complete the process:\n\n'
-                    + 'http://'}${CONFIG.SERVER.HOST}:${CONFIG.SERVER.PORT}/verify/${token}\n\n`
+                    + 'http://'}${CONFIG.SERVER.HOST}:${CONFIG.SERVER.MAILPORT}/verify/${token}\n\n`
                     + 'If you did not request this, please ignore this email.\n',
                 };
                 smtpTransport.sendMail(mailOptions, (err) => {
