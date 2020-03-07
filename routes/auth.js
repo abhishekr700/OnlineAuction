@@ -31,7 +31,7 @@ module.exports = function (app) {
     functions
      */
 
-    async function mailPassword(user, res) {
+    async function mailPassword(user, res) {    
         // generate the token
         const token = await (function () {
             return new Promise((resolve) => {
@@ -69,7 +69,7 @@ module.exports = function (app) {
                 });
                 const mailOptions = {
                     to: user.email,
-                    from: "Auctioneer Team",
+                    from: "Team@Auctioneer",
                     subject: 'Node.js Password Reset',
                     text: `${'You are receiving this because you (or someone else) have requested the reset of the password for your account.\n\n'
                     + 'Please click on the following link, or paste this into your browser to complete the process:\n\n'
@@ -120,7 +120,7 @@ module.exports = function (app) {
                 });
                 const mailOptions = {
                     to: user.email,
-                    from: "Auctioneer Team",
+                    from: "Team@Auctioneer",
                     subject: 'Your password has been changed',
                     text: `${'Hello,\n\n'
                     + 'This is a confirmation that the password for your account '}${user.email} has just been changed.\n`,
@@ -174,15 +174,18 @@ module.exports = function (app) {
                         pass: CONFIG.SERVER.PASS,
                     },
                 });
+               
+                
                 const mailOptions = {
                     to: user.email,
-                    from: "Auctioneer Team",
+                    from: "Team@Auctioneer",
                     subject: 'verify email',
                     text: `${'You are receiving this because you (or someone else) have requested for verification of email for your account.\n\n'
                     + 'Please click on the following link, or paste this into your browser to complete the process:\n\n'
                     + 'http://'}${CONFIG.SERVER.HOST}:${CONFIG.SERVER.MAILPORT}/verify/${token}\n\n`
                     + 'If you did not request this, please ignore this email.\n',
-                };
+                }; 
+                console.log("=> Email: ", mailOptions);
                 smtpTransport.sendMail(mailOptions, (err) => {
                     if (err) {
                         reject();

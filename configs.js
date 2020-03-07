@@ -3,7 +3,8 @@ const PRODUCTION_CONFIGS = {
         HOST: process.env.HOST,
         PORT: process.env.PORT,
         MAIL: process.env.MAIL,
-        PASS: process.env.PASS
+        PASS: process.env.PASS,
+        MAILPORT: process.env.MAILPORT
     },
     SQL: {
         URL: process.env.SQL_URL,
