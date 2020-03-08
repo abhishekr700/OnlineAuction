@@ -1,4 +1,4 @@
-<h1 align="center">Welcome to Auctioneer 👋</h1>
+<h1 align="center">Auctioneer 👋</h1>
 <p>
   <img alt="Version" src="https://img.shields.io/badge/version-1.0.0-blue.svg?cacheSeconds=2592000" />
   <img src="https://img.shields.io/badge/node-10.15.3-blue.svg" />
@@ -13,7 +13,7 @@
   </a>
 </p>
 
-### 🏠 [Homepage](http://online-auction-app.herokuapp.com/)
+### 🏠 [Homepage](http://github.com/abhishekr700/OnlineAuction)
 
 ### ✨ [Demo](http://online-auction-app.herokuapp.com/)
 
@@ -33,18 +33,19 @@ npm install
 node server.js
 ```
 
-## Run tests
-
-```sh
- 
-```
-
 ## Author
 
 👤 **Abhishek Ranjan**
 
-* Website:  
 * Github: [@abhishekr700](https://github.com/abhishekr700)
+
+👤 **Aastha Agarwal**
+
+* Github: [@aastha980](https://github.com/aastha980)
+
+👤 **Bhavya Bansal**
+
+* Github: [@bhavya2020](https://github.com/bhavya2020)
 
 ## Show your support
 
@@ -56,4 +57,3 @@ Copyright © 2020 [Abhishek Ranjan](https://github.com/abhishekr700).<br />
 This project is [MIT]( ) licensed.
 
 ***
-_This README was generated with ❤️ by [readme-md-generator](https://github.com/kefranabg/readme-md-generator)_
