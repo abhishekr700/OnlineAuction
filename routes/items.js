@@ -52,7 +52,9 @@ scheduler.on("error", (err, event) => {
     process.exit(10);
 });
 
-scheduler.on("close-bid", (err, event) => {
+scheduler.on("close-bid", (event) => {
+    console.log("=> Close-Bid: ",event);
+    
     models.Bids.findOne({
         ProdID: event.data
     })
@@ -60,12 +62,12 @@ scheduler.on("close-bid", (err, event) => {
             biditem.isOpen = false;
             return biditem.save();
         })
-        .then(() => {
+        .then((biditem) => {
             //Send mail to winner
-            console.log("Send winner and Owner mail");
+            console.log("=> Close-Bid: Send winner and Owner mail if item was sold");
             
             (async function () {
-                console.log("Inside mailer function");
+                console.log("=> Close-Bid: Inside mailer function");
                 //Mail to winner and Owner
                 await function () {
                     return new Promise((resolve, reject) => {
@@ -139,12 +141,6 @@ scheduler.on("close-bid", (err, event) => {
                 .then(()=>{
                 console.log("bid has been closed");
                 })
-                .catch((err)=>{
-                console.log(err);
-                });
-        })
-        .catch((err) => {
-            console.log(err);
         })
         .catch((err) => {
             console.log(err);
