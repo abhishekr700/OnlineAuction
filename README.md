@@ -1,15 +1,59 @@
-## Online Auction System
+<h1 align="center">Welcome to Auctioneer 👋</h1>
+<p>
+  <img alt="Version" src="https://img.shields.io/badge/version-1.0.0-blue.svg?cacheSeconds=2592000" />
+  <img src="https://img.shields.io/badge/node-10.15.3-blue.svg" />
+  <a href="https://github.com/abhishekr700/OnlineAuction#readme" target="_blank">
+    <img alt="Documentation" src="https://img.shields.io/badge/documentation-yes-brightgreen.svg" />
+  </a>
+  <a href="https://github.com/abhishekr700/OnlineAuction/graphs/commit-activity" target="_blank">
+    <img alt="Maintenance" src="https://img.shields.io/badge/Maintained%3F-yes-green.svg" />
+  </a>
+  <a href=" " target="_blank">
+    <img alt="License: MIT" src="https://img.shields.io/github/license/abhishekr700/Auctioneer" />
+  </a>
+</p>
 
-A NodeJS Web application developed to provide facility to auction any item online.
-1. SECURITY: authentication and verification is done.
-2. REAL TIME UPDATES: On bids , and on completing of an auction.
-3. ROUND THE CLOCK BIDDING: Bids are open 24x7 to facilitate users from various countries. 
-    
-    
-### Steps
-1. Clone the repo.
-2. Run `npm install`.
-3. Download the **_configs.js_** file and place it in the project directory.
-4. Modify **_configs.js_** to specify the port you want to use
-5. Run  `mongod --dbpath=./data`  on separate terminal
-6. Start the server using,   `node server.js`
+### 🏠 [Homepage](http://online-auction-app.herokuapp.com/)
+
+### ✨ [Demo](http://online-auction-app.herokuapp.com/)
+
+## Prerequisites
+
+- node 10.15.3
+
+## Install
+
+```sh
+npm install
+```
+
+## Usage
+
+```sh
+node server.js
+```
+
+## Run tests
+
+```sh
+ 
+```
+
+## Author
+
+👤 **Abhishek Ranjan**
+
+* Website:  
+* Github: [@abhishekr700](https://github.com/abhishekr700)
+
+## Show your support
+
+Give a ⭐️ if this project helped you!
+
+## 📝 License
+
+Copyright © 2020 [Abhishek Ranjan](https://github.com/abhishekr700).<br />
+This project is [MIT]( ) licensed.
+
+***
+_This README was generated with ❤️ by [readme-md-generator](https://github.com/kefranabg/readme-md-generator)_
