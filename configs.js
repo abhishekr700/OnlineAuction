@@ -8,18 +8,18 @@ const PRODUCTION_CONFIGS = {
     },
     SQL: {
         URL: process.env.SQL_URL,
-        DATABASE: process.env.SQLDB,
-        HOST: process.env.SQLHOST,
-        USER: process.env.SQLUSER,
-        PASSWORD: process.env.SQLPASS
+        // DATABASE: process.env.SQLDB,
+        // HOST: process.env.SQLHOST,
+        // USER: process.env.SQLUSER,
+        // PASSWORD: process.env.SQLPASS
     },
     MONGO: {
-        URI: process.env.MONGODB_URI,
-        USER: process.env.MONGOUSER,
-        PASS: process.env.MONGOPASS,
-        HOST: process.env.MONGOHOST,
-        PORT: 27017,
-        DB_NAME: process.env.MONGODB
+        URI: process.env.MONGOURI,
+        // USER: process.env.MONGOUSER,
+        // PASS: process.env.MONGOPASS,
+        // HOST: process.env.MONGOHOST,
+        // PORT: 27017,
+        // DB_NAME: process.env.MONGODB
         // SESSION: "sessions"
     },
     
