@@ -11,6 +11,9 @@ const models = require('../models/mongodb/mongo');
 const CONFIG = require('../configs');
 const { Users } = require('../models/sql/sequelize');
 const Passport = require('../passport');
+const sgMail = require('@sendgrid/mail');
+
+sgMail.setApiKey(CONFIG.SERVER.SENDGRID_API_KEY);
 
 
 module.exports = function (app) {
@@ -18,20 +21,20 @@ module.exports = function (app) {
         destination: './public_html/Images',
         filename(req, file, callback) {
             callback(null, file.originalname);
-        },
+        }
     });
     const upload = multer({ storage: Storage });
     cloudinary.config({
         cloud_name: 'auctioneeer',
         api_key: '553296924422138',
-        api_secret: 'YNGylxUU6jLGb9Ioc2P44b07gfQ',
+        api_secret: 'YNGylxUU6jLGb9Ioc2P44b07gfQ'
     });
 
     /*
     functions
      */
 
-    async function mailPassword(user, res) {    
+    async function mailPassword(user, res) {
         // generate the token
         const token = await (function () {
             return new Promise((resolve) => {
@@ -47,49 +50,35 @@ module.exports = function (app) {
             return new Promise((resolve) => {
                 user.resetPasswordToken = token;
                 user.resetPasswordExpires = Date.now() + 3600000; // 1 hour
-                user.save().then(() => {
-                    resolve();
-                }).catch((err) => {
-                    console.log(err);
-                    res.redirect('/404');
-                });
+                user.save()
+                    .then(() => {
+                        resolve();
+                    })
+                    .catch((err) => {
+                        console.log(err);
+                        res.redirect('/404');
+                    });
             });
         }(token));
 
         // send the mail to the user's email id
         await (function (token, user) {
-            return new Promise((resolve, reject) => {
-                const smtpTransport = nodemailer.createTransport({
-                    service: 'gmail',
-                    // TODO: add username and password
-                    auth: {
-                        user: CONFIG.SERVER.MAIL,
-                        pass: CONFIG.SERVER.PASS,
-                    },
-                });
-                const mailOptions = {
-                    to: user.email,
-                    from: "Team@Auctioneer",
-                    subject: 'Node.js Password Reset',
-                    text: `${'You are receiving this because you (or someone else) have requested the reset of the password for your account.\n\n'
+            const mailOptions = {
+                to: user.email,
+                from: CONFIG.SERVER.MAIL,
+                subject: 'Node.js Password Reset',
+                text: `${'You are receiving this because you (or someone else) have requested the reset of the password for your account.\n\n'
                     + 'Please click on the following link, or paste this into your browser to complete the process:\n\n'
                     + 'http://'}${CONFIG.SERVER.HOST}:${CONFIG.SERVER.MAILPORT}/reset/${token}\n\n`
-                    + 'If you did not request this, please ignore this email and your password will remain unchanged.\n',
-                };
-                smtpTransport.sendMail(mailOptions, (err) => {
-                    if (err) {
-                        reject();
-                    } else {
-                        resolve();
-                    }
-                });
-            });
+                    + 'If you did not request this, please ignore this email and your password will remain unchanged.\n'
+            };
+            return sgMail.send(mailOptions);
         }(token, user));
     }
 
     async function mailConfirmation(user, newPassword, res) {
         console.log("=> Confirmation email link click");
-        
+
         // update user table with new password and tokens
         await (function () {
             return new Promise((resolve) => {
@@ -98,11 +87,13 @@ module.exports = function (app) {
                         user.password = hash;
                         user.resetPasswordToken = null;
                         user.resetPasswordExpires = null;
-                        user.save().then(() => {
-                            resolve();
-                        }).catch((err) => {
-                            res.redirect('/404');
-                        });
+                        user.save()
+                            .then(() => {
+                                resolve();
+                            })
+                            .catch((err) => {
+                                res.redirect('/404');
+                            });
                     });
                 });
             });
@@ -110,36 +101,20 @@ module.exports = function (app) {
 
         // send the mail to the user's email id regarding confirmation of password reset
         await (function (user) {
-            return new Promise((resolve, reject) => {
-                const smtpTransport = nodemailer.createTransport({
-                    service: 'gmail',
-                    auth: {
-                        user: CONFIG.SERVER.MAIL,
-                        pass: CONFIG.SERVER.PASS,
-                    },
-                });
-                const mailOptions = {
-                    to: user.email,
-                    from: "Team@Auctioneer",
-                    subject: 'Your password has been changed',
-                    text: `${'Hello,\n\n'
-                    + 'This is a confirmation that the password for your account '}${user.email} has just been changed.\n`,
-                };
-                smtpTransport.sendMail(mailOptions, (err) => {
-                    if (err) {
-                        console.log(err);
-                        reject();
-                    } else {
-                        resolve();
-                    }
-                });
-            });
+            const mailOptions = {
+                to: user.email,
+                from: CONFIG.SERVER.MAIL,
+                subject: 'Your password has been changed',
+                text: `${'Hello,\n\n'
+                + 'This is a confirmation that the password for your account '}${user.email} has just been changed.\n`
+            };
+            return sgMail.send(mailOptions);
         }(user));
     }
 
     async function mailVerifyEmail(user, res) {
         // generate the token
-        console.log("=> Email: Generating token"); 
+        console.log("=> Email: Generating token");
         const token = await (function () {
             return new Promise((resolve) => {
                 crypto.randomBytes(20, (err, buf) => {
@@ -154,46 +129,31 @@ module.exports = function (app) {
         await (function (token) {
             return new Promise((resolve) => {
                 user.verifyEmailToken = token;
-                user.save().then(() => {
-                    resolve();
-                }).catch((err) => {
-                    console.log(err);
-                    res.redirect('/404');
-                });
+                user.save()
+                    .then(() => {
+                        resolve();
+                    })
+                    .catch((err) => {
+                        console.log(err);
+                        res.redirect('/404');
+                    });
             });
         }(token));
 
         // send the mail to the user's email id
         console.log("=> Email: Sending Email");
         await (function (token, user) {
-            return new Promise((resolve, reject) => {
-                const smtpTransport = nodemailer.createTransport({
-                    service: 'SendGrid',
-                    auth: {
-                        user: CONFIG.SERVER.MAIL,
-                        pass: CONFIG.SERVER.PASS,
-                    },
-                });
-               
-                
-                const mailOptions = {
-                    to: user.email,
-                    from: "Team@Auctioneer",
-                    subject: 'verify email',
-                    text: `${'You are receiving this because you (or someone else) have requested for verification of email for your account.\n\n'
+            const mailOptions = {
+                to: user.email,
+                from: CONFIG.SERVER.MAIL,
+                subject: 'verify email',
+                text: `${'You are receiving this because you (or someone else) have requested for verification of email for your account.\n\n'
                     + 'Please click on the following link, or paste this into your browser to complete the process:\n\n'
                     + 'http://'}${CONFIG.SERVER.HOST}:${CONFIG.SERVER.MAILPORT}/verify/${token}\n\n`
-                    + 'If you did not request this, please ignore this email.\n',
-                }; 
-                console.log("=> Email: ", mailOptions);
-                smtpTransport.sendMail(mailOptions, (err) => {
-                    if (err) {
-                        reject();
-                    } else {
-                        resolve();
-                    }
-                });
-            });
+                    + 'If you did not request this, please ignore this email.\n'
+            };
+            console.log("=> Email: ", mailOptions);
+            return sgMail.send(mailOptions);
         }(token, user));
     }
 
@@ -208,17 +168,17 @@ module.exports = function (app) {
             where: {
                 [Sequelize.Op.or]: [
                     { username: req.body.username },
-                    { email: req.body.email },
-                ],
-            },
+                    { email: req.body.email }
+                ]
+            }
         })
             .then((user) => {
                 if (!user) {
                     alert('username/email not found');
                     res.redirect('/forgot');
                     return;
-                } 
-                return mailPassword(user, res)  
+                }
+                return mailPassword(user, res);
             })
             .then(() => {
 
@@ -237,9 +197,9 @@ module.exports = function (app) {
             where: {
                 resetPasswordToken: req.params.token,
                 resetPasswordExpires: {
-                    [Sequelize.Op.gte]: Date.now(),
-                },
-            },
+                    [Sequelize.Op.gte]: Date.now()
+                }
+            }
         })
             .then((user) => {
                 if (!user) {
@@ -247,7 +207,7 @@ module.exports = function (app) {
                     res.redirect('/');
                 } else {
                     res.render('password-reset', {
-                        user,
+                        user
                     });
                 }
             })
@@ -263,9 +223,9 @@ module.exports = function (app) {
             where: {
                 resetPasswordToken: req.params.token,
                 resetPasswordExpires: {
-                    [Sequelize.Op.gte]: Date.now(),
-                },
-            },
+                    [Sequelize.Op.gte]: Date.now()
+                }
+            }
         })
             .then((user) => {
                 if (!user) {
@@ -273,7 +233,7 @@ module.exports = function (app) {
                     res.redirect('/');
                     return;
                 }
-                return mailConfirmation(user, req.body.password, res)
+                return mailConfirmation(user, req.body.password, res);
             })
             .then(() => {
                 alert('\'success\', \'Success! Your password has been changed.\'');
@@ -287,10 +247,10 @@ module.exports = function (app) {
 
     //Render Login Page
     app.get("/login", (req, res) => {
-        if (req.user)
+        if (req.user) {
             res.redirect("/users");
-        else {
-            res.render("login",{
+        } else {
+            res.render("login", {
                 message: req.flash("loginMsg")
             });
         }
@@ -305,10 +265,10 @@ module.exports = function (app) {
 
     //Render SignUp page
     app.get("/signup", (req, res) => {
-        if (req.user)
+        if (req.user) {
             res.redirect("/users");
-        else {
-            res.render("login",{
+        } else {
+            res.render("login", {
                 message: req.flash("loginMsg")
             });
         }
@@ -317,26 +277,26 @@ module.exports = function (app) {
     //verify email
     app.get("/verify/:token", (req, res) => {
         console.log("=> Verify Link", req.params);
-        
+
         Users.find({
             where: {
-                verifyEmailToken: req.params.token,
-            },
+                verifyEmailToken: req.params.token
+            }
         })
             .then((user) => {
                 console.log("User:", user);
-                
+
                 if (!user) {
                     alert('verify email token is invalid.');
                     res.redirect('/');
                     return;
-                } 
+                }
                 user.isVerified = true;
                 return user.save();
             })
-            .then((user)=>{
+            .then((user) => {
                 console.log("=> Redirecting to /users");
-                
+
                 req.login(user, () => {
                     res.redirect("/users");
                 });
@@ -349,23 +309,23 @@ module.exports = function (app) {
 
     // New User via SignUp route
     app.post('/signup', upload.single('imgUploader'), (req, res) => {
-        console.log("Signup:",req.body);
+        console.log("Signup:", req.body);
         console.log("Finding User");
         Users.find({
             where: {
                 [Sequelize.Op.or]: [
                     { username: req.body.username },
-                    { email: req.body.email },
-                ],
-            },
+                    { email: req.body.email }
+                ]
+            }
         })
             .then((user) => {
-                console.log("FindUser Result:",user);
-                
+                console.log("FindUser Result:", user);
+
                 if (!user) {
                     bcrypt.genSalt(10, (err, salt) => {
                         bcrypt.hash(req.body.password, salt, (err, hash) => {
-                        // Store hash in your password DB.
+                            // Store hash in your password DB.
 
                             Users.create({
                                 username: req.body.username,
@@ -374,12 +334,12 @@ module.exports = function (app) {
                                 email: req.body.email,
                                 phone1: req.body.phone1,
                                 phone2: req.body.phone2,
-                                isVerified: false,
+                                isVerified: false
                             })
                                 .then((user) => {
                                     models.UserBidsMap.create({
                                         userID: user.id,
-                                        bidsOn: [],
+                                        bidsOn: []
                                     })
                                         .then((data) => {
                                             let imgName;
@@ -390,9 +350,9 @@ module.exports = function (app) {
                                                         console.log(err);
                                                         res.redirect('/404');
                                                     } else {
-                                                    // Upload image
+                                                        // Upload image
                                                         cloudinary.uploader.upload(path.join(__dirname, '../', 'public_html/Images/', `${user.id}.jpg`), (result) => {
-                                                            console.log("Clodiniary Result:",result.url);
+                                                            console.log("Clodiniary Result:", result.url);
 
                                                             // Delete image from server
                                                             fs.stat(path.join(__dirname, '../', 'public_html/Images/', `${user.id}.jpg`), (err, stats) => {
@@ -412,77 +372,74 @@ module.exports = function (app) {
                                                                         user.save()
                                                                             .then(() => {
                                                                                 console.log("=> Sending Email");
-                                                                                return mailVerifyEmail(user, res)      
+                                                                                return mailVerifyEmail(user, res);
                                                                             })
                                                                             .then(() => {
                                                                                 console.log("=> Logging new user in");
-                                                                                
+
                                                                                 req.login(user, (err) => {
                                                                                     if (err) {
                                                                                         console.log(err);
                                                                                         res.redirect("/404");
-                                                                                    }
-                                                                                    else {
+                                                                                    } else {
                                                                                         alert("A link has been sent to your email id to verify it.");
                                                                                         res.redirect('/login');
                                                                                     }
                                                                                 });
 
-                                                                            })
+                                                                            });
                                                                     }
-                                                                })
-                                                            })
-                                                        })
+                                                                });
+                                                            });
+                                                        });
                                                     } // fs-rename first else block end
-                                                        // })
                                                     // })
-                                                }) // fs.rename close
+                                                    // })
+                                                }); // fs.rename close
 
                                             } //if(req.file) close
-                                            // })
-                                        // }
-                                        else {
-                                            user.img = "/images/user.png";
-                                            user.save()
-                                            .then(() => {
-                                                return mailVerifyEmail(user, res)
-                                            })
-                                            .then(() => {
-                                                req.login(user, (err) => {
-                                                    if (err) {
-                                                        console.log(err);
-                                                        res.redirect("/404");
-                                                    }
-                                                    else {
-                                                        alert("A link has been sent to your email id to verify it.");
-                                                        res.redirect('/login');
-                                                    }
-                                                });
+                                                // })
+                                            // }
+                                            else {
+                                                user.img = "/images/user.png";
+                                                user.save()
+                                                    .then(() => {
+                                                        return mailVerifyEmail(user, res);
+                                                    })
+                                                    .then(() => {
+                                                        req.login(user, (err) => {
+                                                            if (err) {
+                                                                console.log(err);
+                                                                res.redirect("/404");
+                                                            } else {
+                                                                alert("A link has been sent to your email id to verify it.");
+                                                                res.redirect('/login');
+                                                            }
+                                                        });
 
-                                            })
-                                                
-                                        }
-                                        })
-                                    
-                                })
-                    })
-                })
+                                                    });
 
-            }
-            else {
-                alert("Username already taken");
-                res.redirect('/login');
-            }
+                                            }
+                                        });
+
+                                });
+                        });
+                    });
+
+                } else {
+                    alert("Username already taken");
+                    res.redirect('/login');
+                }
 
 
-        })
-        .catch((err) => {
-            console.log(err);
-            res.redirect('/404');
-        })
+            })
+            .catch((err) => {
+                console.log(err);
+                res.redirect('/404');
+            });
 
 
-});
+    });
 
     app.get('/resendEmail', (req, res) => {
         Users.findOne({
@@ -490,17 +447,17 @@ module.exports = function (app) {
                 id: req.user.dataValues.id
             }
         })
-        .then((user) => {
-            return mailVerifyEmail(user, res)
-        })
-        .then(() => {
-            alert("An Email has been sent again with the verification link");
-            res.render('email-not-verified');
-        })
-        .catch((err) => {
-            console.log(err);
-            res.redirect('/404');
-        })
+            .then((user) => {
+                return mailVerifyEmail(user, res);
+            })
+            .then(() => {
+                alert("An Email has been sent again with the verification link");
+                res.render('email-not-verified');
+            })
+            .catch((err) => {
+                console.log(err);
+                res.redirect('/404');
+            });
     });
     // Logout route
     app.get('/logout', (req, res) => {

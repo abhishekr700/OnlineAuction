@@ -2,9 +2,9 @@ const PRODUCTION_CONFIGS = {
     SERVER: {
         HOST: process.env.HOST,
         PORT: process.env.PORT,
-        MAIL: process.env.MAIL,
         PASS: process.env.PASS,
-        MAILPORT: process.env.MAILPORT
+        MAILPORT: process.env.MAILPORT,
+        SENDGRID_API_KEY: process.env.SENDGRID_API_KEY
     },
     SQL: {
         URL: process.env.SQL_URL,
@@ -22,10 +22,10 @@ const PRODUCTION_CONFIGS = {
         // DB_NAME: process.env.MONGODB
         // SESSION: "sessions"
     },
-    
+
 };
 if (process.env.NODE_ENV === "production") {
     module.exports = PRODUCTION_CONFIGS;
 } else {
-    module.exports = require("./configs-local");
+    module.exports = require("./configslocal");
 }
