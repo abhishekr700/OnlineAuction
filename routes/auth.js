@@ -1,6 +1,5 @@
 const crypto = require('crypto');
 const bcrypt = require('bcryptjs');
-const nodemailer = require('nodemailer');
 const Sequelize = require('sequelize');
 const alert = require('alert-node');
 const multer = require('multer');
@@ -25,9 +24,9 @@ module.exports = function (app) {
     });
     const upload = multer({ storage: Storage });
     cloudinary.config({
-        cloud_name: 'auctioneeer',
-        api_key: '553296924422138',
-        api_secret: 'YNGylxUU6jLGb9Ioc2P44b07gfQ'
+        cloud_name: CONFIG.IMAGES.CLOUD_NAME,
+        api_key: CONFIG.IMAGES.API_KEY ,
+        api_secret: CONFIG.IMAGES.API_SECRET
     });
 
     /*
@@ -182,7 +181,7 @@ module.exports = function (app) {
             })
             .then(() => {
 
-                alert('An e-mail has been sent to ' + user.email + ' with further instructions.');
+                // alert('An e-mail has been sent to ' + user.email + ' with further instructions.');
                 res.redirect('/');
             })
             .catch((err) => {

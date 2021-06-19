@@ -7,21 +7,19 @@ const PRODUCTION_CONFIGS = {
         SENDGRID_API_KEY: process.env.SENDGRID_API_KEY
     },
     SQL: {
-        URL: process.env.SQL_URL,
-        // DATABASE: process.env.SQLDB,
-        // HOST: process.env.SQLHOST,
-        // USER: process.env.SQLUSER,
-        // PASSWORD: process.env.SQLPASS
+        DATABASE: process.env.SQLDB,
+        HOST: process.env.SQLHOST,
+        USER: process.env.SQLUSER,
+        PASSWORD: process.env.SQLPASS
     },
     MONGO: {
         URI: process.env.MONGOURI,
-        // USER: process.env.MONGOUSER,
-        // PASS: process.env.MONGOPASS,
-        // HOST: process.env.MONGOHOST,
-        // PORT: 27017,
-        // DB_NAME: process.env.MONGODB
-        // SESSION: "sessions"
     },
+    IMAGES: {
+        CLOUD_NAME: process.env.CLOUD_NAME,
+        API_KEY: process.env.API_KEY,
+        API_SECRET: process.env.API_SECRET
+    }
 
 };
 if (process.env.NODE_ENV === "production") {
