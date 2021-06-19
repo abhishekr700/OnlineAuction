@@ -2,7 +2,7 @@ const PRODUCTION_CONFIGS = {
     SERVER: {
         HOST: process.env.HOST,
         PORT: process.env.PORT,
-        PASS: process.env.PASS,
+        MAIL: process.env.MAIL,
         MAILPORT: process.env.MAILPORT,
         SENDGRID_API_KEY: process.env.SENDGRID_API_KEY
     },
