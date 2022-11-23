@@ -45,7 +45,7 @@
     "passport-local": "^1.0.0",
     "path": "^0.12.7",
     "sequelize": "^4.44.4",
-    "socket.io": "^2.3.0",
+    "socket.io": "^2.5.0",
     "timer.js": "^1.0.4"
   },
   "devDependencies": {
