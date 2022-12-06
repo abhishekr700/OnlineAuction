@@ -31,7 +31,7 @@
     "crypto": "^1.0.1",
     "dotenv": "^8.2.0",
     "ejs": "^2.7.4",
-    "express": "^4.17.1",
+    "express": "^4.18.2",
     "express-session": "^1.17.0",
     "mongo-scheduler-more": "^2.2.2",
     "mongodb": "^3.5.4",
